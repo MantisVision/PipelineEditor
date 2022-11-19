@@ -1,5 +1,9 @@
 from PyQt5.QtWidgets import *
-from node_graphic_scene import QDMGraphicsScene
+from PyQt5.QtGui import *
+from PyQt5.QtCore import *
+
+from node_graphics_scene import QDMGraphicsScene
+from node_graphics_view import QDMGraphicsView
 
 class NodeEditorWindow(QWidget):
     def __init__(self, parent=None) -> None:
@@ -17,7 +21,7 @@ class NodeEditorWindow(QWidget):
         self.gr_scene = QDMGraphicsScene()
 
         # Create graphics view
-        self.view = QGraphicsView(self)
+        self.view = QDMGraphicsView(self.gr_scene, self)
         self.view.setScene(self.gr_scene)
         self.layout.addWidget(self.view)
 
@@ -25,3 +29,13 @@ class NodeEditorWindow(QWidget):
 
         self.setWindowTitle("Pipeline Editor")
         self.show()
+
+        self.addDebugContent()
+
+    def addDebugContent(self):
+        greenBrush = QBrush(Qt.green)
+        outlinePen = QPen(Qt.black)
+        outlinePen.setWidth(2)
+        
+        rect = self.gr_scene.addRect(-100, -100, 100, 100, outlinePen, greenBrush)
+        rect.setFlag(QGraphicsItem.ItemIsMovable)
