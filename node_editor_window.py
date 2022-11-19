@@ -1,4 +1,5 @@
 from PyQt5.QtWidgets import *
+from node_graphic_scene import QDMGraphicsScene
 
 class NodeEditorWindow(QWidget):
     def __init__(self, parent=None) -> None:
@@ -13,7 +14,7 @@ class NodeEditorWindow(QWidget):
         self.setLayout(self.layout)
 
         # Create graphics scene
-        self.gr_scene = QGraphicsScene()
+        self.gr_scene = QDMGraphicsScene()
 
         # Create graphics view
         self.view = QGraphicsView(self)
