@@ -10,6 +10,11 @@ class  QDMGraphicsView(QGraphicsView):
         self.gr_scene = gr_scene
         self.initUI()
         self.setScene(self.gr_scene)
+        self.zoom_in_factor = 1.25
+        self.zoom = 10
+        self.zoom_step = 1
+        self.zoom_range = [5, 15]
+        self.zoom_clamp = True
 
     def initUI(self):
         self.setRenderHints(QPainter.Antialiasing | QPainter.HighQualityAntialiasing | QPainter.TextAntialiasing | QPainter.SmoothPixmapTransform)
@@ -18,6 +23,8 @@ class  QDMGraphicsView(QGraphicsView):
 
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+
+        self.setTransformationAnchor(QGraphicsView.AnchorUnderMouse)
 
 
     def mousePressEvent(self, event: QMouseEvent) -> None:
@@ -65,3 +72,26 @@ class  QDMGraphicsView(QGraphicsView):
 
     def rightMouseButtonRelease(self, event):
         super().mousePressEvent(event)
+
+    def wheelEvent(self, event):
+        zoom_out_factor = 1 / self.zoom_in_factor
+        
+        if event.angleDelta().y() > 0:
+            zoom_factor = self.zoom_in_factor
+            self.zoom += self.zoom_step
+        else:
+            zoom_factor = zoom_out_factor
+            self.zoom -= self.zoom_step
+        
+        clamped = False
+
+        if self.zoom < self.zoom_range[0]:
+            self.zoom = self.zoom_range[0]
+            clamped = True
+        if self.zoom > self.zoom_range[1]:
+            self.zoom = self.zoom_range[1]
+            clamped = True
+
+        if not clamped or not self.zoom_clamp:
+            self.scale(zoom_factor, zoom_factor)
+        

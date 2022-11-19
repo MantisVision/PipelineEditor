@@ -38,4 +38,4 @@ class NodeEditorWindow(QWidget):
         outlinePen.setWidth(2)
         
         rect = self.gr_scene.addRect(-100, -100, 100, 100, outlinePen, greenBrush)
-        rect.setFlag(QGraphicsItem.ItemIsMovable)
+        rect.setFlags(QGraphicsItem.ItemIsMovable)
