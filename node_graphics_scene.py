@@ -5,8 +5,10 @@ import math
 
 
 class  QDMGraphicsScene(QGraphicsScene):
-    def __init__(self, parent=None):
+    def __init__(self, scene, parent=None):
         super().__init__(parent)
+
+        self.scene = scene
 
         self.grid_size = 20
         self.grid_squares = 5
@@ -20,12 +22,11 @@ class  QDMGraphicsScene(QGraphicsScene):
         self.pen_dark = QPen(self._color_dark)
         self.pen_dark.setWidth(2)
 
-        self.scene_width , self.scene_height = 64000, 64000
-        self.setSceneRect(-self.scene_width // 2, -self.scene_height // 2, self.scene_width, self.scene_height)
-
 
         self.setBackgroundBrush(self._color_background)
 
+    def setGrScene(self, width, height):
+        self.setSceneRect(-width // 2, -height // 2, width, height)
 
     def drawBackground(self, painter, rect) -> None:
         super().drawBackground(painter, rect)

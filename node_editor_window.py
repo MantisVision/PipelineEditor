@@ -2,7 +2,8 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 
-from node_graphics_scene import QDMGraphicsScene
+from node_node import Node
+from node_scene import Scene
 from node_graphics_view import QDMGraphicsView
 
 class NodeEditorWindow(QWidget):
@@ -16,21 +17,19 @@ class NodeEditorWindow(QWidget):
         self.layout = QVBoxLayout()
         self.layout.setContentsMargins(0, 0, 0, 0)
         self.setLayout(self.layout)
-
-        # Create graphics scene
-        self.gr_scene = QDMGraphicsScene()
+        self.scene = Scene()
 
         # Create graphics view
-        self.view = QDMGraphicsView(self.gr_scene, self)
-        self.view.setScene(self.gr_scene)
+        self.view = QDMGraphicsView(self.scene.gr_scene, self)
+        # self.view.setScene(self.gr_scene)
         self.layout.addWidget(self.view)
 
-
+        node = Node(self.scene, "My Awesome Node!")
 
         self.setWindowTitle("Pipeline Editor")
         self.show()
 
-        self.addDebugContent()
+        # self.addDebugContent()
 
     def addDebugContent(self):
         greenBrush = QBrush(Qt.green)
