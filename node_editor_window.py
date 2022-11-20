@@ -6,6 +6,7 @@ from node_node import Node
 from node_scene import Scene
 from node_graphics_view import QDMGraphicsView
 
+
 class NodeEditorWindow(QWidget):
     def __init__(self, parent=None) -> None:
         super().__init__(parent)
@@ -35,6 +36,6 @@ class NodeEditorWindow(QWidget):
         greenBrush = QBrush(Qt.green)
         outlinePen = QPen(Qt.black)
         outlinePen.setWidth(2)
-        
+
         rect = self.gr_scene.addRect(-100, -100, 100, 100, outlinePen, greenBrush)
         rect.setFlags(QGraphicsItem.ItemIsMovable)

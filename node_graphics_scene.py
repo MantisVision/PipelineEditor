@@ -4,7 +4,7 @@ from PyQt5.QtGui import *
 import math
 
 
-class  QDMGraphicsScene(QGraphicsScene):
+class QDMGraphicsScene(QGraphicsScene):
     def __init__(self, scene, parent=None):
         super().__init__(parent)
 
@@ -22,7 +22,6 @@ class  QDMGraphicsScene(QGraphicsScene):
         self.pen_dark = QPen(self._color_dark)
         self.pen_dark.setWidth(2)
 
-
         self.setBackgroundBrush(self._color_background)
 
     def setGrScene(self, width, height):
@@ -39,16 +38,15 @@ class  QDMGraphicsScene(QGraphicsScene):
         first_left = left - (left % self.grid_size)
         first_top = top - (top % self.grid_size)
 
-        
         lines_light, lines_dark = [], []
-        
+
         # Draw horizontal Lines (every self.grid_squares draw darker line)
         for x in range(first_left, right, self.grid_size):
             if x % (self.grid_size * self.grid_squares) == 0:
                 lines_dark.append(QLine(x, top, x, bottom))
             else:
                 lines_light.append(QLine(x, top, x, bottom))
-            
+
         # Draw vertical Lines (every self.grid_squares draw darker line)
         for y in range(first_top, bottom, self.grid_size):
             if y % (self.grid_size * self.grid_squares) == 0:
@@ -61,4 +59,3 @@ class  QDMGraphicsScene(QGraphicsScene):
 
         painter.setPen(self.pen_dark)
         painter.drawLines(*lines_dark)
-
