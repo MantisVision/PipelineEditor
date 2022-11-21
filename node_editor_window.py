@@ -11,6 +11,9 @@ class NodeEditorWindow(QWidget):
     def __init__(self, parent=None) -> None:
         super().__init__(parent)
 
+        self.stylesheet_file = "qss/node_style.qss"
+        self.loadStylesheet(self.stylesheet_file)
+
         self.initUI()
 
     def initUI(self):
@@ -39,3 +42,10 @@ class NodeEditorWindow(QWidget):
 
         rect = self.gr_scene.addRect(-100, -100, 100, 100, outlinePen, greenBrush)
         rect.setFlags(QGraphicsItem.ItemIsMovable)
+
+    def loadStylesheet(self, filename):
+        print(f"STYLE loading: {filename}")
+        q_file = QFile(filename)
+        q_file.open(QFile.ReadOnly | QFile.Text)
+        stylesheet = q_file.readAll()
+        QApplication.instance().setStyleSheet(str(stylesheet, encoding="utf-8"))

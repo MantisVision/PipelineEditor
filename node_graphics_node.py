@@ -4,9 +4,10 @@ from PyQt5.QtCore import *
 
 
 class QDMGraphicsNode(QGraphicsItem):
-    def __init__(self, node, title, parent=None) -> None:
+    def __init__(self, node, parent=None) -> None:
         super().__init__(parent)
         self.node = node
+        self.content = self.node.content
         self._title_color = Qt.white
         # self._title_font = QFont("Ubuntu", 10)
 
@@ -21,9 +22,26 @@ class QDMGraphicsNode(QGraphicsItem):
         self._brush_title = QBrush(QColor("#FF313131"))
         self._brush_background = QBrush(QColor("#E3212121"))
 
+        # init title
         self.initTitle()
-        self.title = title
+        self.title = self.node.title
+
+        # init sockets
+
+        # init content
+        self.initContent()
+
+
         self.initUI()
+
+    @property
+    def title(self):
+        return self._title
+
+    @title.setter
+    def title(self, value):
+        self._title = value
+        self.title_item.setPlainText(self._title)
 
     def boundingRect(self) -> QRectF:
         return QRectF(0, 0, 2 * self.edge_size + self.width, 2 * self.edge_size + self.height).normalized()
@@ -39,15 +57,10 @@ class QDMGraphicsNode(QGraphicsItem):
         self.title_item.setPos(self._padding, 0)
         self.title_item.setTextWidth(self.width - 2 * self._padding)
 
-    @property
-    def title(self):
-        return self._title
-
-    @title.setter
-    def title(self, value):
-        self._title = value
-        print(value)
-        self.title_item.setPlainText(self._title)
+    def initContent(self):
+        self.gr_content = QGraphicsProxyWidget(self)
+        self.content.setGeometry(self.edge_size, self.title_height + self.edge_size, self.width - 2 * self.edge_size, self.height - 2 * self.edge_size - self.title_height )
+        self.gr_content.setWidget(self.content)
 
     def paint(self, painter, QStyleOptionGraphicsItem, widget=None):
         # title
@@ -59,7 +72,7 @@ class QDMGraphicsNode(QGraphicsItem):
         painter.setPen(Qt.NoPen)
         painter.setBrush(self._brush_title)
         painter.drawPath(path_title.simplified())
-        
+
         # contnet
         path_content = QPainterPath()
         path_content.setFillRule(Qt.WindingFill)
