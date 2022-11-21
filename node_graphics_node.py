@@ -27,10 +27,10 @@ class QDMGraphicsNode(QGraphicsItem):
         self.title = self.node.title
 
         # init sockets
+        self.initSockets()
 
         # init content
         self.initContent()
-
 
         self.initUI()
 
@@ -44,8 +44,12 @@ class QDMGraphicsNode(QGraphicsItem):
         self.title_item.setPlainText(self._title)
 
     def boundingRect(self) -> QRectF:
-        return QRectF(0, 0, 2 * self.edge_size + self.width, 2 * self.edge_size + self.height).normalized()
-        # return super().boundingRect()
+        return QRectF(
+            0,
+            0,
+            self.width,
+            self.height
+        ).normalized()
 
     def initUI(self):
         self.setFlags(QGraphicsItem.ItemIsSelectable | QGraphicsItem.ItemIsMovable)
@@ -61,6 +65,9 @@ class QDMGraphicsNode(QGraphicsItem):
         self.gr_content = QGraphicsProxyWidget(self)
         self.content.setGeometry(self.edge_size, self.title_height + self.edge_size, self.width - 2 * self.edge_size, self.height - 2 * self.edge_size - self.title_height )
         self.gr_content.setWidget(self.content)
+
+    def initSockets(self):
+        pass
 
     def paint(self, painter, QStyleOptionGraphicsItem, widget=None):
         # title

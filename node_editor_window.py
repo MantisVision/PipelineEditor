@@ -4,6 +4,7 @@ from PyQt5.QtCore import *
 
 from node_node import Node
 from node_scene import Scene
+
 from node_graphics_view import QDMGraphicsView
 
 
@@ -28,7 +29,7 @@ class NodeEditorWindow(QWidget):
         # self.view.setScene(self.gr_scene)
         self.layout.addWidget(self.view)
 
-        node = Node(self.scene, "My Awesome Node!")
+        node = Node(self.scene, "My Awesome Node!", inputs=[1, 1, 1], outputs=[1])
 
         self.setWindowTitle("Pipeline Editor")
         self.show()
