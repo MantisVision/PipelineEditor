@@ -4,6 +4,7 @@ from PyQt5.QtCore import *
 
 from node_node import Node
 from node_scene import Scene
+from node_edge import Edge
 
 from node_graphics_view import QDMGraphicsView
 
@@ -29,7 +30,7 @@ class NodeEditorWindow(QWidget):
         # self.view.setScene(self.gr_scene)
         self.layout.addWidget(self.view)
 
-        node = Node(self.scene, "My Awesome Node!", inputs=[1, 1, 1], outputs=[1])
+        self.addNodes()
 
         self.setWindowTitle("Pipeline Editor")
         self.show()
@@ -50,3 +51,14 @@ class NodeEditorWindow(QWidget):
         q_file.open(QFile.ReadOnly | QFile.Text)
         stylesheet = q_file.readAll()
         QApplication.instance().setStyleSheet(str(stylesheet, encoding="utf-8"))
+
+    def addNodes(self):
+        node1 = Node(self.scene, "My Awesome Node1", inputs=[1, 1, 1], outputs=[1])
+        node2 = Node(self.scene, "My Awesome Node2", inputs=[1, 1, 1], outputs=[1])
+        node3 = Node(self.scene, "My Awesome Node3", inputs=[1, 1, 1], outputs=[1])
+        node1.setPos(-350, -250)
+        node2.setPos(-75, 0)
+        node3.setPos(200, -250)
+
+        edge1 = Edge(self.scene, node1.outputs[0], node2.inputs[0])
+        edge2 = Edge(self.scene, node1.outputs[0], node2.inputs[0], edge_type=2)

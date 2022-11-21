@@ -39,3 +39,10 @@ class Node():
             y = (self.gr_node.title_height + self.gr_node._padding + self.gr_node.edge_size) + (index * self._socket_gap)
 
         return x, y
+
+    @property
+    def pos(self):
+        return self.gr_node.pos()
+
+    def setPos(self, x, y):
+        self.gr_node.setPos(x, y)
