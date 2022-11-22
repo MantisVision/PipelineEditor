@@ -20,25 +20,30 @@ class Node():
 
         counter = 0
         for i in inputs:
-            socket = Socket(node=self, index=counter, position=LEFT_TOP)
+            socket = Socket(node=self, index=counter, position=LEFT_TOP, socket_type=i)
             self.inputs.append(socket)
             counter += 1
 
         counter = 0
         for o in outputs:
-            socket = Socket(node=self, index=counter, position=RIGHT_BOTTOM)
+            socket = Socket(node=self, index=counter, position=RIGHT_TOP, socket_type=i)
             self.outputs.append(socket)
             counter += 1
+
+    def updateConnectedEdges(self):
+        for socket in self.inputs + self.outputs:
+            if socket.hasEdge():
+                socket.edge.updatePositions()
 
     def getSocketsPosition(self, index, position):
         x = 0 if position in (LEFT_TOP, LEFT_BOTTOM) else self.gr_node.width
 
         if position in (LEFT_BOTTOM, RIGHT_BOTTOM):
-            y = (self.gr_node.height - self.gr_node._padding - self.gr_node.edge_size) - (index * self._socket_gap)
+            y = self.gr_node.height - self.gr_node.edge_size - self.gr_node._padding - index * self._socket_gap
         else:
-            y = (self.gr_node.title_height + self.gr_node._padding + self.gr_node.edge_size) + (index * self._socket_gap)
+            y = self.gr_node.title_height + self.gr_node._padding + self.gr_node.edge_size + index * self._socket_gap
 
-        return x, y
+        return [x, y]
 
     @property
     def pos(self):

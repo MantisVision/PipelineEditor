@@ -53,12 +53,12 @@ class NodeEditorWindow(QWidget):
         QApplication.instance().setStyleSheet(str(stylesheet, encoding="utf-8"))
 
     def addNodes(self):
-        node1 = Node(self.scene, "My Awesome Node1", inputs=[1, 1, 1], outputs=[1])
-        node2 = Node(self.scene, "My Awesome Node2", inputs=[1, 1, 1], outputs=[1])
-        node3 = Node(self.scene, "My Awesome Node3", inputs=[1, 1, 1], outputs=[1])
+        node1 = Node(self.scene, "My Awesome Node1", inputs=[0, 2, 3], outputs=[1])
+        node2 = Node(self.scene, "My Awesome Node2", inputs=[1, 2, 3], outputs=[1])
+        node3 = Node(self.scene, "My Awesome Node3", inputs=[0, 2, 3], outputs=[1])
         node1.setPos(-350, -250)
         node2.setPos(-75, 0)
         node3.setPos(200, -250)
 
-        edge1 = Edge(self.scene, node1.outputs[0], node2.inputs[0])
-        edge2 = Edge(self.scene, node1.outputs[0], node2.inputs[0], edge_type=2)
+        edge1 = Edge(self.scene, node1.outputs[0], node2.inputs[0], edge_type=2)
+        edge2 = Edge(self.scene, node2.outputs[0], node3.inputs[1], edge_type=2)

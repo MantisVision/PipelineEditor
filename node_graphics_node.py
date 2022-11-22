@@ -43,6 +43,10 @@ class QDMGraphicsNode(QGraphicsItem):
         self._title = value
         self.title_item.setPlainText(self._title)
 
+    def mouseMoveEvent(self, event: 'QGraphicsSceneMouseEvent') -> None:
+        super().mouseMoveEvent(event)
+        self.node.updateConnectedEdges()
+
     def boundingRect(self) -> QRectF:
         return QRectF(
             0,
