@@ -1,10 +1,13 @@
-from node_graphics_node import QDMGraphicsNode
+from graphics.node_graphics_node import QDMGraphicsNode
 from node_content_widget import QDMNodeContentWidget
+
+from serialize.node_serializable import Serializable
 from node_socket import *
 
 
-class Node():
+class Node(Serializable):
     def __init__(self, scene, title="New Node", inputs=[], outputs=[]) -> None:
+        super().__init__()
         self.scene = scene
         self.title = title
         self._socket_gap = 20
@@ -59,3 +62,17 @@ class Node():
         self.scene.gr_scene.removeItem(self.gr_node)
         self.gr_node = None
         self.scene.removeNode(self)
+
+    def serialize(self):
+        return OrderedDict([
+            ('id', self.id),
+            ('title', self.title),
+            ('pos_x', self.gr_node.scenePos().x()),
+            ('pos_y', self.gr_node.scenePos().y()),
+            ('inputs', [socket.serialize() for socket in self.inputs]),
+            ('outputs', [socket.serialize() for socket in self.outputs]),
+            ('content', self.content.serialize())
+        ])
+
+    def deserialize(self, data, hashmap={}):
+        print(data)

@@ -6,7 +6,7 @@ from node_node import Node
 from node_scene import Scene
 from node_edge import Edge
 
-from node_graphics_view import QDMGraphicsView
+from graphics.node_graphics_view import QDMGraphicsView
 
 
 class NodeEditorWindow(QWidget):

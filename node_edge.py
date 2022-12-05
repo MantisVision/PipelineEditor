@@ -2,14 +2,16 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 
-from node_graphics_edge import *
+from serialize.node_serializable import Serializable
+from graphics.node_graphics_edge import *
 
 EDGE_TYPE_DIRECT = 1
 EDGE_TYPE_BEZIER = 2
 
 
-class Edge():
+class Edge(Serializable):
     def __init__(self, scene, start_sokcet, end_socket, edge_type=EDGE_TYPE_DIRECT) -> None:
+        super().__init__()
         self.scene = scene
         self._start_socket = start_sokcet
         self._end_socket = end_socket
@@ -58,3 +60,14 @@ class Edge():
         else:
             self.gr_edge.setDestination(*sourcePos)
         self.gr_edge.update()
+
+    def serialize(self):
+        return OrderedDict([
+            ('id', self.id),
+            ('edge_type', self._edge_type),
+            ('start', self._start_socket.id),
+            ('end', self._end_socket.id)
+        ])
+
+    def deserialize(self, data, hashmap={}):
+        print(data)

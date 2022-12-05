@@ -1,9 +1,9 @@
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
-from node_graphics_socket import QDMGraphicsSocket
-from node_graphics_edge import QDMGraphicsEdge
-from node_graphics_cutline import QDMGraphicsCutline
+from graphics.node_graphics_socket import QDMGraphicsSocket
+from graphics.node_graphics_edge import QDMGraphicsEdge
+from graphics.node_graphics_cutline import QDMGraphicsCutline
 from node_edge import Edge, EDGE_TYPE_BEZIER
 
 MODE_NOOP = 1
@@ -47,6 +47,10 @@ class QDMGraphicsView(QGraphicsView):
                 self.deleteSelected()
             else:
                 super().keyPressEvent(event)
+        elif event.key() == Qt.Key_S and event.modifiers() & Qt.ControlModifier:
+            self.gr_scene.scene.save_to_file("graph.json.txt")
+        elif event.key() == Qt.Key_L and event.modifiers() & Qt.ControlModifier:
+            self.gr_scene.scene.load_from_file("graph.json.txt")
         else:
             super().keyPressEvent(event)
 
