@@ -1,5 +1,6 @@
 from node_graphics_scene import QDMGraphicsScene
 
+
 class Scene:
     def __init__(self) -> None:
         self.nodes = []
@@ -21,6 +22,6 @@ class Scene:
 
     def removeNode(self, node):
         self.nodes.remove(node)
-    
+
     def removeEdge(self, edge):
         self.edges.remove(edge)

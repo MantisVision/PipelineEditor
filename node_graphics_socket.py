@@ -4,8 +4,9 @@ from PyQt5.QtCore import *
 
 
 class QDMGraphicsSocket(QGraphicsItem):
-    def __init__(self, parent=None, socket_type=1) -> None:
-        super().__init__(parent)
+    def __init__(self, socket, socket_type=1) -> None:
+        self.socket = socket
+        super().__init__(socket.node.gr_node)
 
         self._radius = 6
         self._socket_type = socket_type
@@ -23,6 +24,9 @@ class QDMGraphicsSocket(QGraphicsItem):
         self._pen = QPen(self._color_outline)
         self._pen.setWidth(self._outline_width)
         self._brush = QBrush(self._color_background)
+
+    def mousePressEvent(self, QGraphicsSceneMouseEvent) -> None:
+        print("Socket is clicked")
 
     def boundingRect(self):
         return QRectF(

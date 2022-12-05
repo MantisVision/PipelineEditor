@@ -16,7 +16,7 @@ class Socket():
         self._position = position
         self._index = index
         self._socket_type = socket_type
-        self.gr_socket = QDMGraphicsSocket(self.node.gr_node, self._socket_type)
+        self.gr_socket = QDMGraphicsSocket(self, self._socket_type)
 
         self.gr_socket.setPos(*self.node.getSocketsPosition(self._index, self._position))
 

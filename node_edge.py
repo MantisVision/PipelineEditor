@@ -23,6 +23,7 @@ class Edge():
 
         self.updatePositions()
         self.scene.gr_scene.addItem(self.gr_edge)
+        self.scene.addEdge(self)
 
     def removeFromSocket(self):
         if self._start_socket:
@@ -36,7 +37,7 @@ class Edge():
 
     def remove(self):
         self.removeFromSocket()
-        self.scene.removeItem(self.gr_edge)
+        self.scene.gr_scene.removeItem(self.gr_edge)
         self.gr_edge = None
         self.scene.removeEdge(self)
 
@@ -50,5 +51,6 @@ class Edge():
             endPos[0] += self._end_socket.node.gr_node.pos().x()
             endPos[1] += self._end_socket.node.gr_node.pos().y()
             self.gr_edge.setDestination(*endPos)
-
+        else:
+            self.gr_edge.setDestination(*sourcePos)
         self.gr_edge.update()
