@@ -8,7 +8,7 @@ class Node():
         self.scene = scene
         self.title = title
         self._socket_gap = 20
-        self.content = QDMNodeContentWidget()
+        self.content = QDMNodeContentWidget(self)
         self.gr_node = QDMGraphicsNode(self)
         self.scene.addNode(self)
         self.scene.gr_scene.addItem(self.gr_node)
@@ -51,3 +51,11 @@ class Node():
 
     def setPos(self, x, y):
         self.gr_node.setPos(x, y)
+
+    def remove(self):
+        for socket in (self.inputs + self.outputs):
+            if socket.hasEdge():
+                socket.edge.remove()
+        self.scene.gr_scene.removeItem(self.gr_node)
+        self.gr_node = None
+        self.scene.removeNode(self)

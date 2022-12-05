@@ -17,7 +17,7 @@ class QDMGraphicsView(QGraphicsView):
         self.initUI()
         self.setScene(self.gr_scene)
         self.mode = MODE_NOOP
-
+        self.editingFlag = True
         self.zoom_in_factor = 1.25
         self.zoom = 10
         self.zoom_step = 1
@@ -36,6 +36,22 @@ class QDMGraphicsView(QGraphicsView):
 
         self.setTransformationAnchor(QGraphicsView.AnchorUnderMouse)
         self.setDragMode(QGraphicsView.RubberBandDrag)
+
+    def keyPressEvent(self, event: QKeyEvent) -> None:
+        if event.key() == Qt.Key_Delete:
+            if not self.editingFlag:
+                self.deleteSelected()
+            else:
+                super().keyPressEvent(event)
+        else:
+            super().keyPressEvent(event)
+
+    def deleteSelected(self):
+        for item in self.gr_scene.selectedItems():
+            if isinstance(item, QDMGraphicsEdge):
+                item.edge.remove()
+            if hasattr(item, 'node'):
+                item.node.remove()
 
     def mousePressEvent(self, event: QMouseEvent) -> None:
         if event.button() == Qt.MiddleButton:
@@ -123,18 +139,19 @@ class QDMGraphicsView(QGraphicsView):
         print('end dragging edge')
 
         if type(item) is QDMGraphicsSocket:
-            print('Assign end socket')
-            if item.socket.hasEdge():
-                item.socket.edge.remove()
-            if self.previousEdge:
-                self.previousEdge.remove()
-                self.previousEdge = None
-            self.dragEdge._start_socket = self.last_start_socket
-            self.dragEdge._end_socket = item.socket
-            self.dragEdge._start_socket.setConnectedEdge(self.dragEdge)
-            self.dragEdge._end_socket.setConnectedEdge(self.dragEdge)
-            self.dragEdge.updatePositions()
-            return True
+            if item.socket != self.last_start_socket:
+                print('Assign end socket')
+                if item.socket.hasEdge():
+                    item.socket.edge.remove()
+                if self.previousEdge:
+                    self.previousEdge.remove()
+                    self.previousEdge = None
+                self.dragEdge._start_socket = self.last_start_socket
+                self.dragEdge._end_socket = item.socket
+                self.dragEdge._start_socket.setConnectedEdge(self.dragEdge)
+                self.dragEdge._end_socket.setConnectedEdge(self.dragEdge)
+                self.dragEdge.updatePositions()
+                return True
 
         self.dragEdge.remove()
         self.dragEdge = None

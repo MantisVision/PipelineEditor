@@ -39,7 +39,11 @@ class Edge():
         self.removeFromSocket()
         self.scene.gr_scene.removeItem(self.gr_edge)
         self.gr_edge = None
-        self.scene.removeEdge(self)
+
+        try:
+            self.scene.removeEdge(self)
+        except ValueError:
+            pass
 
     def updatePositions(self):
         sourcePos = self._start_socket.getSocketPosition()
