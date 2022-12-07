@@ -39,7 +39,7 @@ class QDMGraphicsEdge(QGraphicsPathItem):
 
     def paint(self, painter, QStyleOptionGraphicsItem, widget=None) -> None:
         self.setPath(self.calcPath())
-        if not self.edge._end_socket:
+        if not self.edge.end_socket:
             painter.setPen(self._pen_dragging)
         else:
             painter.setPen(self._pen if not self.isSelected() else self._pen_selected)
@@ -74,7 +74,7 @@ class QDMGraphicsEdgeBezier(QDMGraphicsEdge):
         cpy_s = 0
         cpy_d = 0
 
-        sspos = self.edge._start_socket._position
+        sspos = self.edge.start_socket._position
 
         if (s[0] > d[0] and sspos in (RIGHT_TOP, RIGHT_BOTTOM)) or (s[0] < d[0] and sspos in (LEFT_TOP, LEFT_BOTTOM)):
             cpx_s = -cpx_s

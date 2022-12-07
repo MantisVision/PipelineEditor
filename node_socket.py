@@ -39,8 +39,10 @@ class Socket(Serializable):
             ('id', self.id),
             ('index', self._index),
             ('position', self._position),
-            ('type', self._socket_type)
+            ('socket_type', self._socket_type)
         ])
 
     def deserialize(self, data, hashmap={}):
-        print(data)
+        self.id = data['id']
+        hashmap[data['id']] = self
+        return True

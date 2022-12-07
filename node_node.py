@@ -8,11 +8,12 @@ from node_socket import *
 class Node(Serializable):
     def __init__(self, scene, title="New Node", inputs=[], outputs=[]) -> None:
         super().__init__()
+        self._title = title
         self.scene = scene
-        self.title = title
         self._socket_gap = 20
         self.content = QDMNodeContentWidget(self)
         self.gr_node = QDMGraphicsNode(self)
+        self.title = title
         self.scene.addNode(self)
         self.scene.gr_scene.addItem(self.gr_node)
 
@@ -49,6 +50,15 @@ class Node(Serializable):
         return [x, y]
 
     @property
+    def title(self):
+        return self._title
+
+    @title.setter
+    def title(self, value):
+        self._title = value
+        self.gr_node.title = self._title
+
+    @property
     def pos(self):
         return self.gr_node.pos()
 
@@ -75,4 +85,25 @@ class Node(Serializable):
         ])
 
     def deserialize(self, data, hashmap={}):
-        print(data)
+        self.id = data['id']
+        hashmap[data['id']] = self
+
+        self.setPos(data['pos_x'], data['pos_y'])
+        self.title = data['title']
+
+        data['inputs'].sort(key=lambda socket: socket['index'] + socket['position'] * 1000)
+        data['outputs'].sort(key=lambda socket: socket['index'] + socket['position'] * 1000)
+
+        self.inputs = []
+        for socket_data in data['inputs']:
+            new_socket = Socket(node=self, index=socket_data['index'], position=socket_data['position'], socket_type=socket_data['socket_type'])
+            new_socket.deserialize(socket_data, hashmap)
+            self.inputs.append(new_socket)
+
+        self.outputs = []
+        for socket_data in data['outputs']:
+            new_socket = Socket(node=self, index=socket_data['index'], position=socket_data['position'], socket_type=socket_data['socket_type'])
+            new_socket.deserialize(socket_data, hashmap)
+            self.outputs.append(new_socket)
+
+        return True

@@ -172,17 +172,17 @@ class QDMGraphicsView(QGraphicsView):
                 if self.previousEdge:
                     self.previousEdge.remove()
                     self.previousEdge = None
-                self.dragEdge._start_socket = self.last_start_socket
-                self.dragEdge._end_socket = item.socket
-                self.dragEdge._start_socket.setConnectedEdge(self.dragEdge)
-                self.dragEdge._end_socket.setConnectedEdge(self.dragEdge)
+                self.dragEdge.start_socket = self.last_start_socket
+                self.dragEdge.end_socket = item.socket
+                self.dragEdge.start_socket.setConnectedEdge(self.dragEdge)
+                self.dragEdge.end_socket.setConnectedEdge(self.dragEdge)
                 self.dragEdge.updatePositions()
                 return True
 
         self.dragEdge.remove()
         self.dragEdge = None
         if self.previousEdge:
-            self.previousEdge._start_socket.edge = self.previousEdge
+            self.previousEdge.start_socket.edge = self.previousEdge
 
         return False
 
