@@ -51,6 +51,18 @@ class QDMGraphicsView(QGraphicsView):
             self.gr_scene.scene.save_to_file("graph.json.txt")
         elif event.key() == Qt.Key_L and event.modifiers() & Qt.ControlModifier:
             self.gr_scene.scene.load_from_file("graph.json.txt")
+        elif event.key() == Qt.Key_1:
+            self.gr_scene.scene.history.store_history('Item A')
+        elif event.key() == Qt.Key_2:
+            self.gr_scene.scene.history.store_history('Item B')
+        elif event.key() == Qt.Key_3:
+            self.gr_scene.scene.history.store_history('Item C')
+        elif event.key() == Qt.Key_4:
+            self.gr_scene.scene.history.undo()
+        elif event.key() == Qt.Key_5:
+            self.gr_scene.scene.history.redo()
+        elif event.key() == Qt.Key_H:
+            print(self.gr_scene.scene.history.history_stack)
         else:
             super().keyPressEvent(event)
 
