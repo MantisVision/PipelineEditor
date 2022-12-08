@@ -1,65 +1,117 @@
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
-
-from node_node import Node
-from node_scene import Scene
-from node_edge import Edge
-
-from graphics.node_graphics_view import QDMGraphicsView
+import json
+from pathlib import Path
+from node_editor_widget import NodeEditorWidget
 
 
-class NodeEditorWindow(QWidget):
-    def __init__(self, parent=None) -> None:
-        super().__init__(parent)
+class NodeEditorWindow(QMainWindow):
+    def __init__(self) -> None:
+        super().__init__()
 
-        self.stylesheet_file = "qss/node_style.qss"
-        self.loadStylesheet(self.stylesheet_file)
+        self.filename = None
 
         self.initUI()
 
     def initUI(self):
+        menubar = self.menuBar()
+
+        filemenu = menubar.addMenu('&File')
+
+        filemenu.addAction(self.createAct("&New", self.onFileNew, shortcut="Ctrl+N", tooltip="Create new pipeline"))
+        filemenu.addSeparator()
+        filemenu.addAction(self.createAct("&Open", self.onFileOpen, shortcut="Ctrl+O", tooltip="Open file"))
+        filemenu.addAction(self.createAct("&Save", self.onFileSave, shortcut="Ctrl+S", tooltip="Save file"))
+        filemenu.addAction(self.createAct("Save &As", self.onFileSaveAs, shortcut="Ctrl+Shift+S", tooltip="Save file as..."))
+        filemenu.addSeparator()
+        filemenu.addAction(self.createAct("E&xit", self.onExit, shortcut="ESC", tooltip="Exit application"))
+
+        editmenu = menubar.addMenu('&Edit')
+        editmenu.addAction(self.createAct("&Undo", self.onEditUndo, shortcut="Ctrl+Z", tooltip="Undo last operation"))
+        editmenu.addAction(self.createAct("&Redo", self.onEditRedo, shortcut="Ctrl+Y", tooltip="Redo last operation"))
+        editmenu.addSeparator()
+        editmenu.addAction(self.createAct("&Delete", self.onEditDelete, shortcut="Del", tooltip="Delete selected items"))
+
+        node_editor = NodeEditorWidget(self)
+        self.setCentralWidget(node_editor)
+
+        self.statusBar().showMessage("")
+        self.statusBar().setStyleSheet('QStatusBar::item {border: None;}')
+        self.status_mouse_pos = QLabel("")
+        self.status_bar_text = QLabel("")
+
+        widget = QWidget(self)
+        widget.setLayout(QHBoxLayout())
+        widget.layout().addWidget(self.status_bar_text)
+        spacerItem = QSpacerItem(800, 0, QSizePolicy.Preferred, QSizePolicy.Preferred)
+        widget.layout().addItem(spacerItem)
+        widget.layout().addWidget(self.status_mouse_pos)
+
+        self.statusBar().addPermanentWidget(widget)
+        # self.statusBar().addPermanentWidget(self.status_bar_text)
+        node_editor.view.scenePosChanged.connect(self.onSceneChanged)
+
         self.setGeometry(200, 200, 800, 600)
-        self.layout = QVBoxLayout()
-        self.layout.setContentsMargins(0, 0, 0, 0)
-        self.setLayout(self.layout)
-        self.scene = Scene()
-
-        # Create graphics view
-        self.view = QDMGraphicsView(self.scene.gr_scene, self)
-        # self.view.setScene(self.gr_scene)
-        self.layout.addWidget(self.view)
-
-        self.addNodes()
-
         self.setWindowTitle("Pipeline Editor")
-        self.scene.gr_scene.scene.history.store_history("Delete Selected")
         self.show()
 
-        # self.addDebugContent()
+    def createAct(self, name, callback, shortcut="", tooltip=""):
+        act = QAction(name, self)
+        act.setShortcut(shortcut)
+        act.setToolTip(tooltip)
+        act.triggered.connect(callback)
 
-    def addDebugContent(self):
-        greenBrush = QBrush(Qt.green)
-        outlinePen = QPen(Qt.black)
-        outlinePen.setWidth(2)
+        return act
 
-        rect = self.gr_scene.addRect(-100, -100, 100, 100, outlinePen, greenBrush)
-        rect.setFlags(QGraphicsItem.ItemIsMovable)
+    def onFileNew(self):
+        self.centralWidget().scene.clear()
 
-    def loadStylesheet(self, filename):
-        print(f"STYLE loading: {filename}")
-        q_file = QFile(filename)
-        q_file.open(QFile.ReadOnly | QFile.Text)
-        stylesheet = q_file.readAll()
-        QApplication.instance().setStyleSheet(str(stylesheet, encoding="utf-8"))
+    def onFileOpen(self):
+        fname, ffilter = QFileDialog.getOpenFileName(self, "Open pipeline from file")
 
-    def addNodes(self):
-        node1 = Node(self.scene, "My Awesome Node1", inputs=[0, 2, 3], outputs=[1])
-        node2 = Node(self.scene, "My Awesome Node2", inputs=[1, 2, 3], outputs=[1])
-        node3 = Node(self.scene, "My Awesome Node3", inputs=[0, 2, 3], outputs=[1])
-        node1.setPos(-350, -250)
-        node2.setPos(-75, 0)
-        node3.setPos(200, -250)
+        if not fname:
+            return
 
-        edge1 = Edge(self.scene, node1.outputs[0], node2.inputs[0], edge_type=2)
-        edge2 = Edge(self.scene, node2.outputs[0], node3.inputs[1], edge_type=2)
+        try:
+            if Path(fname).exists():
+                self.centralWidget().scene.load_from_file(fname)
+                self.print_msg(f"File {fname} opened successfully.")
+        except (KeyError, json.decoder.JSONDecodeError) as e:
+            self.print_msg("The file might be corrupted, or not in the right format.", 'red')
+
+    def onFileSave(self):
+        if not self.filename:
+            return self.onFileSaveAs()
+
+        self.centralWidget().scene.save_to_file(self.filename)
+        self.print_msg(f"Successfully saved to {self.filename}")
+
+    def onFileSaveAs(self):
+        fname, ffilter = QFileDialog.getSaveFileName(self, "Save pipeline to file")
+
+        if not fname:
+            return
+
+        self.filename = fname
+        self.onFileSave()
+
+    def onExit(self):
+        print("Exit")
+
+    def onEditUndo(self):
+        self.centralWidget().scene.history.undo()
+
+    def onEditRedo(self):
+        self.centralWidget().scene.history.redo()
+
+    def onEditDelete(self):
+        self.centralWidget().scene.gr_scene.views()[0].deleteSelected()
+
+    def print_msg(self, msg, color='black', msecs=3000):
+        QTimer.singleShot(msecs, lambda: self.status_bar_text.setText(""))
+        self.status_bar_text.setStyleSheet(f"color : {color}")
+        self.status_bar_text.setText(msg)
+
+    def onSceneChanged(self, x, y):
+        self.status_mouse_pos.setText(f"Scene Pos [{x}, {y}]")

@@ -1,5 +1,6 @@
 from graphics.node_graphics_edge import QDMGraphicsEdge
 
+
 class SceneHistory():
     def __init__(self, scene) -> None:
         self.scene = scene

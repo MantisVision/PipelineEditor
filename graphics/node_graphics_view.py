@@ -13,6 +13,9 @@ MODE_EDGE_CUT = 3
 
 
 class QDMGraphicsView(QGraphicsView):
+
+    scenePosChanged = pyqtSignal(int, int)
+
     def __init__(self, gr_scene, parent=None):
         super().__init__(parent)
         self.gr_scene = gr_scene
@@ -42,23 +45,7 @@ class QDMGraphicsView(QGraphicsView):
         self.setDragMode(QGraphicsView.RubberBandDrag)
 
     def keyPressEvent(self, event: QKeyEvent) -> None:
-        if event.key() == Qt.Key_Delete:
-            if not self.editingFlag:
-                self.deleteSelected()
-            else:
-                super().keyPressEvent(event)
-        elif event.key() == Qt.Key_S and event.modifiers() & Qt.ControlModifier:
-            self.gr_scene.scene.save_to_file("graph.json.txt")
-        elif event.key() == Qt.Key_L and event.modifiers() & Qt.ControlModifier:
-            self.gr_scene.scene.load_from_file("graph.json.txt")
-        elif event.key() == Qt.Key_Z and event.modifiers() & Qt.ControlModifier:
-            self.gr_scene.scene.history.undo()
-        elif event.key() == Qt.Key_Y and event.modifiers() & Qt.ControlModifier:
-            self.gr_scene.scene.history.redo()
-        elif event.key() == Qt.Key_H:
-            print(self.gr_scene.scene.history.history_stack)
-        else:
-            super().keyPressEvent(event)
+        super().keyPressEvent(event)
 
     def deleteSelected(self):
         print("DELETE")
@@ -210,6 +197,9 @@ class QDMGraphicsView(QGraphicsView):
             self.cutline._line_points.append(pos)
             self.cutline.update()
 
+        self.last_mb_pos = self.mapToScene(event.pos())
+
+        self.scenePosChanged.emit(int(self.last_mb_pos.x()), int(self.last_mb_pos.y()))
         super().mouseMoveEvent(event)
 
     def distBetweenClickRelease(self, event):
