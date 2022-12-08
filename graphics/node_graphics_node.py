@@ -25,7 +25,7 @@ class QDMGraphicsNode(QGraphicsItem):
         # init title
         self.initTitle()
         self.title = self.node.title
-
+        self.wasMoved = False
         # init sockets
         self.initSockets()
 
@@ -50,6 +50,13 @@ class QDMGraphicsNode(QGraphicsItem):
         for node in self.scene().scene.nodes:
             if self.node.gr_node.isSelected():
                 node.updateConnectedEdges()
+        self.wasMoved = True
+
+    def mouseReleaseEvent(self, event: 'QGraphicsSceneMouseEvent') -> None:
+        super().mouseReleaseEvent(event)
+        if self.wasMoved:
+            self.wasMoved = False
+            self.node.scene.history.store_history("Node Moved")
 
     def boundingRect(self) -> QRectF:
         return QRectF(

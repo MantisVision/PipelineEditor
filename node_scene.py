@@ -6,6 +6,7 @@ from graphics.node_graphics_scene import QDMGraphicsScene
 from serialize.node_serializable import Serializable
 from node_scene_history import SceneHistory
 
+
 class Scene(Serializable):
     def __init__(self) -> None:
         super().__init__()

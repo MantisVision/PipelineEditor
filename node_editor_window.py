@@ -33,6 +33,7 @@ class NodeEditorWindow(QWidget):
         self.addNodes()
 
         self.setWindowTitle("Pipeline Editor")
+        self.scene.gr_scene.scene.history.store_history("Delete Selected")
         self.show()
 
         # self.addDebugContent()
