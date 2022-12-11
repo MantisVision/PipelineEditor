@@ -1,8 +1,10 @@
+import json
+from pathlib import Path
+
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
-import json
-from pathlib import Path
+
 from node_editor_widget import NodeEditorWidget
 
 
@@ -13,6 +15,8 @@ class NodeEditorWindow(QMainWindow):
         self.filename = None
 
         self.initUI()
+
+        # QApplication.instance().clipboard().dataChanged.connect(self.onClipboardChanged)
 
     def initUI(self):
         menubar = self.menuBar()
@@ -30,6 +34,9 @@ class NodeEditorWindow(QMainWindow):
         editmenu = menubar.addMenu('&Edit')
         editmenu.addAction(self.createAct("&Undo", self.onEditUndo, shortcut="Ctrl+Z", tooltip="Undo last operation"))
         editmenu.addAction(self.createAct("&Redo", self.onEditRedo, shortcut="Ctrl+Y", tooltip="Redo last operation"))
+        editmenu.addAction(self.createAct("Cu&t", self.onEditCut, shortcut="Ctrl+X", tooltip="Cut Selected"))
+        editmenu.addAction(self.createAct("&Copy", self.onEditCopy, shortcut="Ctrl+C", tooltip="Copy Selected"))
+        editmenu.addAction(self.createAct("&Paste", self.onEditPaste, shortcut="Ctrl+V", tooltip="Paste Selected"))
         editmenu.addSeparator()
         editmenu.addAction(self.createAct("&Delete", self.onEditDelete, shortcut="Del", tooltip="Delete selected items"))
 
@@ -108,6 +115,30 @@ class NodeEditorWindow(QMainWindow):
     def onEditDelete(self):
         self.centralWidget().scene.gr_scene.views()[0].deleteSelected()
 
+    def onEditCut(self):
+        data = self.centralWidget().scene.clipboard.serializedSelected(delete=True)
+        str_data = json.dumps(data, indent=4)
+        QApplication.instance().clipboard().setText(str_data)
+
+    def onEditCopy(self):
+        data = self.centralWidget().scene.clipboard.serializedSelected(delete=False)
+        str_data = json.dumps(data, indent=4)
+        QApplication.instance().clipboard().setText(str_data)
+
+    def onEditPaste(self):
+        raw_data = QApplication.instance().clipboard().text()
+        try:
+            data = json.loads(raw_data)
+        except Exception as e:
+            print(e)
+            return
+
+        if 'nodes' not in data:
+            print("Json is not contain any node")
+            return
+
+        self.centralWidget().scene.clipboard.deserializeFromClipboard(data)
+
     def print_msg(self, msg, color='black', msecs=3000):
         QTimer.singleShot(msecs, lambda: self.status_bar_text.setText(""))
         self.status_bar_text.setStyleSheet(f"color : {color}")
@@ -115,3 +146,8 @@ class NodeEditorWindow(QMainWindow):
 
     def onSceneChanged(self, x, y):
         self.status_mouse_pos.setText(f"Scene Pos [{x}, {y}]")
+
+    # def onClipboardChanged(self):
+    #     clip = QApplication.instance().clipboard()
+    #     clip.setText("12123123")
+    #     print(clip.text())

@@ -23,10 +23,11 @@ class QDMGraphicsView(QGraphicsView):
         self.setScene(self.gr_scene)
         self.mode = MODE_NOOP
         self.editingFlag = False
+        self.rubberBandDragRect = False
         self.zoom_in_factor = 1.25
         self.zoom = 10
         self.zoom_step = 1
-        self.zoom_range = [5, 15]
+        self.zoom_range = [2, 15]
         self.zoom_clamp = True
         self.last_mb_pos = None
         self.release_mb_pos = None
@@ -118,6 +119,8 @@ class QDMGraphicsView(QGraphicsView):
                 super().mouseReleaseEvent(fakeEvent)
                 QApplication.setOverrideCursor(Qt.CrossCursor)
                 return
+            else:
+                self.rubberBandDragRect = True
 
         super().mousePressEvent(event)
 
@@ -147,8 +150,9 @@ class QDMGraphicsView(QGraphicsView):
             return
 
         # Store selection in history_stamps
-        if self.dragMode() == QGraphicsView.RubberBandDrag:
+        if self.rubberBandDragRect:
             self.gr_scene.scene.history.store_history("Selection Changed")
+            self.rubberBandDragRect = False
 
         super().mouseReleaseEvent(event)
 
