@@ -19,11 +19,11 @@ class SceneHistory():
             self.restore_history()
 
     def restore_history(self):
-        print(f"restore history current_step: {self.current_step}, stack length: {len(self.history_stack)}")
         self.restore_history_stamp(self.history_stack[self.current_step])
 
-    def store_history(self, desc):
-        print(f"store history current_step: {self.current_step}, stack length: {len(self.history_stack)}")
+    def store_history(self, desc, set_modified=False):
+        if set_modified:
+            self.scene.has_been_modified = True
 
         if self.current_step + 1 < len(self.history_stack):
             self.history_stack = self.history_stack[0:self.current_step + 1]

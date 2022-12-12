@@ -29,7 +29,7 @@ class NodeEditorWindow(QMainWindow):
         filemenu.addAction(self.createAct("&Save", self.onFileSave, shortcut="Ctrl+S", tooltip="Save file"))
         filemenu.addAction(self.createAct("Save &As", self.onFileSaveAs, shortcut="Ctrl+Shift+S", tooltip="Save file as..."))
         filemenu.addSeparator()
-        filemenu.addAction(self.createAct("E&xit", self.onExit, shortcut="ESC", tooltip="Exit application"))
+        filemenu.addAction(self.createAct("E&xit", self.closeEvent, shortcut="ESC", tooltip="Exit application"))
 
         editmenu = menubar.addMenu('&Edit')
         editmenu.addAction(self.createAct("&Undo", self.onEditUndo, shortcut="Ctrl+Z", tooltip="Undo last operation"))
@@ -42,6 +42,7 @@ class NodeEditorWindow(QMainWindow):
 
         node_editor = NodeEditorWidget(self)
         self.setCentralWidget(node_editor)
+        node_editor.scene.add_has_been_modified_listener(self.changeTitle)
 
         self.statusBar().showMessage("")
         self.statusBar().setStyleSheet('QStatusBar::item {border: None;}')
@@ -56,12 +57,24 @@ class NodeEditorWindow(QMainWindow):
         widget.layout().addWidget(self.status_mouse_pos)
 
         self.statusBar().addPermanentWidget(widget)
-        # self.statusBar().addPermanentWidget(self.status_bar_text)
         node_editor.view.scenePosChanged.connect(self.onSceneChanged)
 
         self.setGeometry(200, 200, 800, 600)
-        self.setWindowTitle("Pipeline Editor")
+        self.changeTitle()
         self.show()
+
+    def changeTitle(self):
+        title = "Pipeline Editor - "
+        if not self.filename:
+            title += "New"
+        else:
+            title += Path(self.filename).name
+            print("ASDASD")
+
+        if self.centralWidget().scene.has_been_modified:
+            title += "*"
+
+        self.setWindowTitle(title)
 
     def createAct(self, name, callback, shortcut="", tooltip=""):
         act = QAction(name, self)
@@ -72,20 +85,26 @@ class NodeEditorWindow(QMainWindow):
         return act
 
     def onFileNew(self):
-        self.centralWidget().scene.clear()
+        if self.save_dlg:
+            self.centralWidget().scene.clear()
+            self.filename = None
+            self.changeTitle()
 
     def onFileOpen(self):
-        fname, ffilter = QFileDialog.getOpenFileName(self, "Open pipeline from file")
+        if self.save_dlg:
+            fname, ffilter = QFileDialog.getOpenFileName(self, "Open pipeline from file")
 
-        if not fname:
-            return
+            if not fname:
+                return
 
-        try:
-            if Path(fname).exists():
-                self.centralWidget().scene.load_from_file(fname)
-                self.print_msg(f"File {fname} opened successfully.")
-        except (KeyError, json.decoder.JSONDecodeError) as e:
-            self.print_msg("The file might be corrupted, or not in the right format.", 'red')
+            try:
+                if Path(fname).exists():
+                    self.centralWidget().scene.load_from_file(fname)
+                    self.print_msg(f"File {fname} opened successfully.")
+                    self.filename = fname
+                    self.changeTitle()
+            except (KeyError, json.decoder.JSONDecodeError) as e:
+                self.print_msg("The file might be corrupted, or not in the right format.", 'red')
 
     def onFileSave(self):
         if not self.filename:
@@ -94,17 +113,19 @@ class NodeEditorWindow(QMainWindow):
         self.centralWidget().scene.save_to_file(self.filename)
         self.print_msg(f"Successfully saved to {self.filename}")
 
+        return True
+
     def onFileSaveAs(self):
         fname, ffilter = QFileDialog.getSaveFileName(self, "Save pipeline to file")
 
         if not fname:
-            return
+            return False
 
         self.filename = fname
-        self.onFileSave()
+        return self.onFileSave()
 
-    def onExit(self):
-        print("Exit")
+    # def onExit(self):
+    #     self.closeEvent()
 
     def onEditUndo(self):
         self.centralWidget().scene.history.undo()
@@ -146,6 +167,28 @@ class NodeEditorWindow(QMainWindow):
 
     def onSceneChanged(self, x, y):
         self.status_mouse_pos.setText(f"Scene Pos [{x}, {y}]")
+
+    def is_modified(self):
+        return self.centralWidget().scene.has_been_modified
+
+    def closeEvent(self, event) -> None:
+        if self.save_dlg():
+            event.accept()
+        else:
+            event.ignore()
+
+    def save_dlg(self):
+        if not self.is_modified():
+            return True
+
+        res = QMessageBox.warning(self, "Pipeline Editor Alert", "The document has been modified.\nDo you want to save your changes?", QMessageBox.Save | QMessageBox.Discard | QMessageBox.Cancel)
+
+        if res == QMessageBox.Save:
+            return self.onFileSave()
+        elif res == QMessageBox.Cancel:
+            return False
+
+        return True
 
     # def onClipboardChanged(self):
     #     clip = QApplication.instance().clipboard()

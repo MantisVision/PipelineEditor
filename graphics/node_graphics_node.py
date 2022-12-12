@@ -56,7 +56,7 @@ class QDMGraphicsNode(QGraphicsItem):
         super().mouseReleaseEvent(event)
         if self.wasMoved:
             self.wasMoved = False
-            self.node.scene.history.store_history("Node Moved")
+            self.node.scene.history.store_history("Node Moved", True)
 
     def boundingRect(self) -> QRectF:
         return QRectF(

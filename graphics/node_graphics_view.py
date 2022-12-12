@@ -55,7 +55,7 @@ class QDMGraphicsView(QGraphicsView):
                 item.edge.remove()
             if hasattr(item, 'node'):
                 item.node.remove()
-        self.gr_scene.scene.history.store_history("Delete Selected")
+        self.gr_scene.scene.history.store_history("Delete Selected", True)
 
     def mousePressEvent(self, event: QMouseEvent) -> None:
         if event.button() == Qt.MiddleButton:
@@ -180,7 +180,7 @@ class QDMGraphicsView(QGraphicsView):
                 self.dragEdge.start_socket.setConnectedEdge(self.dragEdge)
                 self.dragEdge.end_socket.setConnectedEdge(self.dragEdge)
                 self.dragEdge.updatePositions()
-                self.gr_scene.scene.history.store_history("Created new Edge")
+                self.gr_scene.scene.history.store_history("Created new Edge", True)
                 return True
 
         self.dragEdge.remove()
@@ -251,4 +251,4 @@ class QDMGraphicsView(QGraphicsView):
             for edge in self.gr_scene.scene.edges:
                 if edge.gr_edge.intersects_with(p1, p2):
                     edge.remove()
-        self.gr_scene.scene.history.store_history("Cutting Edge")
+        self.gr_scene.scene.history.store_history("Cutting Edge", True)

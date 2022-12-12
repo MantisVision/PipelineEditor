@@ -17,7 +17,26 @@ class Scene(Serializable):
         self.scene_height = 64000
         self.history = SceneHistory(self)
         self.clipboard = SceneClipbaord(self)
+        self._has_been_modified = False
+        self._has_been_modified_listeners = []
         self.initUI()
+
+    @property
+    def has_been_modified(self):
+        return self._has_been_modified
+
+    @has_been_modified.setter
+    def has_been_modified(self, val):
+        if not self.has_been_modified and val:
+            self._has_been_modified = val
+
+            for callback in self._has_been_modified_listeners:
+                callback()
+
+        self._has_been_modified = val
+
+    def add_has_been_modified_listener(self, callback):
+        self._has_been_modified_listeners.append(callback)
 
     def initUI(self):
         # Create graphics scene
@@ -39,16 +58,19 @@ class Scene(Serializable):
     def clear(self):
         while len(self.nodes) > 0:
             self.nodes[0].remove()
+        self.has_been_modified = False
 
     def save_to_file(self, filename):
         with open(filename, 'w') as f:
             f.write(json.dumps(self.serialize(), indent=4))
-        print(f"Saving to {filename} was successful")
+            print(f"Saving to {filename} was successful")
+            self.has_been_modified = False
 
     def load_from_file(self, filename):
         with open(filename, 'r') as f:
             data = json.loads(f.read())
             self.deserialize(data)
+            self.has_been_modified = False
 
     def serialize(self):
         nodes = [node.serialize() for node in self.nodes]

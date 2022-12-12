@@ -44,7 +44,7 @@ class SceneClipbaord():
         # delete in cut mode:
         if delete:
             self.scene.gr_scene.views()[0].deleteSelected()
-            self.scene.history.store_history("Cut")
+            self.scene.history.store_history("Cut", True)
 
         return data
 
@@ -88,4 +88,4 @@ class SceneClipbaord():
                 new_edge.deserialize(edge_data, hashmap, restore_id=False)
 
         # Store history
-        self.scene.history.store_history('Paste')
+        self.scene.history.store_history('Paste', True)
