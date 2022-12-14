@@ -94,6 +94,7 @@ class QDMGraphicsView(QGraphicsView):
     def leftMouseButtonPress(self, event):
         item = self.getItemAtClick(event)
         self.last_mb_pos = self.mapToScene(event.pos())
+        print("LAST PRESS", self.last_mb_pos)
 
         # Shift clicking items
         if hasattr(item, "node") or isinstance(item, QDMGraphicsEdge) or not item:
@@ -135,9 +136,7 @@ class QDMGraphicsView(QGraphicsView):
                 return
 
         if self.mode == MODE_EDGE_GRAPH:
-            if self.distBetweenClickRelease(event):
-                pass
-            else:
+            if self.distanceBetweenClickAndReleaseIsOff(event):
                 if self.edgeDragEnd(item):
                     return
 
@@ -157,60 +156,52 @@ class QDMGraphicsView(QGraphicsView):
         super().mouseReleaseEvent(event)
 
     def edgeDragStart(self, item):
-        print("start dragging")
-        print("assign start socket")
-        self.previousEdge = item.socket.edge
-        self.last_start_socket = item.socket
-        self.dragEdge = Edge(self.gr_scene.scene, item.socket, None, EDGE_TYPE_BEZIER)
+        self.drag_start_socket = item.socket
+        self.drag_edge = Edge(self.gr_scene.scene, item.socket, None, EDGE_TYPE_BEZIER)
 
     def edgeDragEnd(self, item):
         self.mode = MODE_NOOP
         print('end dragging edge')
 
+        self.drag_edge.remove()
+        self.drag_edge = None
+
         if type(item) is QDMGraphicsSocket:
-            if item.socket != self.last_start_socket:
-                print('Assign end socket')
-                if item.socket.hasEdge():
-                    item.socket.edge.remove()
-                if self.previousEdge:
-                    self.previousEdge.remove()
-                    self.previousEdge = None
-                self.dragEdge.start_socket = self.last_start_socket
-                self.dragEdge.end_socket = item.socket
-                self.dragEdge.start_socket.setConnectedEdge(self.dragEdge)
-                self.dragEdge.end_socket.setConnectedEdge(self.dragEdge)
-                self.dragEdge.updatePositions()
+            if item.socket != self.drag_start_socket:
+                # if release dragging on socket (other than the first)
+                if not item.socket.multi_edge:
+                    item.socket.remove_all_edges()
+
+                if not self.drag_start_socket.multi_edge:
+                    self.drag_start_socket.remove_all_edges()
+
+                new_edge = Edge(self.gr_scene.scene, self.drag_start_socket, item.socket, edge_type=EDGE_TYPE_BEZIER)
                 self.gr_scene.scene.history.store_history("Created new Edge", True)
                 return True
-
-        self.dragEdge.remove()
-        self.dragEdge = None
-        if self.previousEdge:
-            self.previousEdge.start_socket.edge = self.previousEdge
 
         return False
 
     def mouseMoveEvent(self, event) -> None:
         if self.mode == MODE_EDGE_GRAPH:
             pos = self.mapToScene(event.pos())
-            self.dragEdge.gr_edge.setDestination(pos.x(), pos.y())
-            self.dragEdge.gr_edge.update()
+            self.drag_edge.gr_edge.setDestination(pos.x(), pos.y())
+            self.drag_edge.gr_edge.update()
 
         if self.mode == MODE_EDGE_CUT:
             pos = self.mapToScene(event.pos())
             self.cutline._line_points.append(pos)
             self.cutline.update()
 
-        self.last_mb_pos = self.mapToScene(event.pos())
+        self.last_scne_mb_pos = self.mapToScene(event.pos())
 
-        self.scenePosChanged.emit(int(self.last_mb_pos.x()), int(self.last_mb_pos.y()))
+        self.scenePosChanged.emit(int(self.last_scne_mb_pos.x()), int(self.last_scne_mb_pos.y()))
         super().mouseMoveEvent(event)
 
-    def distBetweenClickRelease(self, event):
-        self.release_mb_pos = self.mapToScene(event.pos())
-        dist = self.release_mb_pos - self.last_mb_pos
-
-        return (dist.x() * dist.x() + dist.y() * dist.y()) < EDGE_DRAG_THRESHOLD * EDGE_DRAG_THRESHOLD
+    def distanceBetweenClickAndReleaseIsOff(self, event):
+        new_lmb_release_scene_pos = self.mapToScene(event.pos())
+        dist_scene = new_lmb_release_scene_pos - self.last_mb_pos
+        edge_drag_threshold_sq = EDGE_DRAG_THRESHOLD * EDGE_DRAG_THRESHOLD
+        return (dist_scene.x() * dist_scene.x() + dist_scene.y() * dist_scene.y()) > edge_drag_threshold_sq
 
     def rightMouseButtonPress(self, event):
         super().mousePressEvent(event)

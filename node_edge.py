@@ -13,11 +13,14 @@ class Edge(Serializable):
     def __init__(self, scene, start_sokcet=None, end_socket=None, edge_type=EDGE_TYPE_DIRECT) -> None:
         super().__init__()
         self.scene = scene
+        self._start_socket = None
+        self._end_socket = None
+
         self.start_socket = start_sokcet
         self.end_socket = end_socket
         self.edge_type = edge_type
 
-        self.scene.addEdge(self)
+        self.scene.add_edge(self)
 
     @property
     def start_socket(self):
@@ -25,9 +28,12 @@ class Edge(Serializable):
 
     @start_socket.setter
     def start_socket(self, val):
+        if self._start_socket:
+            self._start_socket.remove_edge(self)
+
         self._start_socket = val
         if self.start_socket:
-            self.start_socket.edge = self
+            self.start_socket.add_edge(self)
 
     @property
     def end_socket(self):
@@ -35,9 +41,12 @@ class Edge(Serializable):
 
     @end_socket.setter
     def end_socket(self, val):
+        if self._end_socket:
+            self._end_socket.remove_edge(self)
+
         self._end_socket = val
         if self.end_socket:
-            self.end_socket.edge = self
+            self.end_socket.add_edge(self)
 
     @property
     def edge_type(self):
@@ -62,12 +71,6 @@ class Edge(Serializable):
             self.updatePositions()
 
     def removeFromSocket(self):
-        if self.start_socket:
-            self.start_socket.edge = None
-
-        if self.end_socket:
-            self.end_socket.edge = None
-
         self.start_socket = None
         self.end_socket = None
 
@@ -77,7 +80,7 @@ class Edge(Serializable):
         self.gr_edge = None
 
         try:
-            self.scene.removeEdge(self)
+            self.scene.remove_edge(self)
         except ValueError:
             pass
 
