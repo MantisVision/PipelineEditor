@@ -14,7 +14,7 @@ class Node(Serializable):
         self.content = QDMNodeContentWidget(self)
         self.gr_node = QDMGraphicsNode(self)
         self.title = title
-        self.scene.addNode(self)
+        self.scene.add_node(self)
         self.scene.gr_scene.addItem(self.gr_node)
 
         # self.grNode.title = "ASDASDAD"
@@ -24,20 +24,20 @@ class Node(Serializable):
 
         counter = 0
         for i in inputs:
-            socket = Socket(node=self, index=counter, position=LEFT_TOP, socket_type=i)
+            socket = Socket(node=self, index=counter, position=LEFT_TOP, socket_type=i, multi_edge=False)
             self.inputs.append(socket)
             counter += 1
 
         counter = 0
         for o in outputs:
-            socket = Socket(node=self, index=counter, position=RIGHT_TOP, socket_type=i)
+            socket = Socket(node=self, index=counter, position=RIGHT_TOP, socket_type=i, multi_edge=True)
             self.outputs.append(socket)
             counter += 1
 
     def updateConnectedEdges(self):
         for socket in self.inputs + self.outputs:
-            if socket.hasEdge():
-                socket.edge.updatePositions()
+            for edge in socket.edges:
+                edge.updatePositions()
 
     def getSocketsPosition(self, index, position):
         x = 0 if position in (LEFT_TOP, LEFT_BOTTOM) else self.gr_node.width
@@ -67,11 +67,12 @@ class Node(Serializable):
 
     def remove(self):
         for socket in (self.inputs + self.outputs):
-            if socket.hasEdge():
-                socket.edge.remove()
+            # if socket.hasEdge():
+            for edge in socket.edges:
+                edge.remove()
         self.scene.gr_scene.removeItem(self.gr_node)
         self.gr_node = None
-        self.scene.removeNode(self)
+        self.scene.remove_node(self)
 
     def serialize(self):
         return OrderedDict([

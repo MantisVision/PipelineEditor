@@ -124,9 +124,6 @@ class NodeEditorWindow(QMainWindow):
         self.filename = fname
         return self.onFileSave()
 
-    # def onExit(self):
-    #     self.closeEvent()
-
     def onEditUndo(self):
         self.centralWidget().scene.history.undo()
 
@@ -189,8 +186,3 @@ class NodeEditorWindow(QMainWindow):
             return False
 
         return True
-
-    # def onClipboardChanged(self):
-    #     clip = QApplication.instance().clipboard()
-    #     clip.setText("12123123")
-    #     print(clip.text())

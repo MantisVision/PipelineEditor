@@ -43,17 +43,19 @@ class Scene(Serializable):
         self.gr_scene = QDMGraphicsScene(self)
         self.gr_scene.setGrScene(self.scene_width, self.scene_height)
 
-    def addNode(self, node):
+    def add_node(self, node):
         self.nodes.append(node)
 
-    def addEdge(self, edge):
+    def add_edge(self, edge):
         self.edges.append(edge)
 
-    def removeNode(self, node):
-        self.nodes.remove(node)
+    def remove_node(self, node):
+        if node in self.nodes:
+            self.nodes.remove(node)
 
-    def removeEdge(self, edge):
-        self.edges.remove(edge)
+    def remove_edge(self, edge):
+        if edge in self.edges:
+            self.edges.remove(edge)
 
     def clear(self):
         while len(self.nodes) > 0:

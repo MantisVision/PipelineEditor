@@ -29,7 +29,7 @@ class NodeEditorWidget(QWidget):
         # self.view.setScene(self.gr_scene)
         self.layout.addWidget(self.view)
 
-        self.addNodes()
+        self.add_nodes()
 
         self.scene.gr_scene.scene.history.store_history("Init scene")
 
@@ -40,7 +40,7 @@ class NodeEditorWidget(QWidget):
         stylesheet = q_file.readAll()
         QApplication.instance().setStyleSheet(str(stylesheet, encoding="utf-8"))
 
-    def addNodes(self):
+    def add_nodes(self):
         node1 = Node(self.scene, "My Awesome Node1", inputs=[0, 2, 3], outputs=[1])
         node2 = Node(self.scene, "My Awesome Node2", inputs=[1, 2, 3], outputs=[1])
         node3 = Node(self.scene, "My Awesome Node3", inputs=[0, 2, 3], outputs=[1])
