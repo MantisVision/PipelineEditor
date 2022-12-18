@@ -8,4 +8,4 @@ if __name__ == "__main__":
 
     window = NodeEditorWindow()
 
-    # sys.exit(app.exec_())
+    sys.exit(app.exec_())

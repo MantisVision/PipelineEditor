@@ -1,7 +1,8 @@
 from collections import OrderedDict
-from graphics.node_graphics_edge import QDMGraphicsEdge
-from node_node import Node
-from node_edge import Edge
+
+from pipelineeditor.node_edge import Edge
+from pipelineeditor.node_node import Node
+from pipelineeditor.graphics.node_graphics_edge import QDMGraphicsEdge
 
 
 class SceneClipbaord():

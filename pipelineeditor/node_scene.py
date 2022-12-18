@@ -1,11 +1,11 @@
 import json
 from collections import OrderedDict
-from node_node import Node
-from node_edge import Edge
-from graphics.node_graphics_scene import QDMGraphicsScene
-from serialize.node_serializable import Serializable
-from node_scene_history import SceneHistory
-from node_scene_clipboard import SceneClipbaord
+from pipelineeditor.node_node import Node
+from pipelineeditor.node_edge import Edge
+from pipelineeditor.graphics.node_graphics_scene import QDMGraphicsScene
+from pipelineeditor.serialize.node_serializable import Serializable
+from pipelineeditor.node_scene_history import SceneHistory
+from pipelineeditor.node_scene_clipboard import SceneClipbaord
 
 
 class Scene(Serializable):

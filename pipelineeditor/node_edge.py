@@ -2,8 +2,8 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 
-from serialize.node_serializable import Serializable
-from graphics.node_graphics_edge import *
+from pipelineeditor.serialize.node_serializable import Serializable
+from pipelineeditor.graphics.node_graphics_edge import *
 
 EDGE_TYPE_DIRECT = 1
 EDGE_TYPE_BEZIER = 2

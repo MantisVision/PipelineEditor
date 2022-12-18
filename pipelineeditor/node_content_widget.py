@@ -1,7 +1,7 @@
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from collections import OrderedDict
-from serialize.node_serializable import Serializable
+from pipelineeditor.serialize.node_serializable import Serializable
 
 
 class QDMNodeContentWidget(QWidget, Serializable):

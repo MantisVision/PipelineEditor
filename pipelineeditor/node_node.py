@@ -1,8 +1,8 @@
-from graphics.node_graphics_node import QDMGraphicsNode
-from node_content_widget import QDMNodeContentWidget
+from pipelineeditor.graphics.node_graphics_node import QDMGraphicsNode
+from pipelineeditor.node_content_widget import QDMNodeContentWidget
 
-from serialize.node_serializable import Serializable
-from node_socket import *
+from pipelineeditor.serialize.node_serializable import Serializable
+from pipelineeditor.node_socket import *
 
 
 class Node(Serializable):
