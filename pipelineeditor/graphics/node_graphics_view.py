@@ -1,10 +1,11 @@
-from PyQt5.QtWidgets import *
-from PyQt5.QtCore import *
 from PyQt5.QtGui import *
-from graphics.node_graphics_socket import QDMGraphicsSocket
-from graphics.node_graphics_edge import QDMGraphicsEdge
-from graphics.node_graphics_cutline import QDMGraphicsCutline
-from node_edge import Edge, EDGE_TYPE_BEZIER
+from PyQt5.QtCore import *
+from PyQt5.QtWidgets import *
+
+from pipelineeditor.node_edge import Edge, EDGE_TYPE_BEZIER
+from pipelineeditor.graphics.node_graphics_edge import QDMGraphicsEdge
+from pipelineeditor.graphics.node_graphics_socket import QDMGraphicsSocket
+from pipelineeditor.graphics.node_graphics_cutline import QDMGraphicsCutline
 
 MODE_NOOP = 1
 MODE_EDGE_GRAPH = 2

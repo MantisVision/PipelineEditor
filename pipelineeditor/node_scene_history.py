@@ -1,4 +1,4 @@
-from graphics.node_graphics_edge import QDMGraphicsEdge
+from pipelineeditor.graphics.node_graphics_edge import QDMGraphicsEdge
 
 
 class SceneHistory():

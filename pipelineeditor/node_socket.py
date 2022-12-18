@@ -3,8 +3,8 @@ from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 
 from collections import OrderedDict
-from serialize.node_serializable import Serializable
-from graphics.node_graphics_socket import QDMGraphicsSocket
+from pipelineeditor.serialize.node_serializable import Serializable
+from pipelineeditor.graphics.node_graphics_socket import QDMGraphicsSocket
 
 LEFT_TOP = 1
 LEFT_BOTTOM = 2

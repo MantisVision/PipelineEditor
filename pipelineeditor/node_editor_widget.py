@@ -2,18 +2,18 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 
-from node_node import Node
-from node_scene import Scene
-from node_edge import Edge
+from pipelineeditor.node_node import Node
+from pipelineeditor.node_scene import Scene
+from pipelineeditor.node_edge import Edge
 
-from graphics.node_graphics_view import QDMGraphicsView
+from pipelineeditor.graphics.node_graphics_view import QDMGraphicsView
 
 
 class NodeEditorWidget(QWidget):
     def __init__(self, parent=None) -> None:
         super().__init__(parent)
 
-        self.stylesheet_file = "qss/node_style.qss"
+        self.stylesheet_file = "./pipelineeditor/qss/node_style.qss"
         self.loadStylesheet(self.stylesheet_file)
 
         self.initUI()
