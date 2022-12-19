@@ -2,6 +2,7 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 
+from pathlib import Path
 from pipelineeditor.node_node import Node
 from pipelineeditor.node_scene import Scene
 from pipelineeditor.node_edge import Edge
@@ -15,7 +16,7 @@ class NodeEditorWidget(QWidget):
 
         self.stylesheet_file = "./pipelineeditor/qss/node_style.qss"
         self.loadStylesheet(self.stylesheet_file)
-
+        self.filename = None
         self.initUI()
 
     def initUI(self):
@@ -32,6 +33,16 @@ class NodeEditorWidget(QWidget):
         self.add_nodes()
 
         self.scene.gr_scene.scene.history.store_history("Init scene")
+
+    def isFilenameSet(self):
+        return self.filename is not None
+
+    def isModified(self):
+        return self.scene.has_been_modified
+
+    def getUserFriendltFilename(self):
+        name = Path(self.filename).filename if self.isFilenameSet() else "New Graph"
+        return name + ("*" if self.isModified() else "")
 
     def loadStylesheet(self, filename):
         print(f"STYLE loading: {filename}")
