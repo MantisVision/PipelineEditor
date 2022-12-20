@@ -1,19 +1,28 @@
+import os
+import sys
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
-import sys
 
 sys.path.append(".")
 from examples.calculator.calc_sub_window import CalculatorSubWindow
 from pipelineeditor.node_editor_window import NodeEditorWindow
+from pipelineeditor.utils import loadStylesheets
 # from pipelineeditor.utils import dump_exception
 
+import examples.calculator.qss.nodeeditor_dark_resources
 
 class CalculatorWindow(NodeEditorWindow):
 
     def initUI(self):
         self.author_name = "ZikriBen"
         self.module_name = "Pipeline Editor - Calculator"
+
+        self.styleSheet_filename = os.path.join(os.path.dirname(__file__), "qss/nodeeditor.qss")
+        loadStylesheets(
+            os.path.join(os.path.dirname(__file__), "qss/nodeeditor-dark.qss"),
+            os.path.join(os.path.dirname(__file__), "qss/nodeeditor.qss")
+        )
 
         self.mdiArea = QMdiArea()
         self.mdiArea.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)

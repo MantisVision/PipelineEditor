@@ -14,8 +14,6 @@ class NodeEditorWidget(QWidget):
     def __init__(self, parent=None) -> None:
         super().__init__(parent)
 
-        self.stylesheet_file = "./pipelineeditor/qss/node_style.qss"
-        self.loadStylesheet(self.stylesheet_file)
         self.filename = None
         self.initUI()
 
@@ -44,12 +42,6 @@ class NodeEditorWidget(QWidget):
         name = Path(self.filename).filename if self.isFilenameSet() else "New Graph"
         return name + ("*" if self.isModified() else "")
 
-    def loadStylesheet(self, filename):
-        print(f"STYLE loading: {filename}")
-        q_file = QFile(filename)
-        q_file.open(QFile.ReadOnly | QFile.Text)
-        stylesheet = q_file.readAll()
-        QApplication.instance().setStyleSheet(str(stylesheet, encoding="utf-8"))
 
     def add_nodes(self):
         node1 = Node(self.scene, "My Awesome Node1", inputs=[0, 2, 3], outputs=[1])
