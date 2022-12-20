@@ -1,16 +1,14 @@
-import os
 import sys
+from pathlib import Path
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 
-sys.path.append(".")
-from examples.calculator.calc_sub_window import CalculatorSubWindow
-from pipelineeditor.node_editor_window import NodeEditorWindow
-from pipelineeditor.utils import loadStylesheets
-# from pipelineeditor.utils import dump_exception
+sys.path.insert(0, str(Path(__file__).parent.parent.parent))
+from pipelineeditor.utils import loadStylesheets # noqa
+from pipelineeditor.node_editor_window import NodeEditorWindow # noqa
+from examples.calculator.calc_sub_window import CalculatorSubWindow # noqa
 
-import examples.calculator.qss.nodeeditor_dark_resources
 
 class CalculatorWindow(NodeEditorWindow):
 
@@ -18,10 +16,9 @@ class CalculatorWindow(NodeEditorWindow):
         self.author_name = "ZikriBen"
         self.module_name = "Pipeline Editor - Calculator"
 
-        self.styleSheet_filename = os.path.join(os.path.dirname(__file__), "qss/nodeeditor.qss")
         loadStylesheets(
-            os.path.join(os.path.dirname(__file__), "qss/nodeeditor-dark.qss"),
-            os.path.join(os.path.dirname(__file__), "qss/nodeeditor.qss")
+            str(Path(__file__).parent.joinpath("qss/nodeeditor.qss")),
+            str(Path(__file__).parent.joinpath("qss/nodeeditor-dark.qss"))
         )
 
         self.mdiArea = QMdiArea()
