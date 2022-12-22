@@ -50,7 +50,6 @@ class QDMGraphicsView(QGraphicsView):
         super().keyPressEvent(event)
 
     def deleteSelected(self):
-        print("DELETE")
         for item in self.gr_scene.selectedItems():
             if isinstance(item, QDMGraphicsEdge):
                 item.edge.remove()
@@ -95,7 +94,6 @@ class QDMGraphicsView(QGraphicsView):
     def leftMouseButtonPress(self, event):
         item = self.getItemAtClick(event)
         self.last_mb_pos = self.mapToScene(event.pos())
-        print("LAST PRESS", self.last_mb_pos)
 
         # Shift clicking items
         if hasattr(item, "node") or isinstance(item, QDMGraphicsEdge) or not item:
@@ -162,7 +160,6 @@ class QDMGraphicsView(QGraphicsView):
 
     def edgeDragEnd(self, item):
         self.mode = MODE_NOOP
-        print('end dragging edge')
 
         self.drag_edge.remove()
         self.drag_edge = None
@@ -176,7 +173,7 @@ class QDMGraphicsView(QGraphicsView):
                 if not self.drag_start_socket.multi_edge:
                     self.drag_start_socket.remove_all_edges()
 
-                new_edge = Edge(self.gr_scene.scene, self.drag_start_socket, item.socket, edge_type=EDGE_TYPE_BEZIER)
+                Edge(self.gr_scene.scene, self.drag_start_socket, item.socket, edge_type=EDGE_TYPE_BEZIER)
                 self.gr_scene.scene.history.store_history("Created new Edge", True)
                 return True
 

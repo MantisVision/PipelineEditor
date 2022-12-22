@@ -92,7 +92,7 @@ class NodeEditorWindow(QMainWindow):
     def onFileNew(self):
         if self.save_dlg:
             self.getcurrentPipelineEditorWidget().scene.clear()
-            self.filename = None
+            self.getcurrentPipelineEditorWidget().filename = None
             self.setTitle()
 
     def onFileOpen(self):
@@ -102,21 +102,18 @@ class NodeEditorWindow(QMainWindow):
             if not fname:
                 return
 
-            try:
-                if Path(fname).exists():
-                    self.getcurrentPipelineEditorWidget().scene.load_from_file(fname)
-                    self.print_msg(f"File {fname} opened successfully.")
-                    self.filename = fname
-                    self.setTitle()
-            except (KeyError, json.decoder.JSONDecodeError) as e:
-                self.print_msg("The file might be corrupted, or not in the right format.", 'red')
+            self.getcurrentPipelineEditorWidget().fileLoad(fname)
 
     def onFileSave(self):
-        if not self.filename:
+        if not self.getcurrentPipelineEditorWidget().isFilenameSet():
             return self.onFileSaveAs()
 
-        self.getcurrentPipelineEditorWidget().scene.save_to_file(self.filename)
-        self.print_msg(f"Successfully saved to {self.filename}")
+        # self.getcurrentPipelineEditorWidget().scene.save_to_file(self.getcurrentPipelineEditorWidget().filename)
+        self.getcurrentPipelineEditorWidget().fileSave()
+        self.print_msg(f"Successfully saved to {self.getcurrentPipelineEditorWidget().filename}")
+
+        if hasattr("selfTitle", self.getcurrentPipelineEditorWidget()):
+            self.getcurrentPipelineEditorWidget().setTitle()
 
         return True
 
@@ -126,8 +123,10 @@ class NodeEditorWindow(QMainWindow):
         if not fname:
             return False
 
-        self.filename = fname
-        return self.onFileSave()
+        self.getcurrentPipelineEditorWidget().fileSave(fname)
+        self.print_msg(f"Successfully saved to {self.getcurrentPipelineEditorWidget().filename}")
+
+        return True
 
     def onEditUndo(self):
         self.getcurrentPipelineEditorWidget().scene.history.undo()

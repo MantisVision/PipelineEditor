@@ -4,7 +4,7 @@ from PyQt5.QtCore import *
 
 from pathlib import Path
 from pipelineeditor.node_node import Node
-from pipelineeditor.node_scene import Scene
+from pipelineeditor.node_scene import Scene, InvalidFile
 from pipelineeditor.node_edge import Edge
 
 from pipelineeditor.graphics.node_graphics_view import QDMGraphicsView
@@ -32,6 +32,28 @@ class NodeEditorWidget(QWidget):
 
         self.scene.gr_scene.scene.history.store_history("Init scene")
 
+    def fileLoad(self, fname):
+        QApplication.setOverrideCursor(Qt.WaitCursor)
+        try:
+            self.scene.load_from_file(fname)
+            self.filename = fname
+            return True
+        except InvalidFile as e:
+            QApplication.restoreOverrideCursor()
+            QMessageBox.warning(self, f"Error loading {fname}", str(e))
+            return False
+        finally:
+            QApplication.restoreOverrideCursor()
+
+    def fileSave(self, filename=None):
+        if filename:
+            self.filename = filename
+
+        self.scene.save_to_file(self.filename)
+        QApplication.setOverrideCursor(Qt.WaitCursor)
+        QApplication.restoreOverrideCursor()
+        return True
+
     def isFilenameSet(self):
         return self.filename is not None
 
@@ -39,9 +61,8 @@ class NodeEditorWidget(QWidget):
         return self.scene.has_been_modified
 
     def getUserFriendltFilename(self):
-        name = Path(self.filename).filename if self.isFilenameSet() else "New Graph"
+        name = Path(self.filename).name if self.isFilenameSet() else "New Graph"
         return name + ("*" if self.isModified() else "")
-
 
     def add_nodes(self):
         node1 = Node(self.scene, "My Awesome Node1", inputs=[0, 2, 3], outputs=[1])

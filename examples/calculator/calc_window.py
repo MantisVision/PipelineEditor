@@ -1,10 +1,12 @@
 import sys
+import json
 from pathlib import Path
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
+from pipelineeditor.utils import dump_exception # noqa
 from pipelineeditor.utils import loadStylesheets # noqa
 from pipelineeditor.node_editor_window import NodeEditorWindow # noqa
 from examples.calculator.calc_sub_window import CalculatorSubWindow # noqa
@@ -17,8 +19,8 @@ class CalculatorWindow(NodeEditorWindow):
         self.module_name = "Pipeline Editor - Calculator"
 
         loadStylesheets(
+            str(Path(__file__).parent.joinpath("qss/nodeeditor-dark.qss")),
             str(Path(__file__).parent.joinpath("qss/nodeeditor.qss")),
-            str(Path(__file__).parent.joinpath("qss/nodeeditor-dark.qss"))
         )
 
         self.mdiArea = QMdiArea()
@@ -57,15 +59,15 @@ class CalculatorWindow(NodeEditorWindow):
     def createActions(self):
         super().createActions()
 
-        self.closeAct = QAction("Cl&ose", self, statusTip="Close the active window", triggered=self.mdiArea.closeActiveSubWindow)
-        self.closeAllAct = QAction("Close &All", self, statusTip="Close all the windows", triggered=self.mdiArea.closeAllSubWindows)
-        self.tileAct = QAction("&Tile", self, statusTip="Tile the windows", triggered=self.mdiArea.tileSubWindows)
-        self.cascadeAct = QAction("&Cascade", self, statusTip="Cascade the windows", triggered=self.mdiArea.cascadeSubWindows)
-        self.nextAct = QAction("Ne&xt", self, shortcut=QKeySequence.NextChild, statusTip="Move the focus to the next window", triggered=self.mdiArea.activateNextSubWindow)
-        self.previousAct = QAction("Pre&vious", self, shortcut=QKeySequence.PreviousChild, statusTip="Move the focus to the previous window", triggered=self.mdiArea.activatePreviousSubWindow)
-        self.separatorAct = QAction(self)
-        self.separatorAct.setSeparator(True)
-        self.aboutAct = QAction("&About", self, statusTip="Show the application's About box", triggered=self.about)
+        self.actClose = QAction("Cl&ose", self, statusTip="Close the active window", triggered=self.mdiArea.closeActiveSubWindow)
+        self.actCloseAll = QAction("Close &All", self, statusTip="Close all the windows", triggered=self.mdiArea.closeAllSubWindows)
+        self.actTile = QAction("&Tile", self, statusTip="Tile the windows", triggered=self.mdiArea.tileSubWindows)
+        self.actCascade = QAction("&Cascade", self, statusTip="Cascade the windows", triggered=self.mdiArea.cascadeSubWindows)
+        self.actNext = QAction("Ne&xt", self, shortcut=QKeySequence.NextChild, statusTip="Move the focus to the next window", triggered=self.mdiArea.activateNextSubWindow)
+        self.actPrevious = QAction("Pre&vious", self, shortcut=QKeySequence.PreviousChild, statusTip="Move the focus to the previous window", triggered=self.mdiArea.activatePreviousSubWindow)
+        self.actSeparator = QAction(self)
+        self.actSeparator.setSeparator(True)
+        self.actAbout = QAction("&About", self, statusTip="Show the application's About box", triggered=self.about)
 
     def createMenus(self):
         super().createMenus()
@@ -77,25 +79,36 @@ class CalculatorWindow(NodeEditorWindow):
         self.menuBar().addSeparator()
 
         self.helpMenu = self.menuBar().addMenu("&Help")
-        self.helpMenu.addAction(self.aboutAct)
+        self.helpMenu.addAction(self.actAbout)
 
     def updateMenus(self):
-        pass
+        active = self.activeMdiChild()
+        hasMdiChild = active is not None
+
+        self.actSave.setEnabled(hasMdiChild)
+        self.actSaveAs.setEnabled(hasMdiChild)
+        self.actClose.setEnabled(hasMdiChild)
+        self.actCloseAll.setEnabled(hasMdiChild)
+        self.actTile.setEnabled(hasMdiChild)
+        self.actCascade.setEnabled(hasMdiChild)
+        self.actNext.setEnabled(hasMdiChild)
+        self.actPrevious.setEnabled(hasMdiChild)
+        self.actSeparator.setEnabled(hasMdiChild)
 
     def updateWindowMenu(self):
         self.windowMenu.clear()
-        self.windowMenu.addAction(self.closeAct)
-        self.windowMenu.addAction(self.closeAllAct)
+        self.windowMenu.addAction(self.actClose)
+        self.windowMenu.addAction(self.actCloseAll)
         self.windowMenu.addSeparator()
-        self.windowMenu.addAction(self.tileAct)
-        self.windowMenu.addAction(self.cascadeAct)
+        self.windowMenu.addAction(self.actTile)
+        self.windowMenu.addAction(self.actCascade)
         self.windowMenu.addSeparator()
-        self.windowMenu.addAction(self.nextAct)
-        self.windowMenu.addAction(self.previousAct)
-        self.windowMenu.addAction(self.separatorAct)
+        self.windowMenu.addAction(self.actNext)
+        self.windowMenu.addAction(self.actPrevious)
+        self.windowMenu.addAction(self.actSeparator)
 
         windows = self.mdiArea.subWindowList()
-        self.separatorAct.setVisible(len(windows) != 0)
+        self.actSeparator.setVisible(len(windows) != 0)
 
         for i, window in enumerate(windows):
             child = window.widget()
@@ -144,6 +157,9 @@ class CalculatorWindow(NodeEditorWindow):
         settings.setValue('size', self.size())
         settings.setValue('dockSize', self.listWidget.size())
 
+    def getcurrentPipelineEditorWidget(self):
+        return self.activeMdiChild()
+
     def setActiveSubWindow(self, window):
         if window:
             self.mdiArea.setActiveSubWindow(window)
@@ -158,10 +174,60 @@ class CalculatorWindow(NodeEditorWindow):
         sub_window = self.createMdiChild()
         sub_window.show()
 
+    def onFileOpen(self):
+        fnames, ffilter = QFileDialog.getOpenFileNames(self, "Open pipeline from file")
+        try:
+            for fname in fnames:
+                existing = self.findMdiChild(fname)
+                if existing:
+                    self.mdiArea.setActiveSubWindow(existing)
+                else:
+                    pipeline_editor = CalculatorSubWindow()
+                    if pipeline_editor.fileLoad(fname):
+                        self.statusBar().showMessage(f"File {fname} opened successfully.")
+                        pipeline_editor.setTitle()
+                        sub_window = self.mdiArea.addSubWindow(pipeline_editor)
+                        sub_window.show()
+                    else:
+                        pipeline_editor.close()
+        except Exception as e:
+            dump_exception(e)
+
+    # def onFileSave(self):
+    #     current_editor = self.getcurrentPipelineEditorWidget()
+    #     if current_editor:
+    #         if not current_editor.isFilenameSet():
+    #             return self.onFileSaveAs()
+    #         else:
+    #             current_editor.fileSave()
+    #             current_editor.setTitle()
+    #             self.statusBar().showMessage(f"Successfully saved to {current_editor.filename}")
+    #             return True
+
+    def onFileSaveAs(self):
+        current_editor = self.activeMdiChild()
+        if current_editor:
+            fname, ffilter = QFileDialog.getSaveFileName(self, "Save pipeline to file")
+
+            if not fname:
+                return False
+
+            current_editor.fileSave(fname)
+            current_editor.setTitle()
+            self.statusBar().showMessage(f"Successfully saved to {fname}")
+
+            return True
+
     def createMdiChild(self):
         pipeline_editor = CalculatorSubWindow()
         sub_window = self.mdiArea.addSubWindow(pipeline_editor)
         return sub_window
+
+    def findMdiChild(self, fname):
+        for window in self.mdiArea.subWindowList():
+            if window.widget().filename == fname:
+                return window
+        return None
 
     def about(self):
         QMessageBox.about(

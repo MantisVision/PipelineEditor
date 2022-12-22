@@ -2,10 +2,15 @@ import json
 from collections import OrderedDict
 from pipelineeditor.node_node import Node
 from pipelineeditor.node_edge import Edge
+from pipelineeditor.utils import dump_exception
 from pipelineeditor.graphics.node_graphics_scene import QDMGraphicsScene
 from pipelineeditor.serialize.node_serializable import Serializable
 from pipelineeditor.node_scene_history import SceneHistory
 from pipelineeditor.node_scene_clipboard import SceneClipbaord
+
+
+class InvalidFile(Exception):
+    pass
 
 
 class Scene(Serializable):
@@ -69,10 +74,15 @@ class Scene(Serializable):
             self.has_been_modified = False
 
     def load_from_file(self, filename):
-        with open(filename, 'r') as f:
-            data = json.loads(f.read())
-            self.deserialize(data)
-            self.has_been_modified = False
+        try:
+            with open(filename, 'r') as f:
+                data = json.loads(f.read())
+                self.deserialize(data)
+                self.has_been_modified = False
+        except json.JSONDecodeError:
+            raise InvalidFile(f"{filename} is not a valid JSON file")
+        except Exception as e:
+            dump_exception(e)
 
     def serialize(self):
         nodes = [node.serialize() for node in self.nodes]
