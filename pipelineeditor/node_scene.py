@@ -26,6 +26,12 @@ class Scene(Serializable):
         self._has_been_modified_listeners = []
         self.initUI()
 
+    def isModified(self):
+        return self.has_been_modified
+
+    def getSelectedItems(self):
+        self.gr_scene.selectedItems()
+
     @property
     def has_been_modified(self):
         return self._has_been_modified

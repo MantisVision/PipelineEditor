@@ -74,14 +74,14 @@ class NodeEditorWindow(QMainWindow):
         self.filemenu.addSeparator()
         self.filemenu.addAction(self.actExit)
 
-        self.editmenu = self.menubar.addMenu('&Edit')
-        self.editmenu.addAction(self.actUndo)
-        self.editmenu.addAction(self.actRedo)
-        self.editmenu.addAction(self.actCopy)
-        self.editmenu.addAction(self.actPaste)
-        self.editmenu.addAction(self.actCut)
-        self.editmenu.addSeparator()
-        self.editmenu.addAction(self.actDelete)
+        self.editMenu = self.menubar.addMenu('&Edit')
+        self.editMenu.addAction(self.actUndo)
+        self.editMenu.addAction(self.actRedo)
+        self.editMenu.addAction(self.actCopy)
+        self.editMenu.addAction(self.actPaste)
+        self.editMenu.addAction(self.actCut)
+        self.editMenu.addSeparator()
+        self.editMenu.addAction(self.actDelete)
 
     def setTitle(self):
         title = "Pipeline Editor - "
@@ -91,8 +91,7 @@ class NodeEditorWindow(QMainWindow):
 
     def onFileNew(self):
         if self.save_dlg:
-            self.getcurrentPipelineEditorWidget().scene.clear()
-            self.getcurrentPipelineEditorWidget().filename = None
+            self.getcurrentPipelineEditorWidget().fileNew()
             self.setTitle()
 
     def onFileOpen(self):
@@ -105,26 +104,40 @@ class NodeEditorWindow(QMainWindow):
             self.getcurrentPipelineEditorWidget().fileLoad(fname)
 
     def onFileSave(self):
-        if not self.getcurrentPipelineEditorWidget().isFilenameSet():
+        current_editor = self.getcurrentPipelineEditorWidget()
+
+        if not current_editor:
+            return False
+        if not current_editor.isFilenameSet():
             return self.onFileSaveAs()
 
-        # self.getcurrentPipelineEditorWidget().scene.save_to_file(self.getcurrentPipelineEditorWidget().filename)
-        self.getcurrentPipelineEditorWidget().fileSave()
-        self.print_msg(f"Successfully saved to {self.getcurrentPipelineEditorWidget().filename}")
+        current_editor.fileSave()
+        self.print_msg(f"Successfully saved to {current_editor.filename}")
+        # self.statusBar().showMessage(f"Successfully saved to {self.getcurrentPipelineEditorWidget().filename}", 3000)
 
-        if hasattr("selfTitle", self.getcurrentPipelineEditorWidget()):
-            self.getcurrentPipelineEditorWidget().setTitle()
+        if hasattr(current_editor, "setTitle"):
+            current_editor.setTitle()
 
         return True
 
     def onFileSaveAs(self):
+        current_editor = self.getcurrentPipelineEditorWidget()
+
+        if not current_editor:
+            return False
+
         fname, ffilter = QFileDialog.getSaveFileName(self, "Save pipeline to file")
 
         if not fname:
             return False
 
-        self.getcurrentPipelineEditorWidget().fileSave(fname)
-        self.print_msg(f"Successfully saved to {self.getcurrentPipelineEditorWidget().filename}")
+        if hasattr(current_editor, "setTitle"):
+            current_editor.setTitle()
+        else:
+            self.setTitle()
+
+        current_editor.fileSave(fname)
+        # self.print_msg(f"Successfully saved to {current_editor.filename}")
 
         return True
 

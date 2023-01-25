@@ -25,10 +25,7 @@ class NodeEditorWidget(QWidget):
 
         # Create graphics view
         self.view = QDMGraphicsView(self.scene.gr_scene, self)
-        # self.view.setScene(self.gr_scene)
         self.layout.addWidget(self.view)
-
-        self.add_nodes()
 
         self.scene.gr_scene.scene.history.store_history("Init scene")
 
@@ -37,6 +34,8 @@ class NodeEditorWidget(QWidget):
         try:
             self.scene.load_from_file(fname)
             self.filename = fname
+            self.scene.history.clear()
+            self.scene.history.store_initial_history_stamp()
             return True
         except InvalidFile as e:
             QApplication.restoreOverrideCursor()
@@ -44,6 +43,12 @@ class NodeEditorWidget(QWidget):
             return False
         finally:
             QApplication.restoreOverrideCursor()
+
+    def fileNew(self):
+        self.scene.clear()
+        self.filename = None
+        self.scene.history.clear()
+        self.scene.history.store_initial_history_stamp()
 
     def fileSave(self, filename=None):
         if filename:
@@ -57,8 +62,20 @@ class NodeEditorWidget(QWidget):
     def isFilenameSet(self):
         return self.filename is not None
 
+    def getSelectedItems(self):
+        return self.scene.getSelectedItems()
+
+    def hasSelectedItems(self):
+        return len(self.getSelectedItems()) > 0
+
+    def canUndo(self):
+        return self.scene.history.can_undo()
+
+    def canRedo(self):
+        return self.scene.history.can_redo()
+
     def isModified(self):
-        return self.scene.has_been_modified
+        return self.scene.isModified()
 
     def getUserFriendltFilename(self):
         name = Path(self.filename).name if self.isFilenameSet() else "New Graph"
@@ -74,3 +91,5 @@ class NodeEditorWidget(QWidget):
 
         edge1 = Edge(self.scene, node1.outputs[0], node2.inputs[0], edge_type=2)
         edge2 = Edge(self.scene, node2.outputs[0], node3.inputs[1], edge_type=2)
+
+        self.scene.history.store_initial_history_stamp()

@@ -44,6 +44,16 @@ class CalculatorWindow(NodeEditorWindow):
         self.updateMenus()
         self.createNodeDock()
 
+        self.createStatusBar()
+
+        widget = QWidget(self)
+        widget.setLayout(QHBoxLayout())
+        spacerItem = QSpacerItem(0, 0, QSizePolicy.Preferred, QSizePolicy.Preferred)
+        widget.layout().addItem(spacerItem)
+        widget.layout().addWidget(self.status_bar_text)
+        # widget.layout().addWidget(self.status_mouse_pos)
+
+        self.statusBar().addPermanentWidget(widget)
         self.readSettings()
 
         self.setWindowTitle("Calculator Example")
@@ -80,6 +90,7 @@ class CalculatorWindow(NodeEditorWindow):
 
         self.helpMenu = self.menuBar().addMenu("&Help")
         self.helpMenu.addAction(self.actAbout)
+        self.editMenu.aboutToShow.connect(self.updateEditMenu)
 
     def updateMenus(self):
         active = self.activeMdiChild()
@@ -94,6 +105,19 @@ class CalculatorWindow(NodeEditorWindow):
         self.actNext.setEnabled(hasMdiChild)
         self.actPrevious.setEnabled(hasMdiChild)
         self.actSeparator.setEnabled(hasMdiChild)
+        self.updateEditMenu()
+
+    def updateEditMenu(self):
+        print("update edit menu")
+        active = self.activeMdiChild()
+        hasMdiChild = active is not None
+
+        self.actPaste.setEnabled(hasMdiChild)
+        self.actCut.setEnabled(hasMdiChild and active.hasSelectedItems())
+        self.actCopy.setEnabled(hasMdiChild and active.hasSelectedItems())
+        self.actDelete.setEnabled(hasMdiChild and active.hasSelectedItems())
+        self.actUndo.setEnabled(hasMdiChild and active.canUndo())
+        self.actRedo.setEnabled(hasMdiChild and active.canRedo())
 
     def updateWindowMenu(self):
         self.windowMenu.clear()
@@ -126,9 +150,6 @@ class CalculatorWindow(NodeEditorWindow):
     def createToolBars(self):
         pass
 
-    def createStatusBar(self):
-        self.statusBar().showMessage("Ready")
-
     def createNodeDock(self):
         self.listWidget = QListWidget()
         self.listWidget.addItem("Add")
@@ -141,6 +162,12 @@ class CalculatorWindow(NodeEditorWindow):
         self.items.setFloating(False)
 
         self.addDockWidget(Qt.RightDockWidgetArea, self.items)
+
+    def createStatusBar(self):
+        self.statusBar().showMessage("")
+        self.statusBar().setStyleSheet('QStatusBar::item {border: None;}')
+        self.status_mouse_pos = QLabel("")
+        self.status_bar_text = QLabel("")
 
     def readSettings(self):
         settings = QSettings(self.author_name, self.module_name)
@@ -171,13 +198,18 @@ class CalculatorWindow(NodeEditorWindow):
         return None
 
     def onFileNew(self):
-        sub_window = self.createMdiChild()
-        sub_window.show()
+        try:
+            sub_window = self.createMdiChild()
+            sub_window.widget().fileNew()
+            sub_window.show()
+        except Exception as e:
+            dump_exception(e)
 
     def onFileOpen(self):
         fnames, ffilter = QFileDialog.getOpenFileNames(self, "Open pipeline from file")
         try:
             for fname in fnames:
+                print(fname)
                 existing = self.findMdiChild(fname)
                 if existing:
                     self.mdiArea.setActiveSubWindow(existing)
@@ -192,31 +224,6 @@ class CalculatorWindow(NodeEditorWindow):
                         pipeline_editor.close()
         except Exception as e:
             dump_exception(e)
-
-    # def onFileSave(self):
-    #     current_editor = self.getcurrentPipelineEditorWidget()
-    #     if current_editor:
-    #         if not current_editor.isFilenameSet():
-    #             return self.onFileSaveAs()
-    #         else:
-    #             current_editor.fileSave()
-    #             current_editor.setTitle()
-    #             self.statusBar().showMessage(f"Successfully saved to {current_editor.filename}")
-    #             return True
-
-    def onFileSaveAs(self):
-        current_editor = self.activeMdiChild()
-        if current_editor:
-            fname, ffilter = QFileDialog.getSaveFileName(self, "Save pipeline to file")
-
-            if not fname:
-                return False
-
-            current_editor.fileSave(fname)
-            current_editor.setTitle()
-            self.statusBar().showMessage(f"Successfully saved to {fname}")
-
-            return True
 
     def createMdiChild(self):
         pipeline_editor = CalculatorSubWindow()
@@ -237,3 +244,8 @@ class CalculatorWindow(NodeEditorWindow):
             "document interface applications using Qt. For more information please visit: "
             "<a href='https://github.com/ZikriBen/pipelineeditor'> Git Repository</a>"
         )
+
+    def print_msg(self, msg, color='black', msecs=3000):
+        QTimer.singleShot(msecs, lambda: self.status_bar_text.setText(""))
+        self.status_bar_text.setStyleSheet(f"color : {color}")
+        self.status_bar_text.setText(msg)
