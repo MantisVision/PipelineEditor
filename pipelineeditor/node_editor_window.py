@@ -22,7 +22,6 @@ class NodeEditorWindow(QMainWindow):
     def initUI(self):
         self.createActions()
         self.createMenus()
-
         self.node_editor = NodeEditorWidget(self)
         self.setCentralWidget(self.node_editor)
         self.node_editor.scene.add_has_been_modified_listener(self.setTitle)
@@ -53,7 +52,7 @@ class NodeEditorWindow(QMainWindow):
         self.actOpen   = QAction("&Open",    self, triggered=self.onFileOpen,   shortcut="Ctrl+O",       statusTip="Open file")
         self.actSave   = QAction("&Save",    self, triggered=self.onFileSave,   shortcut="Ctrl+S",       statusTip="Save file")
         self.actSaveAs = QAction("Save &As", self, triggered=self.onFileSaveAs, shortcut="Ctrl+Shift+S", statusTip="Save file as...")
-        self.actExit   = QAction("E&xit",    self, triggered=self.closeEvent,   shortcut="ESC",          statusTip="Exit application")
+        self.actExit   = QAction("E&xit",    self, triggered=self.close,   shortcut="ESC",          statusTip="Exit application")
 
         self.actUndo   = QAction("&Undo",    self, triggered=self.onEditUndo,   shortcut="Ctrl+Z",       statusTip="Undo last operation")
         self.actRedo   = QAction("&Redo",    self, triggered=self.onEditRedo,   shortcut="Ctrl+Y",       statusTip="Redo last operation")
@@ -186,7 +185,7 @@ class NodeEditorWindow(QMainWindow):
         return self.centralWidget()
 
     def isModified(self):
-        return self.getcurrentPipelineEditorWidget().scene.has_been_modified
+        return self.getcurrentPipelineEditorWidget().scene.isModified()
 
     def closeEvent(self, event) -> None:
         if self.save_dlg():

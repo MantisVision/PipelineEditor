@@ -66,7 +66,7 @@ class NodeEditorWidget(QWidget):
         return self.scene.getSelectedItems()
 
     def hasSelectedItems(self):
-        return len(self.getSelectedItems()) > 0
+        return self.getSelectedItems() != []
 
     def canUndo(self):
         return self.scene.history.can_undo()

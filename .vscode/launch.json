@@ -8,7 +8,7 @@
             "name": "Python: Current File",
             "type": "python",
             "request": "launch",
-            "program": "${workspaceFolder}/main.py",
+            "program": "C:\\Personal\\PipelineEditor\\examples\\example_test\\main.py",
             "python": "${command:python.interpreterPath}",
             "console": "integratedTerminal",
             "justMyCode": true
