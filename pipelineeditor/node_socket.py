@@ -44,7 +44,7 @@ class Socket(Serializable):
 
     def determineMultiEdges(self, data):
         if 'multi_edges' in data:
-                return data['multi_edges']
+            return data['multi_edges']
         else:
             return data['position'] in (RIGHT_TOP, RIGHT_TOP)
 

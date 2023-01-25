@@ -5,6 +5,7 @@ from pipelineeditor.serialize.node_serializable import Serializable
 from pipelineeditor.node_socket import *
 from pipelineeditor.utils import dump_exception
 
+
 class Node(Serializable):
     def __init__(self, scene, title="New Node", inputs=[], outputs=[]) -> None:
         super().__init__()

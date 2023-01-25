@@ -8,31 +8,37 @@ class QDMGraphicsNode(QGraphicsItem):
         super().__init__(parent)
         self.node = node
         self.content = self.node.content
-        self._title_color = Qt.white
-        # self._title_font = QFont("Ubuntu", 10)
 
+        # init flags
+        self._was_moved = False
+        self._last_selected_state = False
+
+        self.initSizes()
+        self.initAssets()
+
+        self.initUI()
+
+    def initUI(self):
+        self.setFlags(QGraphicsItem.ItemIsSelectable | QGraphicsItem.ItemIsMovable)
+
+        self.initTitle()
+        self.title = self.node.title
+        self.initSockets()
+        self.initContent()
+
+    def initSizes(self):
         self.width = 180
         self.height = 240
         self.edge_size = 10
         self.title_height = 24
         self._padding = 4
 
+    def initAssets(self):
+        self._title_color = Qt.white
         self._pen_default = QPen(QColor("#7F000000"))
         self._pen_selected = QPen(QColor("#FFFFA637"))
         self._brush_title = QBrush(QColor("#FF313131"))
         self._brush_background = QBrush(QColor("#E3212121"))
-
-        # init title
-        self.initTitle()
-        self.title = self.node.title
-        self.wasMoved = False
-        # init sockets
-        self.initSockets()
-
-        # init content
-        self.initContent()
-
-        self.initUI()
 
     @property
     def title(self):
@@ -43,6 +49,9 @@ class QDMGraphicsNode(QGraphicsItem):
         self._title = value
         self.title_item.setPlainText(self._title)
 
+    def onSelected(self):
+        self.node.scene.gr_scene.itemSelected.emit()
+
     def mouseMoveEvent(self, event: 'QGraphicsSceneMouseEvent') -> None:
         super().mouseMoveEvent(event)
 
@@ -50,13 +59,29 @@ class QDMGraphicsNode(QGraphicsItem):
         for node in self.scene().scene.nodes:
             if self.node.gr_node.isSelected():
                 node.updateConnectedEdges()
-        self.wasMoved = True
+        self._was_moved = True
 
     def mouseReleaseEvent(self, event: 'QGraphicsSceneMouseEvent') -> None:
         super().mouseReleaseEvent(event)
-        if self.wasMoved:
-            self.wasMoved = False
+
+        # handle when gr_node was moved
+        if self._was_moved:
+            self._was_moved = False
             self.node.scene.history.store_history("Node Moved", True)
+
+            self.node.scene.resetLastSelectedStates()
+            self._last_selected_state = True
+            # we need to store the last selected state, because moving is also means selecting the object
+            self.node.scene._last_selected_items = self.node.scene.getSelectedItems()
+
+            # we want to skip storing selection in history
+            return
+
+        # handle when gr_node was clicked on
+        if self._last_selected_state != self.isSelected() or self.node.scene._last_selected_items != self.node.scene.getSelectedItems():
+            self.node.scene.resetLastSelectedStates()
+            self._last_selected_state = self.isSelected()
+            self.onSelected()
 
     def boundingRect(self) -> QRectF:
         return QRectF(
@@ -65,9 +90,6 @@ class QDMGraphicsNode(QGraphicsItem):
             self.width,
             self.height
         ).normalized()
-
-    def initUI(self):
-        self.setFlags(QGraphicsItem.ItemIsSelectable | QGraphicsItem.ItemIsMovable)
 
     def initTitle(self):
         self.title_item = QGraphicsTextItem(self)

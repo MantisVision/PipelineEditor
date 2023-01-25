@@ -22,9 +22,40 @@ class Scene(Serializable):
         self.scene_height = 64000
         self.history = SceneHistory(self)
         self.clipboard = SceneClipbaord(self)
+
+        # init listeners
         self._has_been_modified = False
         self._has_been_modified_listeners = []
+        self._item_selected_listeners = []
+        self._items_deselected_listeners = []
+        self._last_selected_items = []
+
         self.initUI()
+
+        self.gr_scene.itemSelected.connect(self.onItemSelected)
+        self.gr_scene.itemsDeselected.connect(self.onItemsDeselected)
+
+    def initUI(self):
+        self.gr_scene = QDMGraphicsScene(self)
+        self.gr_scene.setGrScene(self.scene_width, self.scene_height)
+
+    def onItemSelected(self):
+        current_selected_items = self.getSelectedItems()
+        if current_selected_items != self._last_selected_items:
+            self._last_selected_items = current_selected_items
+            self.history.store_history("Selection Changed")
+
+            for callback in self._item_selected_listeners:
+                callback()
+
+    def onItemsDeselected(self):
+        self.resetLastSelectedStates()
+        if self._last_selected_items != []:
+            self._last_selected_items = []
+            self.history.store_history("Deselction items")
+
+            for callback in self._items_deselected_listeners:
+                callback()
 
     def isModified(self):
         return self.has_been_modified
@@ -39,6 +70,7 @@ class Scene(Serializable):
     @has_been_modified.setter
     def has_been_modified(self, val):
         if not self.has_been_modified and val:
+            # set it now because we will read it soon
             self._has_been_modified = val
 
             for callback in self._has_been_modified_listeners:
@@ -49,10 +81,18 @@ class Scene(Serializable):
     def add_has_been_modified_listener(self, callback):
         self._has_been_modified_listeners.append(callback)
 
-    def initUI(self):
-        # Create graphics scene
-        self.gr_scene = QDMGraphicsScene(self)
-        self.gr_scene.setGrScene(self.scene_width, self.scene_height)
+    def add_item_selected_listener(self, callback):
+        self._item_selected_listeners.append(callback)
+
+    def add_items_deselected_listener(self, callback):
+        self._items_deselected_listeners.append(callback)
+
+    def resetLastSelectedStates(self):
+        for node in self.nodes:
+            node.gr_node._last_selected_state = False
+
+        for edge in self.edges:
+            edge.gr_edge._last_selected_state = False
 
     def add_node(self, node):
         self.nodes.append(node)
