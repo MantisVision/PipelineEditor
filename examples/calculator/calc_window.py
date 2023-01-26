@@ -23,6 +23,8 @@ class CalculatorWindow(NodeEditorWindow):
             str(Path(__file__).parent.joinpath("qss/nodeeditor.qss")),
         )
 
+        self.empty_icon = QIcon(".")
+
         self.mdiArea = QMdiArea()
         self.mdiArea.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)
         self.mdiArea.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
@@ -108,16 +110,19 @@ class CalculatorWindow(NodeEditorWindow):
         self.updateEditMenu()
 
     def updateEditMenu(self):
-        print("update edit menu")
-        active = self.activeMdiChild()
-        hasMdiChild = active is not None
+        try:
+            print("update edit menu")
+            active = self.activeMdiChild()
+            hasMdiChild = active is not None
 
-        self.actPaste.setEnabled(hasMdiChild)
-        self.actCut.setEnabled(hasMdiChild and active.hasSelectedItems())
-        self.actCopy.setEnabled(hasMdiChild and active.hasSelectedItems())
-        self.actDelete.setEnabled(hasMdiChild and active.hasSelectedItems())
-        self.actUndo.setEnabled(hasMdiChild and active.canUndo())
-        self.actRedo.setEnabled(hasMdiChild and active.canRedo())
+            self.actPaste.setEnabled(hasMdiChild)
+            self.actCut.setEnabled(hasMdiChild and active.hasSelectedItems())
+            self.actCopy.setEnabled(hasMdiChild and active.hasSelectedItems())
+            self.actDelete.setEnabled(hasMdiChild and active.hasSelectedItems())
+            self.actUndo.setEnabled(hasMdiChild and active.canUndo())
+            self.actRedo.setEnabled(hasMdiChild and active.canRedo())
+        except Exception as e:
+            dump_exception(e)
 
     def updateWindowMenu(self):
         self.windowMenu.clear()
@@ -218,17 +223,32 @@ class CalculatorWindow(NodeEditorWindow):
                     if pipeline_editor.fileLoad(fname):
                         self.statusBar().showMessage(f"File {fname} opened successfully.")
                         pipeline_editor.setTitle()
-                        sub_window = self.mdiArea.addSubWindow(pipeline_editor)
+                        sub_window = self.createMdiChild(pipeline_editor)
                         sub_window.show()
                     else:
                         pipeline_editor.close()
         except Exception as e:
             dump_exception(e)
 
-    def createMdiChild(self):
-        pipeline_editor = CalculatorSubWindow()
+    def createMdiChild(self, child_widget=None):
+        pipeline_editor = child_widget if child_widget else CalculatorSubWindow()
         sub_window = self.mdiArea.addSubWindow(pipeline_editor)
+        sub_window.setWindowIcon(self.empty_icon)
+        # pipeline_editor.scene.add_item_selected_listener(self.updateEditMenu)
+        # pipeline_editor.scene.add_items_deselected_listener(self.updateEditMenu)
+        pipeline_editor.scene.history.addHistoryModifiedListener(self.updateEditMenu)
+        pipeline_editor.addCloseEventListener(self.onSubwindowClose)
+
         return sub_window
+
+    def onSubwindowClose(self, widget, event):
+        existing = self.findMdiChild(widget.filename)
+        self.mdiArea.setActiveSubWindow(existing)
+
+        if self.save_dlg():
+            event.accept()
+        else:
+            event.ignore()
 
     def findMdiChild(self, fname):
         for window in self.mdiArea.subWindowList():

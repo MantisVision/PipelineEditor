@@ -141,37 +141,43 @@ class NodeEditorWindow(QMainWindow):
         return True
 
     def onEditUndo(self):
-        self.getcurrentPipelineEditorWidget().scene.history.undo()
+        if self.getcurrentPipelineEditorWidget():
+            self.getcurrentPipelineEditorWidget().scene.history.undo()
 
     def onEditRedo(self):
-        self.getcurrentPipelineEditorWidget().scene.history.redo()
+        if self.getcurrentPipelineEditorWidget():
+            self.getcurrentPipelineEditorWidget().scene.history.redo()
 
     def onEditDelete(self):
-        self.getcurrentPipelineEditorWidget().scene.gr_scene.views()[0].deleteSelected()
+        if self.getcurrentPipelineEditorWidget():
+            self.getcurrentPipelineEditorWidget().scene.gr_scene.views()[0].deleteSelected()
 
     def onEditCut(self):
-        data = self.getcurrentPipelineEditorWidget().scene.clipboard.serializedSelected(delete=True)
-        str_data = json.dumps(data, indent=4)
-        QApplication.instance().clipboard().setText(str_data)
+        if self.getcurrentPipelineEditorWidget():
+            data = self.getcurrentPipelineEditorWidget().scene.clipboard.serializedSelected(delete=True)
+            str_data = json.dumps(data, indent=4)
+            QApplication.instance().clipboard().setText(str_data)
 
     def onEditCopy(self):
-        data = self.getcurrentPipelineEditorWidget().scene.clipboard.serializedSelected(delete=False)
-        str_data = json.dumps(data, indent=4)
-        QApplication.instance().clipboard().setText(str_data)
+        if self.getcurrentPipelineEditorWidget():
+            data = self.getcurrentPipelineEditorWidget().scene.clipboard.serializedSelected(delete=False)
+            str_data = json.dumps(data, indent=4)
+            QApplication.instance().clipboard().setText(str_data)
 
     def onEditPaste(self):
-        raw_data = QApplication.instance().clipboard().text()
-        try:
-            data = json.loads(raw_data)
-        except Exception as e:
-            print(e)
-            return
+        if self.getcurrentPipelineEditorWidget():
+            raw_data = QApplication.instance().clipboard().text()
+            try:
+                data = json.loads(raw_data)
+            except Exception as e:
+                print(e)
+                return
 
-        if 'nodes' not in data:
-            print("Json is not contain any node")
-            return
+            if 'nodes' not in data:
+                print("Json is not contain any node")
+                return
 
-        self.getcurrentPipelineEditorWidget().scene.clipboard.deserializeFromClipboard(data)
+            self.getcurrentPipelineEditorWidget().scene.clipboard.deserializeFromClipboard(data)
 
     def print_msg(self, msg, color='black', msecs=3000):
         QTimer.singleShot(msecs, lambda: self.status_bar_text.setText(""))
