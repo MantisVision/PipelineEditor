@@ -10,6 +10,7 @@ from pipelineeditor.utils import dump_exception # noqa
 from pipelineeditor.utils import loadStylesheets # noqa
 from pipelineeditor.node_editor_window import NodeEditorWindow # noqa
 from examples.calculator.calc_sub_window import CalculatorSubWindow # noqa
+from examples.calculator.calc_drag_listbox import QDMDragListBox # noqa
 
 
 class CalculatorWindow(NodeEditorWindow):
@@ -39,12 +40,12 @@ class CalculatorWindow(NodeEditorWindow):
         self.windowMapper = QSignalMapper(self)
         self.windowMapper.mapped[QWidget].connect(self.setActiveSubWindow)
 
+        self.createNodeDock()
         self.createActions()
         self.createMenus()
         self.createToolBars()
         self.createStatusBar()
         self.updateMenus()
-        self.createNodeDock()
 
         self.createStatusBar()
 
@@ -116,9 +117,9 @@ class CalculatorWindow(NodeEditorWindow):
             hasMdiChild = active is not None
 
             self.actPaste.setEnabled(hasMdiChild)
-            self.actCut.setEnabled(hasMdiChild and active.hasSelectedItems())
-            self.actCopy.setEnabled(hasMdiChild and active.hasSelectedItems())
-            self.actDelete.setEnabled(hasMdiChild and active.hasSelectedItems())
+            self.actCut.setEnabled(hasMdiChild and active.hasSelectednodes_dock())
+            self.actCopy.setEnabled(hasMdiChild and active.hasSelectednodes_dock())
+            self.actDelete.setEnabled(hasMdiChild and active.hasSelectednodes_dock())
             self.actUndo.setEnabled(hasMdiChild and active.canUndo())
             self.actRedo.setEnabled(hasMdiChild and active.canRedo())
         except Exception as e:
@@ -126,6 +127,13 @@ class CalculatorWindow(NodeEditorWindow):
 
     def updateWindowMenu(self):
         self.windowMenu.clear()
+
+        nodes_toolbar = self.windowMenu.addAction("Nodes Toolbar")
+        nodes_toolbar.setCheckable(True)
+        nodes_toolbar.triggered.connect(self.onNodeWindowToolbar)
+        nodes_toolbar.setChecked(self.nodes_dock.isVisible())
+
+        self.windowMenu.addSeparator()
         self.windowMenu.addAction(self.actClose)
         self.windowMenu.addAction(self.actCloseAll)
         self.windowMenu.addSeparator()
@@ -152,21 +160,23 @@ class CalculatorWindow(NodeEditorWindow):
             action.triggered.connect(self.windowMapper.map)
             self.windowMapper.setMapping(action, window)
 
+    def onNodeWindowToolbar(self):
+        if self.nodes_dock.isVisible():
+            self.nodes_dock.hide()
+        else:
+            self.nodes_dock.show()
+
     def createToolBars(self):
         pass
 
     def createNodeDock(self):
-        self.listWidget = QListWidget()
-        self.listWidget.addItem("Add")
-        self.listWidget.addItem("Substract")
-        self.listWidget.addItem("Multiply")
-        self.listWidget.addItem("Divide")
+        self.nodes_list_widget = QDMDragListBox()
 
-        self.items = QDockWidget("Nodes")
-        self.items.setWidget(self.listWidget)
-        self.items.setFloating(False)
+        self.nodes_dock = QDockWidget("Nodes")
+        self.nodes_dock.setWidget(self.nodes_list_widget)
+        self.nodes_dock.setFloating(False)
 
-        self.addDockWidget(Qt.RightDockWidgetArea, self.items)
+        self.addDockWidget(Qt.RightDockWidgetArea, self.nodes_dock)
 
     def createStatusBar(self):
         self.statusBar().showMessage("")
@@ -181,13 +191,13 @@ class CalculatorWindow(NodeEditorWindow):
         dockSize = settings.value('dockSize', QSize(20, 20))
         self.move(pos)
         self.resize(size)
-        self.listWidget.resize(dockSize)
+        self.nodes_list_widget.resize(dockSize)
 
     def writeSettings(self):
         settings = QSettings(self.author_name, self.module_name)
         settings.setValue('pos', self.pos())
         settings.setValue('size', self.size())
-        settings.setValue('dockSize', self.listWidget.size())
+        settings.setValue('dockSize', self.nodes_list_widget.size())
 
     def getcurrentPipelineEditorWidget(self):
         return self.activeMdiChild()
@@ -235,7 +245,7 @@ class CalculatorWindow(NodeEditorWindow):
         sub_window = self.mdiArea.addSubWindow(pipeline_editor)
         sub_window.setWindowIcon(self.empty_icon)
         # pipeline_editor.scene.add_item_selected_listener(self.updateEditMenu)
-        # pipeline_editor.scene.add_items_deselected_listener(self.updateEditMenu)
+        # pipeline_editor.scene.add_nodes_dock_deselected_listener(self.updateEditMenu)
         pipeline_editor.scene.history.addHistoryModifiedListener(self.updateEditMenu)
         pipeline_editor.addCloseEventListener(self.onSubwindowClose)
 
