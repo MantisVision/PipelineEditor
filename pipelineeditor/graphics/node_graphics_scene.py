@@ -62,3 +62,7 @@ class QDMGraphicsScene(QGraphicsScene):
 
         painter.setPen(self.pen_dark)
         painter.drawLines(*lines_dark)
+
+    # The drag events won't be allowed until drag move event is overriden
+    def dragMoveEvent(self, event) -> None:
+        pass

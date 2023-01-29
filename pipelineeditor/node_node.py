@@ -18,8 +18,6 @@ class Node(Serializable):
         self.scene.add_node(self)
         self.scene.gr_scene.addItem(self.gr_node)
 
-        # self.grNode.title = "ASDASDAD"
-
         self.inputs = []
         self.outputs = []
 
@@ -65,6 +63,9 @@ class Node(Serializable):
 
     def setPos(self, x, y):
         self.gr_node.setPos(x, y)
+
+    def setContentTitle(self, title):
+        self.content.setTitle(title)
 
     def remove(self):
         for socket in (self.inputs + self.outputs):

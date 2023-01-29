@@ -112,14 +112,13 @@ class CalculatorWindow(NodeEditorWindow):
 
     def updateEditMenu(self):
         try:
-            print("update edit menu")
             active = self.activeMdiChild()
             hasMdiChild = active is not None
 
             self.actPaste.setEnabled(hasMdiChild)
-            self.actCut.setEnabled(hasMdiChild and active.hasSelectednodes_dock())
-            self.actCopy.setEnabled(hasMdiChild and active.hasSelectednodes_dock())
-            self.actDelete.setEnabled(hasMdiChild and active.hasSelectednodes_dock())
+            self.actCut.setEnabled(hasMdiChild and active.hasSelectedItems())
+            self.actCopy.setEnabled(hasMdiChild and active.hasSelectedItems())
+            self.actDelete.setEnabled(hasMdiChild and active.hasSelectedItems())
             self.actUndo.setEnabled(hasMdiChild and active.canUndo())
             self.actRedo.setEnabled(hasMdiChild and active.canRedo())
         except Exception as e:

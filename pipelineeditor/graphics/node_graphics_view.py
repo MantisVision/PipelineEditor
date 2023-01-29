@@ -46,6 +46,27 @@ class QDMGraphicsView(QGraphicsView):
         self.setTransformationAnchor(QGraphicsView.AnchorUnderMouse)
         self.setDragMode(QGraphicsView.RubberBandDrag)
 
+        # enable drop event
+        self.setAcceptDrops(True)
+
+        # init listeneres
+        self._drag_enter_listeneres = []
+        self._drop_listeneres = []
+
+    def dragEnterEvent(self, event) -> None:
+        for callback in self._drag_enter_listeneres:
+            callback(event)
+
+    def dropEvent(self, event) -> None:
+        for callback in self._drop_listeneres:
+            callback(event)
+
+    def addDragEnterListener(self, callback):
+        self._drag_enter_listeneres.append(callback)
+
+    def addDropListener(self, callback):
+        self._drop_listeneres.append(callback)
+
     def keyPressEvent(self, event: QKeyEvent) -> None:
         super().keyPressEvent(event)
 

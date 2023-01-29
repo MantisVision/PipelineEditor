@@ -33,6 +33,8 @@ class QDMNodeContentWidget(QWidget, Serializable):
     def deserialize(self, data, hashmap={}):
         return False
 
+    def setTitle(self, title):
+        self.widget_title.setText(title)
 
 class QDMTextEdit(QTextEdit):
 
