@@ -18,16 +18,16 @@ class QDMNodeContentWidget(QWidget, Serializable):
 
         self.widget_title = QLabel("Some Title")
         self.layout.addWidget(self.widget_title)
-        self._text_edit = QDMTextEdit("foo")
-        self.layout.addWidget(self._text_edit)
+        # self._text_edit = QDMTextEdit("foo")
+        # self.layout.addWidget(self._text_edit)
 
     def setEditingFlag(self, val):
         self.node.scene.gr_scene.views()[0].editingFlag = val
 
     def serialize(self):
         return OrderedDict([
-            ('id', self.id),
-            ('text', self._text_edit.toPlainText())
+            ('id', self.id)
+            # ('text', self._text_edit.toPlainText())
         ])
 
     def deserialize(self, data, hashmap={}):
@@ -35,6 +35,7 @@ class QDMNodeContentWidget(QWidget, Serializable):
 
     def setTitle(self, title):
         self.widget_title.setText(title)
+
 
 class QDMTextEdit(QTextEdit):
 

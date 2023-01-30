@@ -6,6 +6,7 @@ from pathlib import Path
 from examples.calculator.calc_config import *
 from pipelineeditor.utils import dump_exception
 
+
 class QDMDragListBox(QListWidget):
     def __init__(self, parent=None) -> None:
         super().__init__(parent)
@@ -20,8 +21,8 @@ class QDMDragListBox(QListWidget):
     def addMyItems(self):
         current_file_path = Path(__file__).parent
 
-        self.addMyItem(name="input",     icon=str(current_file_path.joinpath(r"icons\in.png")),     op_code=OP_NODE_INPUT)
-        self.addMyItem(name="output",    icon=str(current_file_path.joinpath(r"icons\out.png")),    op_code=OP_NODE_OUTPUT)
+        self.addMyItem(name="Input",     icon=str(current_file_path.joinpath(r"icons\in.png")),     op_code=OP_NODE_INPUT)
+        self.addMyItem(name="Output",    icon=str(current_file_path.joinpath(r"icons\out.png")),    op_code=OP_NODE_OUTPUT)
         self.addMyItem(name="Add",       icon=str(current_file_path.joinpath(r"icons\add.png")),    op_code=OP_NODE_ADD)
         self.addMyItem(name="Substract", icon=str(current_file_path.joinpath(r"icons\sub.png")),    op_code=OP_NODE_SUB)
         self.addMyItem(name="Multiply",  icon=str(current_file_path.joinpath(r"icons\mul.png")),    op_code=OP_NODE_MUL)

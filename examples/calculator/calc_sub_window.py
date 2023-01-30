@@ -3,7 +3,8 @@ from PyQt5.QtGui import *
 from pathlib import Path
 from examples.calculator.calc_config import *
 from pipelineeditor.node_editor_widget import NodeEditorWidget
-from pipelineeditor.node_node import Node
+# from pipelineeditor.node_node import Node
+from examples.calculator.calc_node_base import *
 
 
 class CalculatorSubWindow(NodeEditorWidget):
@@ -39,6 +40,7 @@ class CalculatorSubWindow(NodeEditorWidget):
     def onDrop(self, event):
         print("Calc subwindow: onDrop")
         print(f"mimeData: {event.mimeData().text()}|")
+        # Drop File from Nodes ListBox
         if event.mimeData().hasFormat(LISTBOX_MIMETYPE):
             eventData = event.mimeData().data(LISTBOX_MIMETYPE)
             dataStream = QDataStream(eventData, QIODevice.ReadOnly)
@@ -52,12 +54,13 @@ class CalculatorSubWindow(NodeEditorWidget):
 
             print(f"DROP: {op_code} - {text} mouse at: {mouse_pos} scene at: {scene_pos}")
 
-            node = Node(self.scene, text, inputs=[1, 1], outputs=[2])
+            node = CalcNode(self.scene, op_code, text, inputs=[1, 1], outputs=[2])
+            print(scene_pos.x(), scene_pos.y())
             node.setPos(scene_pos.x(), scene_pos.y())
-            self.scene.add_node(node)
 
             event.setDropAction(Qt.MoveAction)
             event.accept()
+        # Drop File from Windows Explorer
         elif event.mimeData().hasUrls():
             op_code = OP_NODE_INPUT
             mouse_pos = event.pos()
@@ -71,7 +74,6 @@ class CalculatorSubWindow(NodeEditorWidget):
                 offset = i * 20
                 node.setPos(scene_pos.x() + offset, scene_pos.y() + offset)
                 node.setContentTitle(Path((url.toString())).name)
-                self.scene.add_node(node)
 
             event.setDropAction(Qt.MoveAction)
             event.accept()
