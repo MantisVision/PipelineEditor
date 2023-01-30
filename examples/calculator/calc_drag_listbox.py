@@ -19,14 +19,13 @@ class QDMDragListBox(QListWidget):
         self.addMyItems()
 
     def addMyItems(self):
-        current_file_path = Path(__file__).parent
+        # current_file_path = Path(__file__).parent
+        keys = list(CALC_NODES.keys())
+        keys.sort()
 
-        self.addMyItem(name="Input",     icon=str(current_file_path.joinpath(r"icons\in.png")),     op_code=OP_NODE_INPUT)
-        self.addMyItem(name="Output",    icon=str(current_file_path.joinpath(r"icons\out.png")),    op_code=OP_NODE_OUTPUT)
-        self.addMyItem(name="Add",       icon=str(current_file_path.joinpath(r"icons\add.png")),    op_code=OP_NODE_ADD)
-        self.addMyItem(name="Substract", icon=str(current_file_path.joinpath(r"icons\sub.png")),    op_code=OP_NODE_SUB)
-        self.addMyItem(name="Multiply",  icon=str(current_file_path.joinpath(r"icons\mul.png")),    op_code=OP_NODE_MUL)
-        self.addMyItem(name="Divide",    icon=str(current_file_path.joinpath(r"icons\divide.png")), op_code=OP_NODE_DIV)
+        for key in keys:
+            node = get_class_from_op_code(key)
+            self.addMyItem(node.op_title, node.icon, node.op_code)
 
     def addMyItem(self, name, icon=None, op_code=0):
         item = QListWidgetItem(name, self)

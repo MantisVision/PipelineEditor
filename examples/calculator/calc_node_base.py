@@ -21,13 +21,14 @@ class CalcContentWidget(QDMNodeContentWidget):
 
 
 class CalcNode(Node):
-    def __init__(self, scene, op_code, op_title, content_label="", content_label_obj_name="calc_node_bg", inputs=[2, 2], outputs=[1]) -> None:
-        self.op_code = op_code
-        self.op_title = op_title
-        self.content_label = content_label
-        self.content_label_obj_name = content_label_obj_name
+    icon = ""
+    op_code = 0
+    op_title = "Undefined"
+    content_label = ""
+    content_label_obj_name = "calc_node_bg"
 
-        super().__init__(scene, self.op_title, inputs, outputs)
+    def __init__(self, scene, inputs=[2, 2], outputs=[1]) -> None:
+        super().__init__(scene, self.__class__.op_title, inputs, outputs)
 
     def initInnerClasses(self):
         self.content = CalcContentWidget(self)

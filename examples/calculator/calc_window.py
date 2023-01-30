@@ -6,11 +6,13 @@ from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
-from pipelineeditor.utils import dump_exception # noqa
+from pipelineeditor.utils import dump_exception, pp # noqa
 from pipelineeditor.utils import loadStylesheets # noqa
 from pipelineeditor.node_editor_window import NodeEditorWindow # noqa
 from examples.calculator.calc_sub_window import CalculatorSubWindow # noqa
 from examples.calculator.calc_drag_listbox import QDMDragListBox # noqa
+from examples.calculator.calc_config import * # noqa
+from examples.calculator.calc_confg_nodes import * # noqa
 
 
 class CalculatorWindow(NodeEditorWindow):
@@ -25,6 +27,9 @@ class CalculatorWindow(NodeEditorWindow):
         )
 
         self.empty_icon = QIcon(".")
+
+        print("Registered Nodes:")
+        pp(CALC_NODES)
 
         self.mdiArea = QMdiArea()
         self.mdiArea.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)

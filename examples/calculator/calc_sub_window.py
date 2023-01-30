@@ -3,6 +3,7 @@ from PyQt5.QtGui import *
 from pathlib import Path
 from examples.calculator.calc_config import *
 from pipelineeditor.node_editor_widget import NodeEditorWidget
+from pipelineeditor.utils import dump_exception 
 # from pipelineeditor.node_node import Node
 from examples.calculator.calc_node_base import *
 
@@ -54,9 +55,12 @@ class CalculatorSubWindow(NodeEditorWidget):
 
             print(f"DROP: {op_code} - {text} mouse at: {mouse_pos} scene at: {scene_pos}")
 
-            node = CalcNode(self.scene, op_code, text, inputs=[1, 1], outputs=[2])
-            print(scene_pos.x(), scene_pos.y())
-            node.setPos(scene_pos.x(), scene_pos.y())
+            try:
+                node = get_class_from_op_code(op_code)(self.scene)
+                node.setPos(scene_pos.x(), scene_pos.y())
+                self.scene.history.store_history(f"Created Node {node.__class__.__name__}")
+            except Exception as e:
+                dump_exception(e)
 
             event.setDropAction(Qt.MoveAction)
             event.accept()
@@ -70,10 +74,14 @@ class CalculatorSubWindow(NodeEditorWidget):
             for i, url in enumerate(event.mimeData().urls()):
                 print(f"DROP: {op_code} - {str(url)} mouse at: {mouse_pos} scene at: {scene_pos}")
 
-                node = Node(self.scene, "Input", inputs=[1, 1], outputs=[2])
-                offset = i * 20
-                node.setPos(scene_pos.x() + offset, scene_pos.y() + offset)
-                node.setContentTitle(Path((url.toString())).name)
+                try:
+                    offset = i * 20
+                    node = get_class_from_op_code(OP_NODE_INPUT)(self.scene)
+                    node.setPos(scene_pos.x() + offset, scene_pos.y() + offset)
+                    # node.setContentTitle(Path((url.toString())).name) # Need to fix node content
+                    self.scene.history.store_history(f"Created Node {node.__class__.__name__}")
+                except Exception as e:
+                    dump_exception(e)
 
             event.setDropAction(Qt.MoveAction)
             event.accept()

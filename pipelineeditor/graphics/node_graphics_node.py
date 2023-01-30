@@ -23,7 +23,6 @@ class QDMGraphicsNode(QGraphicsItem):
 
         self.initTitle()
         self.title = self.node.title
-        self.initSockets()
         self.initContent()
 
     def initSizes(self):
@@ -103,9 +102,6 @@ class QDMGraphicsNode(QGraphicsItem):
         self.gr_content = QGraphicsProxyWidget(self)
         self.content.setGeometry(self.edge_size, self.title_height + self.edge_size, self.width - 2 * self.edge_size, self.height - 2 * self.edge_size - self.title_height)
         self.gr_content.setWidget(self.content)
-
-    def initSockets(self):
-        pass
 
     def paint(self, painter, QStyleOptionGraphicsItem, widget=None):
         # title
