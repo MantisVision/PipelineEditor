@@ -62,7 +62,6 @@ class QDMGraphicsNode(QGraphicsItem):
 
     def mouseReleaseEvent(self, event: 'QGraphicsSceneMouseEvent') -> None:
         super().mouseReleaseEvent(event)
-
         # handle when gr_node was moved
         if self._was_moved:
             self._was_moved = False
@@ -81,6 +80,10 @@ class QDMGraphicsNode(QGraphicsItem):
             self.node.scene.resetLastSelectedStates()
             self._last_selected_state = self.isSelected()
             self.onSelected()
+
+    def mouseDoubleClickEvent(self, event):
+        """Overriden event for doubleclick. Resend to `Node::onDoubleClicked`"""
+        self.node.onDoubleClicked(event)
 
     def boundingRect(self) -> QRectF:
         return QRectF(

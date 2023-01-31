@@ -52,6 +52,7 @@ class QDMGraphicsView(QGraphicsView):
         # init listeneres
         self._drag_enter_listeneres = []
         self._drop_listeneres = []
+        self._doubleclick_listeneres = []
 
     def dragEnterEvent(self, event) -> None:
         for callback in self._drag_enter_listeneres:
@@ -61,11 +62,18 @@ class QDMGraphicsView(QGraphicsView):
         for callback in self._drop_listeneres:
             callback(event)
 
+    def mouseDoubleClickEvent(self, event) -> None:
+        for callback in self._doubleclick_listeneres:
+            callback(event)
+
     def addDragEnterListener(self, callback):
         self._drag_enter_listeneres.append(callback)
 
     def addDropListener(self, callback):
         self._drop_listeneres.append(callback)
+
+    def addDoubleClickListener(self, callback):
+        self._doubleclick_listeneres.append(callback)
 
     def keyPressEvent(self, event: QKeyEvent) -> None:
         super().keyPressEvent(event)

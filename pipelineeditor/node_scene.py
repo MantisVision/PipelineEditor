@@ -93,6 +93,9 @@ class Scene(Serializable):
     def add_drop_listener(self, callback):
         self.gr_scene.views()[0].addDropListener(callback)
 
+    def add_item_doubleclick_listener(self, callback):
+        self.gr_scene.views()[0].addDoubleClickListener(callback)
+
     def resetLastSelectedStates(self):
         for node in self.nodes:
             node.gr_node._last_selected_state = False

@@ -93,6 +93,10 @@ class Node(Serializable):
     def setContentTitle(self, title):
         self.content.setTitle(title)
 
+    def onDoubleClicked(self, event):
+        """Event handling double click on Graphics Node in `Scene`"""
+        print("double click")
+
     def remove(self):
         for socket in (self.inputs + self.outputs):
             # if socket.hasEdge():

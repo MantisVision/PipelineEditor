@@ -55,3 +55,11 @@ class CalcNode_Output(CalcNode):
 
     def __init__(self, scene) -> None:
         super().__init__(scene, inputs=[1], outputs=[])
+
+
+@register_nodes(OP_NODE_TEST)
+class CalcNode_Test(CalcNode):
+    icon = str(current_file_path.joinpath(r"icons\test.png"))
+    op_code = OP_NODE_TEST
+    op_title = "TEST"
+    content_label = "TEST"

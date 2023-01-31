@@ -170,6 +170,13 @@ class CalculatorWindow(NodeEditorWindow):
         else:
             self.nodes_dock.show()
 
+    def onNodeClick(self, event):
+        print(event)
+        active_mdi_child = self.activeMdiChild()
+        selected = active_mdi_child.scene.gr_scene.selectedItems()
+        if selected:
+            print(selected[0].node)
+
     def createToolBars(self):
         pass
 
@@ -180,7 +187,7 @@ class CalculatorWindow(NodeEditorWindow):
         self.nodes_dock.setWidget(self.nodes_list_widget)
         self.nodes_dock.setFloating(False)
 
-        self.addDockWidget(Qt.RightDockWidgetArea, self.nodes_dock)
+        self.addDockWidget(Qt.LeftDockWidgetArea, self.nodes_dock)
 
     def createStatusBar(self):
         self.statusBar().showMessage("")
@@ -248,8 +255,10 @@ class CalculatorWindow(NodeEditorWindow):
         pipeline_editor = child_widget if child_widget else CalculatorSubWindow()
         sub_window = self.mdiArea.addSubWindow(pipeline_editor)
         sub_window.setWindowIcon(self.empty_icon)
-        # pipeline_editor.scene.add_item_selected_listener(self.updateEditMenu)
-        # pipeline_editor.scene.add_nodes_dock_deselected_listener(self.updateEditMenu)
+        # TODO: Submit here callback function on item selection (only for nodes)
+        # pipeline_editor.scene.add_item_selected_listener(self.onNodeClick)
+        # pipeline_editor.scene.add_items_deselected_listener(self.onNodeClick)
+        pipeline_editor.scene.add_item_doubleclick_listener(self.onNodeClick)
         pipeline_editor.scene.history.addHistoryModifiedListener(self.updateEditMenu)
         pipeline_editor.addCloseEventListener(self.onSubwindowClose)
 
