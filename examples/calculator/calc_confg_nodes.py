@@ -2,7 +2,7 @@ from PyQt5.QtCore import *
 from examples.calculator.calc_config import *
 from examples.calculator.calc_node_base import *
 from pathlib import Path
-
+from pipelineeditor.utils import dump_exception
 current_file_path = Path(__file__).parent
 
 
@@ -86,6 +86,21 @@ class CalcInputContent(QDMNodeContentWidget):
         self.edit = QLineEdit("1", self)
         self.edit.setAlignment(Qt.AlignRight)
         self.edit.setObjectName(self.node.content_label_obj_name)
+
+    def serialize(self):
+        res = super().serialize()
+        res['value'] = self.edit.text()
+        return res
+
+    def deserialize(self, data, hashmap={}, restore_id=True):
+        res = super().deserialize(data, hashmap)
+        try:
+            value = data['value']
+            self.edit.setText(value)
+            return True & res
+        except Exception as e:
+            dump_exception(e)
+        return res
 
 
 class CalcOutputContent(QDMNodeContentWidget):

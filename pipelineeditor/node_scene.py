@@ -30,6 +30,9 @@ class Scene(Serializable):
         self._items_deselected_listeners = []
         self._last_selected_items = []
 
+        # here we can store callback for retrieving the class for Nodes
+        self.node_class_selector = None
+
         self.initUI()
 
         self.gr_scene.itemSelected.connect(self.onItemSelected)
@@ -139,6 +142,12 @@ class Scene(Serializable):
         except Exception as e:
             dump_exception(e)
 
+    def set_node_class_selector(self, class_selectinf_func):
+        self.node_class_selector = class_selectinf_func
+
+    def get_node_class_from_data(self, data):
+        return Node if not self.node_class_selector else self.node_class_selector(data)
+
     def serialize(self):
         nodes = [node.serialize() for node in self.nodes]
         edges = [edge.serialize() for edge in self.edges]
@@ -159,7 +168,7 @@ class Scene(Serializable):
 
         # Load nodes
         for node_data in data['nodes']:
-            Node(self).deserialize(node_data, hashmap, restore_id)
+            self.get_node_class_from_data(node_data)(self).deserialize(node_data, hashmap, restore_id)
 
         # Load Edges
         for edge_data in data['edges']:

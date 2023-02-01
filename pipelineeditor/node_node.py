@@ -190,4 +190,7 @@ class Node(Serializable):
         except Exception as e:
             dump_exception(e)
 
-        return True
+        # Deserialize node content
+        res = self.content.deserialize(data['content'], hashmap)
+
+        return True & res

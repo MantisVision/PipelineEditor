@@ -15,8 +15,15 @@ class CalculatorSubWindow(NodeEditorWidget):
         self.scene.add_has_been_modified_listener(self.setTitle)
         self.scene.add_drag_enter_listener(self.onDragEnter)
         self.scene.add_drop_listener(self.onDrop)
+        self.scene.set_node_class_selector(self.getNodeClassFromData)
         self._close_event_listeners = []
         self.setTitle()
+
+    def getNodeClassFromData(self, data):
+        if 'op_code' not in data:
+            return Node
+
+        return get_class_from_op_code(data['op_code'])
 
     def setTitle(self):
         self.setWindowTitle(self.getUserFriendltFilename())
