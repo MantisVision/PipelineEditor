@@ -150,7 +150,7 @@ class NodeEditorWindow(QMainWindow):
 
     def onEditDelete(self):
         if self.getcurrentPipelineEditorWidget():
-            self.getcurrentPipelineEditorWidget().scene.gr_scene.views()[0].deleteSelected()
+            self.getcurrentPipelineEditorWidget().scene.getView().deleteSelected()
 
     def onEditCut(self):
         if self.getcurrentPipelineEditorWidget():

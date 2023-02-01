@@ -91,13 +91,13 @@ class Scene(Serializable):
         self._items_deselected_listeners.append(callback)
 
     def add_drag_enter_listener(self, callback):
-        self.gr_scene.views()[0].addDragEnterListener(callback)
+        self.getView().addDragEnterListener(callback)
 
     def add_drop_listener(self, callback):
-        self.gr_scene.views()[0].addDropListener(callback)
+        self.getView().addDropListener(callback)
 
     def add_item_doubleclick_listener(self, callback):
-        self.gr_scene.views()[0].addDoubleClickListener(callback)
+        self.getView().addDoubleClickListener(callback)
 
     def resetLastSelectedStates(self):
         for node in self.nodes:
@@ -147,6 +147,12 @@ class Scene(Serializable):
 
     def get_node_class_from_data(self, data):
         return Node if not self.node_class_selector else self.node_class_selector(data)
+
+    def getView(self):
+        return self.gr_scene.views()[0]
+
+    def getItemAt(self, pos):
+        return self.getView().itemAt(pos)
 
     def serialize(self):
         nodes = [node.serialize() for node in self.nodes]

@@ -13,6 +13,7 @@ from examples.calculator.calc_sub_window import CalculatorSubWindow # noqa
 from examples.calculator.calc_drag_listbox import QDMDragListBox # noqa
 from examples.calculator.calc_config import * # noqa
 from examples.calculator.calc_confg_nodes import * # noqa
+from qss import nodeeditor_dark_resources # noqa
 
 
 class CalculatorWindow(NodeEditorWindow):
@@ -23,7 +24,7 @@ class CalculatorWindow(NodeEditorWindow):
 
         loadStylesheets(
             str(Path(__file__).parent.joinpath("qss/nodeeditor-dark.qss")),
-            str(Path(__file__).parent.joinpath("qss/nodeeditor.qss")),
+            str(Path(__file__).parent.joinpath("qss/calc_nodeeditor.qss"))
         )
 
         self.empty_icon = QIcon(".")

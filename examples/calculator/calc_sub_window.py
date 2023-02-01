@@ -3,7 +3,8 @@ from PyQt5.QtGui import *
 from pathlib import Path
 from examples.calculator.calc_config import *
 from pipelineeditor.node_editor_widget import NodeEditorWidget
-from pipelineeditor.utils import dump_exception 
+from pipelineeditor.utils import dump_exception
+from pipelineeditor.node_edge import EDGE_TYPE_BEZIER, EDGE_TYPE_DIRECT
 # from pipelineeditor.node_node import Node
 from examples.calculator.calc_node_base import *
 
@@ -18,6 +19,7 @@ class CalculatorSubWindow(NodeEditorWidget):
         self.scene.set_node_class_selector(self.getNodeClassFromData)
         self._close_event_listeners = []
         self.setTitle()
+        self.initNewNodeActions()
 
     def getNodeClassFromData(self, data):
         if 'op_code' not in data:
@@ -27,6 +29,25 @@ class CalculatorSubWindow(NodeEditorWidget):
 
     def setTitle(self):
         self.setWindowTitle(self.getUserFriendltFilename())
+
+    def initNodesContextMenu(self):
+        context_menu = QMenu(self)
+        keys = list(CALC_NODES.keys())
+        keys.sort()
+
+        for key in keys:
+            context_menu.addAction(self.node_actions[key])
+
+        return context_menu
+
+    def initNewNodeActions(self):
+        self.node_actions = {}
+        keys = list(CALC_NODES.keys())
+        keys.sort()
+        for key in keys:
+            node = CALC_NODES[key]
+            self.node_actions[node.op_code] = QAction(QIcon(node.icon), node.op_title)
+            self.node_actions[node.op_code].setData(node.op_code)
 
     def closeEvent(self, event) -> None:
         for callback in self._close_event_listeners:
@@ -58,7 +79,7 @@ class CalculatorSubWindow(NodeEditorWidget):
             text = dataStream.readQString()
 
             mouse_pos = event.pos()
-            scene_pos = self.scene.gr_scene.views()[0].mapToScene(mouse_pos)
+            scene_pos = self.scene.getView().mapToScene(mouse_pos)
 
             print(f"DROP: {op_code} - {text} mouse at: {mouse_pos} scene at: {scene_pos}")
 
@@ -75,7 +96,7 @@ class CalculatorSubWindow(NodeEditorWidget):
         elif event.mimeData().hasUrls():
             op_code = OP_NODE_INPUT
             mouse_pos = event.pos()
-            scene_pos = self.scene.gr_scene.views()[0].mapToScene(mouse_pos)
+            scene_pos = self.scene.getView().mapToScene(mouse_pos)
 
             # TODO: Fix dragging files in input files
             for i, url in enumerate(event.mimeData().urls()):
@@ -95,3 +116,69 @@ class CalculatorSubWindow(NodeEditorWidget):
         else:
             print("... ignore drop event, not in requested format")
             event.ignore()
+
+    def contextMenuEvent(self, event) -> None:
+        try:
+            item = self.scene.getItemAt(event.pos())
+
+            if type(item) == QGraphicsProxyWidget:
+                item = item.widget()
+            if hasattr(item, 'node') or hasattr(item, 'socket'):
+                self.handleNodeContextMenu(event)
+            elif hasattr(item, 'edge'):
+                self.handleEdgeContextMenu(event)
+            else:
+                self.handleNewNodeContextMenu(event)
+            return super().contextMenuEvent(event)
+        except Exception as e:
+            dump_exception(e)
+
+    def handleNodeContextMenu(self, event):
+        context_menu = QMenu(self)
+        dirty_act = context_menu.addAction("Mark Dirty")
+        mark_invalid_act = context_menu.addAction("Mark Invalid")
+        umnark_invalid_act = context_menu.addAction("Unmark Invalid")
+        eval_act = context_menu.addAction("Eval")
+
+        action = context_menu.exec_(self.mapToGlobal(event.pos()))
+
+        selected = None
+        item = self.scene.getItemAt(event.pos())
+        if type(item) == QGraphicsProxyWidget:
+            item = item.widget()
+
+        if hasattr(item, 'node'):
+            selected = item.node
+
+        if hasattr(item, 'sokcet'):
+            selected = item.socket.node
+
+        # TODO: implement oprations
+
+    def handleEdgeContextMenu(self, event):
+        context_menu = QMenu(self)
+        bezier_act = context_menu.addAction("Bezier Edge")
+        direct_act = context_menu.addAction("Direct Edge")
+
+        action = context_menu.exec_(self.mapToGlobal(event.pos()))
+
+        selected = None
+        item = self.scene.getItemAt(event.pos())
+        if hasattr(item, 'edge'):
+            selected = item.edge
+
+        if selected and action == bezier_act:
+            selected.edge_type = EDGE_TYPE_BEZIER
+
+        if selected and action == direct_act:
+            selected.edge_type = EDGE_TYPE_DIRECT
+
+    def handleNewNodeContextMenu(self, event):
+        context_menu = self.initNodesContextMenu()
+        action = context_menu.exec_(self.mapToGlobal(event.pos()))
+
+        if action:
+            new_calc_node = get_class_from_op_code(action.data())(self.scene)
+            scene_pos = self.scene.getView().mapToScene(event.pos())
+            new_calc_node.setPos(scene_pos.x(), scene_pos.y())
+

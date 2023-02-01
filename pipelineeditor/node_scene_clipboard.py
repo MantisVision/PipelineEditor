@@ -44,7 +44,7 @@ class SceneClipbaord():
 
         # delete in cut mode:
         if delete:
-            self.scene.gr_scene.views()[0].deleteSelected()
+            self.scene.getView().deleteSelected()
             self.scene.history.store_history("Cut", True)
 
         return data
@@ -53,7 +53,7 @@ class SceneClipbaord():
         hashmap = {}
 
         # Calculate mouse pos
-        view = self.scene.gr_scene.views()[0]
+        view = self.scene.getView()
         mouse_pos = view.last_mb_pos
 
         minx, maxx, miny, maxy = 0, 0, 0, 0

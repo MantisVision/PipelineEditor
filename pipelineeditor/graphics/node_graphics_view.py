@@ -107,6 +107,7 @@ class QDMGraphicsView(QGraphicsView):
             super().mouseReleaseEvent(event)
 
     def middleButtonEventPress(self, event):
+        # Faking event for enable MMB dragging the scene (pan)
         release_event = QMouseEvent(QEvent.MouseButtonRelease, event.localPos(), event.screenPos(), Qt.LeftButton, Qt.NoButton, event.modifiers())
         super().mouseReleaseEvent(release_event)
 
@@ -116,6 +117,7 @@ class QDMGraphicsView(QGraphicsView):
         super().mousePressEvent(fake_event)
 
     def middleButtonEventRelease(self, event):
+        # Faking event for enable MMB dragging the scene (pan)
         fake_event = QMouseEvent(event.type(), event.localPos(), event.screenPos(), Qt.LeftButton, event.buttons() | Qt.LeftButton, event.modifiers())
         super().mouseReleaseEvent(fake_event)
         self.setDragMode(QGraphicsView.RubberBandDrag)

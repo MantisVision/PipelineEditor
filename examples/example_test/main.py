@@ -14,6 +14,6 @@ if __name__ == "__main__":
     window = NodeEditorWindow()
     window.node_editor.add_nodes()
     module_apth = Path(inspect.getfile(window.__class__)).parent
-    loadStylesheet(str(module_apth.joinpath("qss/node_style.qss")))
+    loadStylesheet(str(module_apth.joinpath("qss/dark.qss")))
 
     sys.exit(app.exec_())
