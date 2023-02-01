@@ -18,8 +18,8 @@ class QDMNodeContentWidget(QWidget, Serializable):
 
         self.widget_title = QLabel("Some Title")
         self.layout.addWidget(self.widget_title)
-        # self._text_edit = QDMTextEdit("foo")
-        # self.layout.addWidget(self._text_edit)
+        self._text_edit = QDMTextEdit("foo")
+        self.layout.addWidget(self._text_edit)
 
     def setEditingFlag(self, val):
         self.node.scene.gr_scene.views()[0].editingFlag = val

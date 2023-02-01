@@ -49,13 +49,29 @@ class Node(Serializable):
         # Create new sockets
         counter = 0
         for i in inputs:
-            socket = Socket(node=self, index=counter, position=self.input_socket_position, socket_type=i, multi_edge=self.input_multi_edge)
+            socket = Socket(
+                node=self,
+                index=counter,
+                position=self.input_socket_position,
+                socket_type=i,
+                multi_edge=self.input_multi_edge,
+                count_on_this_node_side=len(inputs),
+                is_input=True,
+            )
             self.inputs.append(socket)
             counter += 1
 
         counter = 0
         for o in outputs:
-            socket = Socket(node=self, index=counter, position=self.output_socket_position, socket_type=o, multi_edge=self.output_multi_edge)
+            socket = Socket(
+                node=self,
+                index=counter,
+                position=self.output_socket_position,
+                socket_type=o,
+                multi_edge=self.output_multi_edge,
+                count_on_this_node_side=len(outputs),
+                is_input=False,
+            )
             self.outputs.append(socket)
             counter += 1
 
@@ -64,13 +80,28 @@ class Node(Serializable):
             for edge in socket.edges:
                 edge.updatePositions()
 
-    def getSocketsPosition(self, index, position):
-        x = 0 if position in (LEFT_TOP, LEFT_BOTTOM) else self.gr_node.width
+    def getSocketsPosition(self, index, position, num_out_off=1):
+        x = 0 if position in (LEFT_TOP, LEFT_CENTER, LEFT_BOTTOM) else self.gr_node.width
 
         if position in (LEFT_BOTTOM, RIGHT_BOTTOM):
-            y = self.gr_node.height - self.gr_node.edge_size - self.gr_node._padding - index * self._socket_gap
+            y = self.gr_node.height - self.gr_node.edge_roundness - self.gr_node._title_vertical_padding - index * self._socket_gap
+        elif position in (LEFT_CENTER, RIGHT_CENTER):
+            num_socket = num_out_off
+            node_height = self.gr_node.height
+            top_offset = self.gr_node.title_height + 2 * self.gr_node._title_vertical_padding + self.gr_node.edge_padding
+            available_heigt = node_height - top_offset
+            total_height_of_all_socket = num_socket * self._socket_gap
+            new_top = available_heigt - total_height_of_all_socket
+            # y = top_offset + index * self._socket_gap + new_top / 2
+
+            y = top_offset + (available_heigt / 2) + (index - 0.5) * self._socket_gap
+            if num_socket > 1:
+                y -= (self._socket_gap * (num_socket - 1)) / 2
+        elif position in (LEFT_TOP, RIGHT_TOP):
+            y = self.gr_node.title_height + self.gr_node._title_vertical_padding + self.gr_node.edge_roundness + index * self._socket_gap
         else:
-            y = self.gr_node.title_height + self.gr_node._padding + self.gr_node.edge_size + index * self._socket_gap
+            # this condition never happend
+            y = 0
 
         return [x, y]
 
@@ -128,16 +159,32 @@ class Node(Serializable):
 
             data['inputs'].sort(key=lambda socket: socket['index'] + socket['position'] * 1000)
             data['outputs'].sort(key=lambda socket: socket['index'] + socket['position'] * 1000)
+            num_inputs = len(data['inputs'])
+            num_outputs = len(data['outputs'])
 
             self.inputs = []
             for socket_data in data['inputs']:
-                new_socket = Socket(node=self, index=socket_data['index'], position=socket_data['position'], socket_type=socket_data['socket_type'])
+                new_socket = Socket(
+                    node=self,
+                    index=socket_data['index'],
+                    position=socket_data['position'],
+                    socket_type=socket_data['socket_type'],
+                    count_on_this_node_side=num_inputs,
+                    is_input=True
+                )
                 new_socket.deserialize(socket_data, hashmap, restore_id)
                 self.inputs.append(new_socket)
 
             self.outputs = []
             for socket_data in data['outputs']:
-                new_socket = Socket(node=self, index=socket_data['index'], position=socket_data['position'], socket_type=socket_data['socket_type'])
+                new_socket = Socket(
+                    node=self,
+                    index=socket_data['index'],
+                    position=socket_data['position'],
+                    socket_type=socket_data['socket_type'],
+                    count_on_this_node_side=num_outputs,
+                    is_input=False
+                )
                 new_socket.deserialize(socket_data, hashmap, restore_id)
                 self.outputs.append(new_socket)
         except Exception as e:
