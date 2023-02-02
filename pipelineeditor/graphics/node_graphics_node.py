@@ -12,7 +12,7 @@ class QDMGraphicsNode(QGraphicsItem):
         # init flags
         self._was_moved = False
         self._last_selected_state = False
-
+        self.hovered = False
         self.initSizes()
         self.initAssets()
 
@@ -24,6 +24,7 @@ class QDMGraphicsNode(QGraphicsItem):
         self.initTitle()
         self.title = self.node.title
         self.initContent()
+        self.setAcceptHoverEvents(True)
 
     def initSizes(self):
         self.width = 180
@@ -35,11 +36,19 @@ class QDMGraphicsNode(QGraphicsItem):
         self._title_vertical_padding = 4
 
     def initAssets(self):
+        self._color = QColor("#7F000000")
+        self._color_selected = QColor("#FFFFA637")
+        self._color_hovered  = QColor("#FF37A6FF")
+
         self._title_color = Qt.white
-        self._pen_default = QPen(QColor("#7F000000"))
-        self._pen_selected = QPen(QColor("#FFFFA637"))
+        self._pen_default = QPen(self._color)
+        self._pen_selected = QPen(self._color_selected)
+        self._pen_hovered = QPen(self._color_hovered)
         self._brush_title = QBrush(QColor("#FF313131"))
         self._brush_background = QBrush(QColor("#E3212121"))
+        self._pen_default.setWidthF(1)
+        self._pen_selected.setWidthF(1)
+        self._pen_hovered.setWidthF(2)
 
     @property
     def title(self):
@@ -52,6 +61,14 @@ class QDMGraphicsNode(QGraphicsItem):
 
     def onSelected(self):
         self.node.scene.gr_scene.itemSelected.emit()
+
+    def hoverEnterEvent(self, event) -> None:
+        self.hovered = True
+        self.update()
+
+    def hoverLeaveEvent(self, event) -> None:
+        self.hovered = False
+        self.update()
 
     def mouseMoveEvent(self, event: 'QGraphicsSceneMouseEvent') -> None:
         super().mouseMoveEvent(event)
@@ -132,6 +149,12 @@ class QDMGraphicsNode(QGraphicsItem):
         # outline
         path_outline = QPainterPath()
         path_outline.addRoundedRect(0, 0, self.width, self.height, self.edge_roundness, self.edge_roundness)
-        painter.setPen(self._pen_default if not self.isSelected() else self._pen_selected)
         painter.setBrush(Qt.NoBrush)
-        painter.drawPath(path_outline.simplified())
+        if self.hovered:
+            painter.setPen(self._pen_hovered)
+            painter.drawPath(path_outline.simplified())
+            painter.setPen(self._pen_default)
+            painter.drawPath(path_outline.simplified())
+        else:
+            painter.setPen(self._pen_default if not self.isSelected() else self._pen_selected)
+            painter.drawPath(path_outline.simplified())

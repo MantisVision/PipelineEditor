@@ -15,6 +15,7 @@ class QDMGraphicsEdge(QGraphicsPathItem):
 
         # init flags
         self._last_selected_state = False
+        self.hovered = False
 
         self.posSource = [0, 0]
         self.posDestination = [200, 100]
@@ -25,22 +26,35 @@ class QDMGraphicsEdge(QGraphicsPathItem):
     def initUI(self):
         self.setFlag(QGraphicsItem.ItemIsSelectable)
         self.setZValue(-1)
+        self.setAcceptHoverEvents(True)
 
     def initAssets(self):
         self._color = QColor("#001000")
         self._color_selected = QColor("#00ff00")
-        self._width = 2
+        self._color_hovered  = QColor("#FF37A6FF")
+        self._hover_width = 5
+        self._width = 3
 
         self._pen = QPen(self._color)
-        self._pen.setWidth(self._width)
+        self._pen.setWidthF(self._width)
         self._pen_dragging = QPen(self._color)
         self._pen_selected = QPen(self._color_selected)
-        self._pen_selected.setWidth(self._width)
-        self._pen_dragging.setWidth(self._width)
+        self._pen_hovered  = QPen(self._color_hovered)
+        self._pen_hovered.setWidthF(self._hover_width)
+        self._pen_selected.setWidthF(self._width)
+        self._pen_dragging.setWidthF(self._width)
         self._pen_dragging.setStyle(Qt.DashLine)
 
     def onSelected(self):
         self.edge.scene.gr_scene.itemSelected.emit()
+
+    def hoverEnterEvent(self, event) -> None:
+        self.hovered = True
+        self.update()
+
+    def hoverLeaveEvent(self, event) -> None:
+        self.hovered = False
+        self.update()
 
     def mouseReleaseEvent(self, event) -> None:
         super().mouseReleaseEvent(event)
@@ -63,11 +77,17 @@ class QDMGraphicsEdge(QGraphicsPathItem):
 
     def paint(self, painter, QStyleOptionGraphicsItem, widget=None) -> None:
         self.setPath(self.calcPath())
+
+        painter.setBrush(Qt.NoBrush)
+
+        if self.hovered and self.edge.end_socket:
+            painter.setPen(self._pen_hovered)
+            painter.drawPath(self.path())
+
         if not self.edge.end_socket:
             painter.setPen(self._pen_dragging)
         else:
             painter.setPen(self._pen if not self.isSelected() else self._pen_selected)
-        painter.setBrush(Qt.NoBrush)
         painter.drawPath(self.path())
 
     def calcPath(self):
