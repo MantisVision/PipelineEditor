@@ -1,5 +1,5 @@
 from PyQt5.QtWidgets import *
-
+from pathlib import Path
 from pipelineeditor.node_node import Node
 from pipelineeditor.node_content_widget import QDMNodeContentWidget
 from pipelineeditor.graphics.node_graphics_node import QDMGraphicsNode
@@ -15,6 +15,26 @@ class CalcGraphicsNode(QDMGraphicsNode):
         self.edge_padding = 0
         self._title_horizontal_padding = 8
         self._title_vertical_padding = 10
+
+    def initAssets(self):
+        super().initAssets()
+        current_file_path = Path(__file__).parent
+        self.icons = QImage(str(current_file_path.joinpath(r"icons/status_icons.png")))
+
+    def paint(self, painter, QStyleOptionGraphicsItem, widget=None):
+        super().paint(painter, QStyleOptionGraphicsItem, widget)
+
+        offset = 24
+        if self.node.isDirty():
+            offset = 0
+        if self.node.isInvalid():
+            offset = 48
+
+        painter.drawImage(
+            QRectF(-10, -10, 24, 24),
+            self.icons,
+            QRectF(offset, 0, 24, 24)
+        )
 
 
 class CalcContentWidget(QDMNodeContentWidget):

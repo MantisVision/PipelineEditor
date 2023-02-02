@@ -24,6 +24,9 @@ class Node(Serializable):
         self.outputs = []
         self.initSockets(inputs, outputs)
 
+        self._is_dirty = False
+        self._is_invalid = False
+
     def initInnerClasses(self):
         self.content = QDMNodeContentWidget(self)
         self.gr_node = QDMGraphicsNode(self)
@@ -136,6 +139,71 @@ class Node(Serializable):
         self.scene.gr_scene.removeItem(self.gr_node)
         self.gr_node = None
         self.scene.remove_node(self)
+
+    # Node evaluation functions
+    def isDirty(self):
+        return self._is_dirty
+
+    def markDirty(self, val=True):
+        self._is_dirty = val
+        if self._is_dirty:
+            self.onMarkedDirty()
+
+    def isInvalid(self):
+        return self._is_invalid
+
+    def markInvalid(self, val=True):
+        self._is_invalid = val
+        if self._is_invalid:
+            self.onMarkedDirty()
+
+    def onMarkedDirty(self):
+        pass
+
+    def onMarkedInvalid(self):
+        pass
+
+    def eval(self):
+        self.markDirty(False)
+        self.markInvalid(False)
+        return 0
+
+    def evalChildren(self):
+        for node in self.getChildrenNode():
+            node.eval()
+
+    def markChildrenDirty(self, val=True):
+        for child_node in self.getChildrenNode():
+            child_node.markDirty(val)
+            # added recursion for marking the whole descendatns tree
+            child_node.markChildrenDirty()
+
+    def markDescendantsDirty(self, val=True):
+        for child_node in self.getChildrenNode():
+            child_node.markDirty(val)
+            child_node.markChildrenDirty(val)
+
+    def markChildrenInvalid(self, val=True):
+        for child_node in self.getChildrenNode():
+            child_node.markInvalid(val)
+            # added recursion for marking the whole descendatns tree
+            child_node.markChildrenInvalid()
+
+    def markDescendantsInvalid(self, val=True):
+        for child_node in self.getChildrenNode():
+            child_node.markInvalid(val)
+            child_node.markChildrenInvalid(val)
+
+    def getChildrenNode(self):
+        if self.outputs == []:
+            return []
+        child_nodes = []
+        for i in range(len(self.outputs)):
+            for edge in self.outputs[i].edges:
+                child = edge.getOtherSocket(self.outputs[i]).node
+                child_nodes.append(child)
+
+        return child_nodes
 
     def serialize(self):
         return OrderedDict([

@@ -70,6 +70,9 @@ class Edge(Serializable):
         if self.start_socket:
             self.updatePositions()
 
+    def getOtherSocket(self, known_socket):
+        return self.start_socket if known_socket == self.end_socket else self.end_socket
+
     def removeFromSocket(self):
         self.start_socket = None
         self.end_socket = None

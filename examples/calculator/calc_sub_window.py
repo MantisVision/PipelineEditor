@@ -135,7 +135,8 @@ class CalculatorSubWindow(NodeEditorWidget):
 
     def handleNodeContextMenu(self, event):
         context_menu = QMenu(self)
-        dirty_act = context_menu.addAction("Mark Dirty")
+        mark_dirty_act = context_menu.addAction("Mark Dirty")
+        mark_dirty_desc_act = context_menu.addAction("Mark Descendants Dirty")
         mark_invalid_act = context_menu.addAction("Mark Invalid")
         umnark_invalid_act = context_menu.addAction("Unmark Invalid")
         eval_act = context_menu.addAction("Eval")
@@ -153,7 +154,17 @@ class CalculatorSubWindow(NodeEditorWidget):
         if hasattr(item, 'sokcet'):
             selected = item.socket.node
 
-        # TODO: implement oprations
+        if selected and action == eval_act:
+            val = selected.eval()
+            print(val)
+        elif selected and action == mark_dirty_act:
+            selected.markDirty()
+        elif selected and action == mark_dirty_desc_act:
+            selected.markDescendantsDirty()
+        elif selected and action == mark_invalid_act:
+            selected.markInvalid()
+        elif selected and action == umnark_invalid_act:
+            selected.markInvalid(False)
 
     def handleEdgeContextMenu(self, event):
         context_menu = QMenu(self)
@@ -181,4 +192,3 @@ class CalculatorSubWindow(NodeEditorWidget):
             new_calc_node = get_class_from_op_code(action.data())(self.scene)
             scene_pos = self.scene.getView().mapToScene(event.pos())
             new_calc_node.setPos(scene_pos.x(), scene_pos.y())
-
