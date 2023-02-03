@@ -41,3 +41,6 @@ def get_class_from_op_code(op_code):
         raise OpCodeNotRegistered(f"op_code {op_code} is not registered.")
 
     return CALC_NODES[op_code]
+
+
+from examples.calculator.nodes import * # noqa

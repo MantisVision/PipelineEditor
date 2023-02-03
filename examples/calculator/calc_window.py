@@ -12,7 +12,6 @@ from pipelineeditor.node_editor_window import NodeEditorWindow # noqa
 from examples.calculator.calc_sub_window import CalculatorSubWindow # noqa
 from examples.calculator.calc_drag_listbox import QDMDragListBox # noqa
 from examples.calculator.calc_config import * # noqa
-from examples.calculator.calc_confg_nodes import * # noqa
 from qss import nodeeditor_dark_resources # noqa
 
 
