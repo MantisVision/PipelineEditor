@@ -27,6 +27,15 @@ class CalculatorSubWindow(NodeEditorWidget):
 
         return get_class_from_op_code(data['op_code'])
 
+    def fileLoad(self, fname):
+        if super().fileLoad(fname):
+            for node in self.scene.nodes:
+                if node.__class__.__name__ == "CalcNode_Output":
+                    node.eval()
+            return True
+        return False
+        
+
     def setTitle(self):
         self.setWindowTitle(self.getUserFriendltFilename())
 

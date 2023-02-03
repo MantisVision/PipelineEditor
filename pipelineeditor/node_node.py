@@ -151,7 +151,7 @@ class Node(Serializable):
     # Traversing nodes functions
     def getInput(self, index=0):
         try:
-            edge = self.inputs[0].edges[0]
+            edge = self.inputs[index].edges[0]
             socket = edge.getOtherSocket(self.inputs[index])
             return socket.node
         except IndexError:

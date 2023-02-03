@@ -14,10 +14,8 @@ class CalcNode_Add(CalcNode):
     content_label = "+"
     content_label_obj_name = "calc_node_bg"
 
-    def eval_impl(self):
-        self.markDirty(False)
-        self.markInvalid(False)
-        return 123
+    def eval_operation(self, input1, input2):
+        return input1 + input2
 
 
 @register_nodes(OP_NODE_SUB)
@@ -28,6 +26,8 @@ class CalcNode_Sub(CalcNode):
     content_label = "-"
     content_label_obj_name = "calc_node_bg"
 
+    def eval_operation(self, input1, input2):
+        return input1 - input2
 
 @register_nodes(OP_NODE_MUL)
 class CalcNode_Mul(CalcNode):
@@ -37,6 +37,8 @@ class CalcNode_Mul(CalcNode):
     content_label = "*"
     content_label_obj_name = "calc_node_mul"
 
+    def eval_operation(self, input1, input2):
+        return input1 * input2
 
 @register_nodes(OP_NODE_DIV)
 class CalcNode_Div(CalcNode):
@@ -46,7 +48,8 @@ class CalcNode_Div(CalcNode):
     content_label = "/"
     content_label_obj_name = "calc_node_div"
 
-
+    def eval_operation(self, input1, input2):
+        return input1 / input2
 @register_nodes(OP_NODE_TEST)
 class CalcNode_Test(CalcNode):
     icon = str(current_file_path.joinpath(r"icons\test.png"))

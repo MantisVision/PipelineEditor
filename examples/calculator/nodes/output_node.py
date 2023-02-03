@@ -35,10 +35,11 @@ class CalcNode_Output(CalcNode):
             return
 
         val = input_node.eval()
-        if not val:
+        if val is None:
             self.gr_node.setToolTip("Not a NaN")
             self.markInvalid()
             return
+
         self.content.lbl.setText(str(val))
 
         self.markDirty(False)
