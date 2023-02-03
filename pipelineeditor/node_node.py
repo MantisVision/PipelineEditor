@@ -148,6 +148,35 @@ class Node(Serializable):
         self.gr_node = None
         self.scene.remove_node(self)
 
+    # Traversing nodes functions
+    def getInput(self, index=0):
+        try:
+            edge = self.inputs[0].edges[0]
+            socket = edge.getOtherSocket(self.inputs[index])
+            return socket.node
+        except IndexError:
+            print("Exception: trying to get input but nothing attached")
+            return None
+        except Exception as e:
+            dump_exception(e)
+            return None
+
+    def getInputs(self, index=0):
+        ins = []
+        for edge in self.inputs[index].edges:
+            other_socket = edge.getOtherSocket(self.inputs[index])
+            ins.append(other_socket.node)
+
+        return ins
+
+    def getOutputs(self, index=0):
+        outs = []
+        for edge in self.outs[index].edges:
+            other_socket = edge.getOtherSocket(self.inpoutsuts[index])
+            outs.append(other_socket.node)
+
+        return outs
+
     # Node evaluation functions
     def isDirty(self):
         return self._is_dirty

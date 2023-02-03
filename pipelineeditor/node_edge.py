@@ -4,6 +4,7 @@ from PyQt5.QtCore import *
 
 from pipelineeditor.serialize.node_serializable import Serializable
 from pipelineeditor.graphics.node_graphics_edge import *
+from pipelineeditor.utils import dump_exception
 
 EDGE_TYPE_DIRECT = 1
 EDGE_TYPE_BEZIER = 2
@@ -78,6 +79,8 @@ class Edge(Serializable):
         self.end_socket = None
 
     def remove(self):
+        old_sockets = [self.start_socket, self.end_socket]
+
         self.removeFromSocket()
         self.scene.gr_scene.removeItem(self.gr_edge)
         self.gr_edge = None
@@ -86,6 +89,16 @@ class Edge(Serializable):
             self.scene.remove_edge(self)
         except ValueError:
             pass
+
+        # notify nodes from old sockets
+        try:
+            for socket in old_sockets:
+                if socket and socket.node:
+                    socket.node.onEdgeConnectionChanged(self)
+                    if socket.is_input:
+                        socket.node.onInputChanged(self)
+        except Exception as e:
+            dump_exception(e)
 
     def updatePositions(self):
         sourcePos = self.start_socket.getSocketPosition()

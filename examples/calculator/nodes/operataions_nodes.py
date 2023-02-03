@@ -14,6 +14,11 @@ class CalcNode_Add(CalcNode):
     content_label = "+"
     content_label_obj_name = "calc_node_bg"
 
+    def eval_impl(self):
+        self.markDirty(False)
+        self.markInvalid(False)
+        return 123
+
 
 @register_nodes(OP_NODE_SUB)
 class CalcNode_Sub(CalcNode):

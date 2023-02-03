@@ -40,6 +40,22 @@ class CalcNode_Input(CalcNode):
         self.eval()
 
     def initInnerClasses(self):
-        self.gr_node = CalcGraphicsNode(self)
         self.content = CalcInputContent(self)
+        self.gr_node = CalcGraphicsNode(self)
         self.content.edit.textChanged.connect(self.onInputChanged)
+
+    def eval_impl(self):
+        u_val = self.content.edit.text()
+        s_val = int(u_val)
+        self.value = s_val
+        self.markDirty(False)
+        self.markInvalid(False)
+
+        self.markDescendantsInvalid(False)
+        self.markDescendantsDirty()
+
+        self.gr_node.setToolTip("")
+
+        self.evalChildren()
+
+        return self.value
