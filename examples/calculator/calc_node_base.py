@@ -4,6 +4,7 @@ from pipelineeditor.node_node import Node
 from pipelineeditor.node_content_widget import QDMNodeContentWidget
 from pipelineeditor.graphics.node_graphics_node import QDMGraphicsNode
 from pipelineeditor.node_socket import *
+from pipelineeditor.utils import dump_exception
 
 
 class CalcGraphicsNode(QDMGraphicsNode):
@@ -53,6 +54,11 @@ class CalcNode(Node):
     def __init__(self, scene, inputs=[2, 2], outputs=[1]) -> None:
         super().__init__(scene, self.__class__.op_title, inputs, outputs)
 
+        self.value = None
+
+        # mark all nodes by default to dirty
+        self.markDirty()
+
     def initInnerClasses(self):
         self.content = CalcContentWidget(self)
         self.gr_node = CalcGraphicsNode(self)
@@ -61,6 +67,26 @@ class CalcNode(Node):
         super().initSettings()
         self.input_socket_position = LEFT_CENTER
         self.output_socket_position = RIGHT_CENTER
+
+    def eval_impl(self):
+        return 123
+
+    def eval(self):
+        if not self._is_dirty and not self._is_invalid:
+            return self.value
+
+        try:
+            val = self.eval_impl()
+            self.markDirty(False)
+            self.markInvalid(False)
+            return val
+        except Exception as e:
+            self.markInvalid()
+            dump_exception(e)
+
+    def onInputChanged(self, new_edge):
+        self.markDirty()
+        self.eval()
 
     def serialize(self):
         res = super().serialize()

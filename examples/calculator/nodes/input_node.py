@@ -37,7 +37,9 @@ class CalcNode_Input(CalcNode):
 
     def __init__(self, scene) -> None:
         super().__init__(scene, inputs=[], outputs=[3])
+        self.eval()
 
     def initInnerClasses(self):
-        self.content = CalcInputContent(self)
         self.gr_node = CalcGraphicsNode(self)
+        self.content = CalcInputContent(self)
+        self.content.edit.textChanged.connect(self.onInputChanged)

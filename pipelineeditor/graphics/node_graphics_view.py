@@ -6,6 +6,7 @@ from pipelineeditor.node_edge import Edge, EDGE_TYPE_BEZIER
 from pipelineeditor.graphics.node_graphics_edge import QDMGraphicsEdge
 from pipelineeditor.graphics.node_graphics_socket import QDMGraphicsSocket
 from pipelineeditor.graphics.node_graphics_cutline import QDMGraphicsCutline
+from pipelineeditor.utils import dump_exception
 
 MODE_NOOP = 1
 MODE_EDGE_GRAPH = 2
@@ -198,8 +199,11 @@ class QDMGraphicsView(QGraphicsView):
         super().mouseReleaseEvent(event)
 
     def edgeDragStart(self, item):
-        self.drag_start_socket = item.socket
-        self.drag_edge = Edge(self.gr_scene.scene, item.socket, None, EDGE_TYPE_BEZIER)
+        try:
+            self.drag_start_socket = item.socket
+            self.drag_edge = Edge(self.gr_scene.scene, item.socket, None, EDGE_TYPE_BEZIER)
+        except Exception as e:
+            dump_exception(e)
 
     def edgeDragEnd(self, item):
         self.mode = MODE_NOOP
@@ -207,18 +211,27 @@ class QDMGraphicsView(QGraphicsView):
         self.drag_edge.remove()
         self.drag_edge = None
 
-        if type(item) is QDMGraphicsSocket:
-            if item.socket != self.drag_start_socket:
-                # if release dragging on socket (other than the first)
-                if not item.socket.multi_edge:
-                    item.socket.remove_all_edges()
+        try:
+            if type(item) is QDMGraphicsSocket:
+                if item.socket != self.drag_start_socket:
+                    # if release dragging on socket (other than the first)
+                    if not item.socket.multi_edge:
+                        item.socket.remove_all_edges()
 
-                if not self.drag_start_socket.multi_edge:
-                    self.drag_start_socket.remove_all_edges()
+                    if not self.drag_start_socket.multi_edge:
+                        self.drag_start_socket.remove_all_edges()
 
-                Edge(self.gr_scene.scene, self.drag_start_socket, item.socket, edge_type=EDGE_TYPE_BEZIER)
-                self.gr_scene.scene.history.store_history("Created new Edge", True)
-                return True
+                    new_edge = Edge(self.gr_scene.scene, self.drag_start_socket, item.socket, edge_type=EDGE_TYPE_BEZIER)
+
+                    for socket in [self.drag_start_socket, item.socket]:
+                        socket.node.onEdgeConnectionChanged(new_edge)
+                        if socket.is_input:
+                            socket.node.onInputChanged(new_edge)
+
+                    self.gr_scene.scene.history.store_history("Created new Edge", True)
+                    return True
+        except Exception as e:
+            dump_exception(e)
 
         return False
 

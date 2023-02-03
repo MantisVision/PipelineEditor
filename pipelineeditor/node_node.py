@@ -78,6 +78,14 @@ class Node(Serializable):
             self.outputs.append(socket)
             counter += 1
 
+    def onEdgeConnectionChanged(self, new_edge):
+        print(f"{self.__class__.__name__} onEdgeConnectionChanged {new_edge}")
+
+    def onInputChanged(self, new_edge):
+        print(f"{self.__class__.__name__} onEdgeInputChanged {new_edge}")
+        self.markDirty()
+        self.markDescendantsDirty()
+
     def updateConnectedEdges(self):
         for socket in self.inputs + self.outputs:
             for edge in socket.edges:
