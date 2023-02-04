@@ -5,7 +5,6 @@ from examples.calculator.calc_config import *
 from pipelineeditor.node_editor_widget import NodeEditorWidget
 from pipelineeditor.utils import dump_exception
 from pipelineeditor.node_edge import EDGE_TYPE_BEZIER, EDGE_TYPE_DIRECT
-# from pipelineeditor.node_node import Node
 from examples.calculator.calc_node_base import *
 
 
@@ -34,7 +33,6 @@ class CalculatorSubWindow(NodeEditorWidget):
                     node.eval()
             return True
         return False
-        
 
     def setTitle(self):
         self.setWindowTitle(self.getUserFriendltFilename())

@@ -79,6 +79,9 @@ class QDMGraphicsView(QGraphicsView):
     def keyPressEvent(self, event: QKeyEvent) -> None:
         super().keyPressEvent(event)
 
+        if event.key() == 80:
+            self.take_screenshot()
+
     def deleteSelected(self):
         for item in self.gr_scene.selectedItems():
             if isinstance(item, QDMGraphicsEdge):
@@ -297,3 +300,12 @@ class QDMGraphicsView(QGraphicsView):
                 if edge.gr_edge.intersects_with(p1, p2):
                     edge.remove()
         self.gr_scene.scene.history.store_history("Cutting Edge", True)
+
+    def take_screenshot(self):
+        image = QImage(self.viewport().size(), QImage.Format_ARGB32)
+        painter = QPainter(image)
+        self.render(painter)
+        painter.end()
+
+        # Save the screenshot to a file
+        image.save("test.png")
