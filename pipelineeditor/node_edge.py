@@ -8,6 +8,8 @@ from pipelineeditor.utils import dump_exception
 
 EDGE_TYPE_DIRECT = 1
 EDGE_TYPE_BEZIER = 2
+EDGE_TYPE_SQUARE = 3
+EDGE_TYPE_DEFAULT = EDGE_TYPE_BEZIER
 
 
 class Edge(Serializable):
@@ -63,6 +65,8 @@ class Edge(Serializable):
             self.gr_edge = QDMGraphicsEdgeDirect(self)
         elif self.edge_type == EDGE_TYPE_BEZIER:
             self.gr_edge = QDMGraphicsEdgeBezier(self)
+        elif self.edge_type == EDGE_TYPE_SQUARE:
+            self.gr_edge = GraphicsEdgePathSquare(self)
         else:
             self.gr_edge = QDMGraphicsEdgeBezier(self)
 

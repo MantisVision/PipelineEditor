@@ -5,7 +5,8 @@ from PyQt5.QtCore import *
 
 from pipelineeditor.node_socket import *
 
-EDGE_CP_ROUNDNESS = 100
+EDGE_CP_ROUNDNESS = 100     #: Bezier control point distance on the line
+WEIGHT_SOURCE = 0.2         #: factor for square edge to change the midpoint between start and end socket
 
 
 class QDMGraphicsEdge(QGraphicsPathItem):
@@ -136,5 +137,32 @@ class QDMGraphicsEdgeBezier(QDMGraphicsEdge):
             d[0],
             d[1]
         )
+
+        return path
+
+
+class GraphicsEdgePathSquare(QDMGraphicsEdge):
+    """Square line connection Graphics Edge"""
+    def __init__(self, *args, handle_weight=0.5, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.rand = None
+        self.handle_weight = handle_weight
+
+    def calcPath(self):
+        """Calculate the square edge line connection
+
+        :returns: ``QPainterPath`` of the edge square line
+        :rtype: ``QPainterPath``
+        """
+
+        s = self.posSource
+        d = self.posDestination
+
+        mid_x = s[0] + ((d[0] - s[0]) * self.handle_weight)
+
+        path = QPainterPath(QPointF(s[0], s[1]))
+        path.lineTo(mid_x, s[1])
+        path.lineTo(mid_x, d[1])
+        path.lineTo(d[0], d[1])
 
         return path

@@ -4,7 +4,7 @@ from pathlib import Path
 from examples.calculator.calc_config import *
 from pipelineeditor.node_editor_widget import NodeEditorWidget
 from pipelineeditor.utils import dump_exception
-from pipelineeditor.node_edge import EDGE_TYPE_BEZIER, EDGE_TYPE_DIRECT
+from pipelineeditor.node_edge import EDGE_TYPE_BEZIER, EDGE_TYPE_DIRECT, EDGE_TYPE_SQUARE
 from examples.calculator.calc_node_base import *
 
 
@@ -177,6 +177,7 @@ class CalculatorSubWindow(NodeEditorWidget):
         context_menu = QMenu(self)
         bezier_act = context_menu.addAction("Bezier Edge")
         direct_act = context_menu.addAction("Direct Edge")
+        square_act  = context_menu.addAction("Square Edge")
 
         action = context_menu.exec_(self.mapToGlobal(event.pos()))
 
@@ -190,6 +191,9 @@ class CalculatorSubWindow(NodeEditorWidget):
 
         if selected and action == direct_act:
             selected.edge_type = EDGE_TYPE_DIRECT
+        
+        if selected and action == square_act: 
+            selected.edge_type = EDGE_TYPE_SQUARE
 
     def handleNewNodeContextMenu(self, event):
         context_menu = self.initNodesContextMenu()

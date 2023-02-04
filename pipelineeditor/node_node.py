@@ -142,7 +142,7 @@ class Node(Serializable):
     def remove(self):
         for socket in (self.inputs + self.outputs):
             # if socket.hasEdge():
-            for edge in socket.edges:
+            for edge in socket.edges.copy():
                 edge.remove()
         self.scene.gr_scene.removeItem(self.gr_node)
         self.gr_node = None

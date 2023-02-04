@@ -2,7 +2,7 @@ from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 
-from pipelineeditor.node_edge import Edge, EDGE_TYPE_BEZIER
+from pipelineeditor.node_edge import Edge, EDGE_TYPE_DEFAULT
 from pipelineeditor.graphics.node_graphics_edge import QDMGraphicsEdge
 from pipelineeditor.graphics.node_graphics_socket import QDMGraphicsSocket
 from pipelineeditor.graphics.node_graphics_cutline import QDMGraphicsCutline
@@ -204,7 +204,7 @@ class QDMGraphicsView(QGraphicsView):
     def edgeDragStart(self, item):
         try:
             self.drag_start_socket = item.socket
-            self.drag_edge = Edge(self.gr_scene.scene, item.socket, None, EDGE_TYPE_BEZIER)
+            self.drag_edge = Edge(self.gr_scene.scene, item.socket, None, EDGE_TYPE_DEFAULT)
         except Exception as e:
             dump_exception(e)
 
@@ -224,7 +224,7 @@ class QDMGraphicsView(QGraphicsView):
                     if not self.drag_start_socket.multi_edge:
                         self.drag_start_socket.remove_all_edges()
 
-                    new_edge = Edge(self.gr_scene.scene, self.drag_start_socket, item.socket, edge_type=EDGE_TYPE_BEZIER)
+                    new_edge = Edge(self.gr_scene.scene, self.drag_start_socket, item.socket, edge_type=EDGE_TYPE_DEFAULT)
 
                     for socket in [self.drag_start_socket, item.socket]:
                         socket.node.onEdgeConnectionChanged(new_edge)
@@ -296,7 +296,7 @@ class QDMGraphicsView(QGraphicsView):
             p1 = self.cutline._line_points[ix]
             p2 = self.cutline._line_points[ix + 1]
 
-            for edge in self.gr_scene.scene.edges:
+            for edge in self.gr_scene.scene.edges.copy():
                 if edge.gr_edge.intersects_with(p1, p2):
                     edge.remove()
         self.gr_scene.scene.history.store_history("Cutting Edge", True)
