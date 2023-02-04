@@ -18,6 +18,7 @@ class CalculatorSubWindow(NodeEditorWidget):
         self.scene.add_drag_enter_listener(self.onDragEnter)
         self.scene.add_drop_listener(self.onDrop)
         self.scene.set_node_class_selector(self.getNodeClassFromData)
+        # self.scene.add_items_deselected_listener()
         self._close_event_listeners = []
         self.setTitle()
         self.initNewNodeActions()
@@ -202,7 +203,7 @@ class CalculatorSubWindow(NodeEditorWidget):
         if selected and action == direct_act:
             selected.edge_type = EDGE_TYPE_DIRECT
 
-        if selected and action == square_act: 
+        if selected and action == square_act:
             selected.edge_type = EDGE_TYPE_SQUARE
 
     def handleNewNodeContextMenu(self, event):

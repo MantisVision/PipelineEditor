@@ -12,6 +12,7 @@ from pipelineeditor.node_editor_window import NodeEditorWindow # noqa
 from examples.calculator.calc_sub_window import CalculatorSubWindow # noqa
 from examples.calculator.calc_drag_listbox import QDMDragListBox # noqa
 from examples.calculator.calc_config import * # noqa
+from examples.calculator.nodes.colap import FrameLayout # noqa
 from qss import nodeeditor_dark_resources # noqa
 
 
@@ -46,6 +47,7 @@ class CalculatorWindow(NodeEditorWindow):
         self.windowMapper.mapped[QWidget].connect(self.setActiveSubWindow)
 
         self.createNodeDock()
+        self.createParameterDock()
         self.createActions()
         self.createMenus()
         self.createToolBars()
@@ -171,11 +173,16 @@ class CalculatorWindow(NodeEditorWindow):
             self.nodes_dock.show()
 
     def onNodeClick(self, event):
-        print(event)
         active_mdi_child = self.activeMdiChild()
         selected = active_mdi_child.scene.gr_scene.selectedItems()
         if selected:
-            print(selected[0].node)
+            node = selected[0].node
+            if node.__class__.__name__ == "CalcNode_Test" or node.__class__.__name__ == "CalcNode_Div":
+                print(self.param_dock.widget().objectName())
+                if self.param_dock.widget().objectName() != str(node.id):
+                    print("check params")
+                self.param_dock.setWidget(node.createParamWidget())
+                self.param_dock.setVisible(True)
 
     def createToolBars(self):
         pass
@@ -188,6 +195,17 @@ class CalculatorWindow(NodeEditorWindow):
         self.nodes_dock.setFloating(False)
 
         self.addDockWidget(Qt.LeftDockWidgetArea, self.nodes_dock)
+
+    def createParameterDock(self):
+        self.colaps_widget = QWidget()
+        self.colaps_widget.setMinimumWidth(250)
+
+        self.param_dock = QDockWidget("Parameter")
+        self.param_dock.setWidget(self.colaps_widget)
+        self.param_dock.setFloating(False)
+
+        self.addDockWidget(Qt.RightDockWidgetArea, self.param_dock)
+        self.param_dock.setVisible(False)
 
     def createStatusBar(self):
         self.statusBar().showMessage("")
@@ -256,7 +274,7 @@ class CalculatorWindow(NodeEditorWindow):
         sub_window = self.mdiArea.addSubWindow(pipeline_editor)
         sub_window.setWindowIcon(self.empty_icon)
         # TODO: Submit here callback function on item selection (only for nodes)
-        # pipeline_editor.scene.add_item_selected_listener(self.onNodeClick)
+        # pipeline_editor.scene.add_item_selected_listener(self.testSelection)
         # pipeline_editor.scene.add_items_deselected_listener(self.onNodeClick)
         pipeline_editor.scene.add_item_doubleclick_listener(self.onNodeClick)
         pipeline_editor.scene.history.addHistoryModifiedListener(self.updateEditMenu)
