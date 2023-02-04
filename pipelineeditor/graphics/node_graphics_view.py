@@ -9,9 +9,9 @@ from pipelineeditor.graphics.node_graphics_cutline import QDMGraphicsCutline
 from pipelineeditor.utils import dump_exception
 
 MODE_NOOP = 1
-MODE_EDGE_GRAPH = 2
-EDGE_DRAG_THRESHOLD = 10
+MODE_EDGE_DRAG = 2
 MODE_EDGE_CUT = 3
+EDGE_DRAG_THRESHOLD = 10
 
 
 class QDMGraphicsView(QGraphicsView):
@@ -139,11 +139,11 @@ class QDMGraphicsView(QGraphicsView):
                 return
 
         if type(item) is QDMGraphicsSocket and self.mode == MODE_NOOP:
-            self.mode = MODE_EDGE_GRAPH
+            self.mode = MODE_EDGE_DRAG
             self.edgeDragStart(item)
             return
 
-        if self.mode == MODE_EDGE_GRAPH and self.edgeDragEnd(item):
+        if self.mode == MODE_EDGE_DRAG and self.edgeDragEnd(item):
             return
 
         # Cutline event
@@ -169,7 +169,7 @@ class QDMGraphicsView(QGraphicsView):
                 super().mouseReleaseEvent(fakeEvent)
                 return
 
-        if self.mode == MODE_EDGE_GRAPH:
+        if self.mode == MODE_EDGE_DRAG:
             if self.distanceBetweenClickAndReleaseIsOff(event):
                 if self.edgeDragEnd(item):
                     return
@@ -239,7 +239,7 @@ class QDMGraphicsView(QGraphicsView):
         return False
 
     def mouseMoveEvent(self, event) -> None:
-        if self.mode == MODE_EDGE_GRAPH:
+        if self.mode == MODE_EDGE_DRAG:
             pos = self.mapToScene(event.pos())
             self.drag_edge.gr_edge.setDestination(pos.x(), pos.y())
             self.drag_edge.gr_edge.update()

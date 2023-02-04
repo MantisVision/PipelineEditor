@@ -5,6 +5,7 @@ from examples.calculator.calc_config import *
 from pipelineeditor.node_editor_widget import NodeEditorWidget
 from pipelineeditor.utils import dump_exception
 from pipelineeditor.node_edge import EDGE_TYPE_BEZIER, EDGE_TYPE_DIRECT, EDGE_TYPE_SQUARE
+from pipelineeditor.graphics.node_graphics_view import MODE_EDGE_DRAG
 from examples.calculator.calc_node_base import *
 
 
@@ -13,6 +14,7 @@ class CalculatorSubWindow(NodeEditorWidget):
         super().__init__(parent)
         self.setAttribute(Qt.WA_DeleteOnClose)
         self.scene.add_has_been_modified_listener(self.setTitle)
+        self.scene.history.addHistoryRestoreListener(self.onHistoryRestored)
         self.scene.add_drag_enter_listener(self.onDragEnter)
         self.scene.add_drop_listener(self.onDrop)
         self.scene.set_node_class_selector(self.getNodeClassFromData)
@@ -33,6 +35,14 @@ class CalculatorSubWindow(NodeEditorWidget):
                     node.eval()
             return True
         return False
+
+    def doEvalOutputs(self):
+        for node in self.scene.nodes:
+            if node.__class__.__name__ == "CalcNode_Output":
+                node.eval()
+
+    def onHistoryRestored(self):
+        self.doEvalOutputs()
 
     def setTitle(self):
         self.setWindowTitle(self.getUserFriendltFilename())
@@ -191,7 +201,7 @@ class CalculatorSubWindow(NodeEditorWidget):
 
         if selected and action == direct_act:
             selected.edge_type = EDGE_TYPE_DIRECT
-        
+
         if selected and action == square_act: 
             selected.edge_type = EDGE_TYPE_SQUARE
 
@@ -203,3 +213,11 @@ class CalculatorSubWindow(NodeEditorWidget):
             new_calc_node = get_class_from_op_code(action.data())(self.scene)
             scene_pos = self.scene.getView().mapToScene(event.pos())
             new_calc_node.setPos(scene_pos.x(), scene_pos.y())
+
+            if self.scene.getView().mode == MODE_EDGE_DRAG:
+                # If we were dragging edge
+                self.scene.getView().edgeDragEnd(new_calc_node.inputs[0].gr_socket)
+                new_calc_node.doSelect(True)
+                # new_calc_node.inputs[0].edges[-1].doSelect(True)
+            else:
+                self.scene.history.store_history(f"Created {new_calc_node.__class__.__name__}")

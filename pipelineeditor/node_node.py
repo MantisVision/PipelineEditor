@@ -86,6 +86,9 @@ class Node(Serializable):
         self.markDirty()
         self.markDescendantsDirty()
 
+    def doSelect(self, new_state=True):
+        self.gr_node.doSelect(new_state)
+
     def updateConnectedEdges(self):
         for socket in self.inputs + self.outputs:
             for edge in socket.edges:

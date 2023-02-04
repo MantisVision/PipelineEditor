@@ -62,6 +62,12 @@ class QDMGraphicsNode(QGraphicsItem):
     def onSelected(self):
         self.node.scene.gr_scene.itemSelected.emit()
 
+    def doSelect(self, new_state):
+        self.setSelected(new_state)
+        self._last_selected_state = new_state
+        if new_state:
+            self.onSelected()
+
     def hoverEnterEvent(self, event) -> None:
         self.hovered = True
         self.update()

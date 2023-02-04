@@ -25,6 +25,9 @@ class Edge(Serializable):
 
         self.scene.add_edge(self)
 
+    def doSelect(self, new_state=True):
+        self.gr_edge.doSelect(new_state)
+
     @property
     def start_socket(self):
         return self._start_socket
