@@ -56,21 +56,22 @@ class CalcNode_Div(CalcNode):
 
     def createParamWidget(self):
 
-        colaps_widget = QWidget()
-        colaps_widget.setMinimumWidth(250)
-        colaps_widget.setStyleSheet("")
-        colaps_widget.setObjectName(str(self.id))
-        layout = QVBoxLayout()
-        layout.setSpacing(0)
-        layout.setAlignment(Qt.AlignTop)
-        colaps_widget.setLayout(layout)
+        if not self.colaps_widget:
+            self.colaps_widget = QWidget()
+            self.colaps_widget.setMinimumWidth(250)
+            self.colaps_widget.setStyleSheet("")
+            self.colaps_widget.setObjectName(str(self.id))
+            layout = QVBoxLayout()
+            layout.setSpacing(0)
+            layout.setAlignment(Qt.AlignTop)
+            self.colaps_widget.setLayout(layout)
 
-        t = FrameLayout(title="CalcNode_Div")
-        t.addWidget(QPushButton('div'))
-        t.addWidget(QLineEdit())
-        layout.addWidget(t)
+            t = FrameLayout(title=self.__class__.__name__)
+            t.addWidget(QPushButton('test'))
+            t.addWidget(QLineEdit())
+            layout.addWidget(t)
 
-        return colaps_widget
+        return self.colaps_widget
 
 
 @register_nodes(OP_NODE_TEST)
@@ -80,21 +81,22 @@ class CalcNode_Test(CalcNode):
     op_title = "TEST"
     content_label = "TEST"
     content_label_obj_name = "calc_node_bg"
+    colaps_widget = None
 
     def createParamWidget(self):
+        if not self.colaps_widget:
+            self.colaps_widget = QWidget()
+            self.colaps_widget.setMinimumWidth(250)
+            self.colaps_widget.setStyleSheet("")
+            self.colaps_widget.setObjectName(str(self.id))
+            layout = QVBoxLayout()
+            layout.setSpacing(0)
+            layout.setAlignment(Qt.AlignTop)
+            self.colaps_widget.setLayout(layout)
 
-        colaps_widget = QWidget()
-        colaps_widget.setMinimumWidth(250)
-        colaps_widget.setStyleSheet("")
-        colaps_widget.setObjectName(str(self.id))
-        layout = QVBoxLayout()
-        layout.setSpacing(0)
-        layout.setAlignment(Qt.AlignTop)
-        colaps_widget.setLayout(layout)
+            t = FrameLayout(title=self.__class__.__name__)
+            t.addWidget(QPushButton('test'))
+            t.addWidget(QLineEdit())
+            layout.addWidget(t)
 
-        t = FrameLayout(title="CalcNode_Test")
-        t.addWidget(QPushButton('test'))
-        t.addWidget(QLineEdit())
-        layout.addWidget(t)
-
-        return colaps_widget
+        return self.colaps_widget
