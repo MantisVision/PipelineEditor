@@ -5,10 +5,10 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Calculator",
+            "name": "Mantis",
             "type": "python",
             "request": "launch",
-            "program": "C:\\Personal\\PipelineEditor\\examples\\calculator\\main.py",
+            "program": "C:\\Personal\\PipelineEditor\\examples\\mantis\\main.py",
             "python": "${command:python.interpreterPath}",
             "console": "integratedTerminal",
             "justMyCode": true

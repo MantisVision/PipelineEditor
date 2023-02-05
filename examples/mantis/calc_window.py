@@ -16,11 +16,11 @@ from examples.mantis.nodes.colap import FrameLayout # noqa
 from qss import nodeeditor_dark_resources # noqa
 
 
-class CalculatorWindow(NodeEditorWindow):
+class MantisWindow(NodeEditorWindow):
 
     def initUI(self):
         self.author_name = "ZikriBen"
-        self.module_name = "Pipeline Editor - Calculator"
+        self.module_name = "Pipeline Editor - Mantis"
 
         loadStylesheets(
             str(Path(__file__).parent.joinpath("qss/nodeeditor-dark.qss")),
@@ -66,7 +66,7 @@ class CalculatorWindow(NodeEditorWindow):
         self.statusBar().addPermanentWidget(widget)
         self.readSettings()
 
-        self.setWindowTitle("Calculator Example")
+        self.setWindowTitle("Mantis Example")
 
     def closeEvent(self, event):
         self.mdiArea.closeAllSubWindows()
