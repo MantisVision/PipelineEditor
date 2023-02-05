@@ -73,6 +73,8 @@ class CalcNode_S_MVX_File(CalcNode):
 
     def __init__(self, scene) -> None:
         super().__init__(scene, inputs=[], outputs=[3])
+        self.input_path = ""
+        self.file_line_edit = None
 
     def createParamWidget(self):
         if not self.colaps_widget:
@@ -85,20 +87,70 @@ class CalcNode_S_MVX_File(CalcNode):
             layout.setAlignment(Qt.AlignTop)
             self.colaps_widget.setLayout(layout)
 
-            t = FrameLayout(title=self.__class__.__name__)
-            t.addWidget(QPushButton('test'))
-            t.addWidget(QLineEdit())
+            t = FrameLayout(title=self.op_title)
+            frame = QFrame()
+            frame.setLayout(QGridLayout())
+
+            if not self.file_line_edit:
+                self.file_line_edit = QLineEdit(self.input_path)
+                self.file_line_edit.textChanged.connect(self.onTextChange)
+
+            frame.layout().addWidget(QLabel("File path:"), 0, 0)
+            frame.layout().addWidget(self.file_line_edit, 0, 1)
+            browse_btn = QPushButton("...")
+            browse_btn.setMaximumWidth(24)
+            browse_btn.clicked.connect(self.BrowseFile)
+            frame.layout().addWidget(browse_btn, 0, 2)
+            frame.layout().setColumnStretch(1, 5)
+            t.addWidget(frame)
             layout.addWidget(t)
 
         return self.colaps_widget
 
+    def onTextChange(self):
+        self.input_path = self.file_line_edit.text()
+
+    def eval_impl(self):
+        if not self.input_path:
+            self.markInvalid()
+            self.markDescendantsDirty()
+            self.gr_node.setToolTip("File wasn't selected")
+            return
+
+        if not Path(self.input_path).exists():
+            self.markInvalid()
+            self.markDescendantsDirty()
+            self.gr_node.setToolTip("File wasn't found")
+            return
+
+        self.markDirty(False)
+        self.markInvalid(False)
+
+        self.markDescendantsInvalid(False)
+        self.markDescendantsDirty()
+
+        self.gr_node.setToolTip("")
+
+        self.evalChildren()
+
+        return self.input_path
+
+    def BrowseFile(self):
+        fname, ffilter = QFileDialog.getOpenFileName(None, "Open a MVX file")
+
+        if not fname:
+            return
+
+        self.file_line_edit.setText(fname)
+
 
 @register_nodes(OP_NODE_S_UUID)
-class CalcNode_S_MVX_File(CalcNode):
+class CalcNode_S_UUID(CalcNode):
     icon = str(current_file_path.joinpath(r"icons\in.png"))
     op_code = OP_NODE_S_UUID
     op_title = "UUID"
-    content_label_obj_name = "mvx_source_node_bg"
+    content_label = "UUID"
+    content_label_obj_name = "uuid_source_node_bg"
     colaps_widget = None
 
     def __init__(self, scene) -> None:
@@ -115,9 +167,12 @@ class CalcNode_S_MVX_File(CalcNode):
             layout.setAlignment(Qt.AlignTop)
             self.colaps_widget.setLayout(layout)
 
-            t = FrameLayout(title=self.__class__.__name__)
-            t.addWidget(QPushButton('test'))
-            t.addWidget(QLineEdit())
+            t = FrameLayout(title=self.op_title)
+            frame = QFrame()
+            frame.setLayout(QFormLayout())
+            frame.layout().addRow(QLabel("UUID:"), QLineEdit())
+            frame.layout().addRow(QLabel("UUID:"), QLineEdit())
+            t.addWidget(frame)
             layout.addWidget(t)
 
         return self.colaps_widget

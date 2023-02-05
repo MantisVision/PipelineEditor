@@ -92,8 +92,9 @@ class CalcNode(Node):
             return val
 
     def eval(self):
-        if not self._is_dirty and not self._is_invalid:
-            return self.value
+        # Eval only when node is either dirty or invalid
+        # if not self._is_dirty and not self._is_invalid:
+        #     return self.value
 
         try:
             val = self.eval_impl()

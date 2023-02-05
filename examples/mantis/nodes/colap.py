@@ -12,6 +12,8 @@ class FrameLayout(QWidget):
         self._content, self._content_layout = (None, None)
 
         self._main_v_layout = QVBoxLayout(self)
+        self._main_v_layout.setSpacing(0)
+        self._main_v_layout.setContentsMargins(0, 0, 0, 0)
         self._main_v_layout.addWidget(self.initTitleFrame(title, self._is_collasped))
         self._main_v_layout.addWidget(self.initContent(self._is_collasped))
         self.initCollapsable()
@@ -24,7 +26,8 @@ class FrameLayout(QWidget):
     def initContent(self, collapsed):
         self._content = QWidget()
         self._content_layout = QVBoxLayout()
-
+        self._content_layout.setSpacing(0)
+        self._content_layout.setContentsMargins(0, 0, 0, 0)
         self._content.setLayout(self._content_layout)
         self._content.setVisible(not collapsed)
 
@@ -50,11 +53,10 @@ class FrameLayout(QWidget):
         def __init__(self, parent=None, title="", collapsed=False):
             QFrame.__init__(self, parent=parent)
 
-            self.setMinimumHeight(30)  # height of the button
+            self.setMinimumHeight(24)  # height of the button
             self.move(QPoint(24, 0))
             # self.setStyleSheet("border:2px solid rgb(41, 41, 41); ")
             self.setStyleSheet("border:0px; background:transparent;")
-
             self._hlayout = QHBoxLayout(self)
             self._hlayout.setContentsMargins(0, 0, 0, 0)
             self._hlayout.setSpacing(0)

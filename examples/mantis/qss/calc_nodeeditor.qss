@@ -16,6 +16,9 @@ QDMNodeContentWidget QLabel#calc_node_bg,
 QDMNodeContentWidget QLabel#calc_node_mul,
 QDMNodeContentWidget QLabel#mvx_source_node_bg,
 QDMNodeContentWidget QLabel#mvx_target_node_bg,
+QDMNodeContentWidget QLabel#mvx_target_node_bg,
+QDMNodeContentWidget QLabel#uuid_source_node_bg,
+QDMNodeContentWidget QLabel#harvest_o_node_bg,
 QDMNodeContentWidget QLabel#calc_node_div {
   background: transparent;
   height: 0px;
@@ -35,6 +38,14 @@ QDMNodeContentWidget QLabel#mvx_source_node_bg {
 }
 QDMNodeContentWidget QLabel#mvx_target_node_bg {
   padding-left: 5px;
+  font-size: 30px;
+}
+QDMNodeContentWidget QLabel#uuid_source_node_bg {
+  padding-left: 70px;
+  font-size: 30px;
+}
+QDMNodeContentWidget QLabel#harvest_o_node_bg {
+  padding-left: 40px;
   font-size: 30px;
 }
 QDMNodeContentWidget QLabel#calc_node_output {
