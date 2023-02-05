@@ -3,6 +3,7 @@ from examples.mantis.calc_config import *
 from examples.mantis.calc_node_base import *
 from pathlib import Path
 from pipelineeditor.utils import dump_exception
+from examples.mantis.nodes.colap import FrameLayout
 current_file_path = Path(__file__).parent.parent
 
 
@@ -60,6 +61,7 @@ class CalcNode_S_MVX_File(CalcNode):
 
     def __init__(self, scene) -> None:
         super().__init__(scene, inputs=[1], outputs=[])
+        self.createParamWidget()
 
     def createParamWidget(self):
         if not self.colaps_widget:

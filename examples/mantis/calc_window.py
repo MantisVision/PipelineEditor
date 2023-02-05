@@ -177,9 +177,20 @@ class MantisWindow(NodeEditorWindow):
         selected = active_mdi_child.scene.gr_scene.selectedItems()
         if selected:
             node = selected[0].node
-            colaps = ["CalcNode_S_UUID", "CalcNode_Div", "CalcNode_S_UUID", "CalcNode_S_MVX_File", "CalcNode_S_MVX_File", "CalcNode_Harvest"]
+            colaps = [
+                "CalcNode_S_UUID",
+                "CalcNode_Div",
+                "CalcNode_S_UUID",
+                "CalcNode_S_MVX_File",
+                "CalcNode_S_MVX_File",
+                "CalcNode_Harvest",
+                "CalcNode_Join"
+            ]
 
+            print(node.__class__.__name__)
+            print(colaps)
             if node.__class__.__name__ in colaps:
+                print("ASDSAD")
                 print(self.param_dock.widget().objectName())
                 if self.param_dock.widget().objectName() != str(node.id):
                     print("check params")

@@ -164,6 +164,18 @@ class Node(Serializable):
             dump_exception(e)
             return None
 
+    def getOutput(self, index=0):
+        try:
+            edge = self.outputs[index].edges[0]
+            socket = edge.getOtherSocket(self.outputs[index])
+            return socket.node
+        except IndexError:
+            print("Exception: trying to get input but nothing attached")
+            return None
+        except Exception as e:
+            dump_exception(e)
+            return None
+
     def getInputs(self, index=0):
         ins = []
         for edge in self.inputs[index].edges:

@@ -75,6 +75,7 @@ class CalcNode_S_MVX_File(CalcNode):
         super().__init__(scene, inputs=[], outputs=[3])
         self.input_path = ""
         self.file_line_edit = None
+        self.createParamWidget()
 
     def createParamWidget(self):
         if not self.colaps_widget:
@@ -152,9 +153,12 @@ class CalcNode_S_UUID(CalcNode):
     content_label = "UUID"
     content_label_obj_name = "uuid_source_node_bg"
     colaps_widget = None
+    _uuid = ""
+    uuid_line_edit = None
 
     def __init__(self, scene) -> None:
         super().__init__(scene, inputs=[], outputs=[3])
+        self.createParamWidget()
 
     def createParamWidget(self):
         if not self.colaps_widget:
@@ -170,9 +174,33 @@ class CalcNode_S_UUID(CalcNode):
             t = FrameLayout(title=self.op_title)
             frame = QFrame()
             frame.setLayout(QFormLayout())
-            frame.layout().addRow(QLabel("UUID:"), QLineEdit())
-            frame.layout().addRow(QLabel("UUID:"), QLineEdit())
+            if not self.uuid_line_edit:
+                self.uuid_line_edit = QLineEdit(self._uuid)
+                self.uuid_line_edit.textChanged.connect(self.onTextChange)
+            frame.layout().addRow(QLabel("UUID:"), self.uuid_line_edit)
             t.addWidget(frame)
             layout.addWidget(t)
 
         return self.colaps_widget
+
+    def eval_impl(self):
+        if not self._uuid:
+            self.markInvalid()
+            self.markDescendantsDirty()
+            self.gr_node.setToolTip("UUID wasn't entered")
+            return
+
+        self.markDirty(False)
+        self.markInvalid(False)
+
+        self.gr_node.setToolTip("")
+
+        # self.evalChildren()
+
+        return self._uuid
+
+    def onTextChange(self):
+        self._uuid = self.uuid_line_edit.text()
+        output_node = self.getOutput(0)
+        if output_node:
+            output_node.eval()

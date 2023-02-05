@@ -19,6 +19,7 @@ QDMNodeContentWidget QLabel#mvx_target_node_bg,
 QDMNodeContentWidget QLabel#mvx_target_node_bg,
 QDMNodeContentWidget QLabel#uuid_source_node_bg,
 QDMNodeContentWidget QLabel#harvest_o_node_bg,
+QDMNodeContentWidget QLabel#join_o_node_bg,
 QDMNodeContentWidget QLabel#calc_node_div {
   background: transparent;
   height: 0px;
@@ -45,6 +46,10 @@ QDMNodeContentWidget QLabel#uuid_source_node_bg {
   font-size: 30px;
 }
 QDMNodeContentWidget QLabel#harvest_o_node_bg {
+  padding-left: 22px;
+  font-size: 30px;
+}
+QDMNodeContentWidget QLabel#join_o_node_bg {
   padding-left: 40px;
   font-size: 30px;
 }
