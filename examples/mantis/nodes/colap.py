@@ -2,12 +2,13 @@ import sys
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
+from pathlib import Path
 
 
 class FrameLayout(QWidget):
     def __init__(self, parent=None, title=None):
         QFrame.__init__(self, parent=parent)
-        self._is_collasped = True
+        self._is_collasped = False
         self._title_frame = None
         self._content, self._content_layout = (None, None)
 
@@ -77,7 +78,7 @@ class FrameLayout(QWidget):
             self._title = QLabel(title)
             self._title.setMinimumHeight(17)
             self._title.move(QPoint(24, 0))
-            self._title.setStyleSheet("border:0px")
+            self._title.setStyleSheet("border:1px")
 
             return self._title
 
@@ -113,6 +114,36 @@ class FrameLayout(QWidget):
             painter.end()
 
 
+class ColapseGB(QGroupBox):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.initUI()
+
+    def initUI(self):
+        self.setTitle("Group")
+        self.setCheckable(True)
+        self.setChecked(True)
+        icons_root = (Path(__file__).parent.parent.joinpath("icons").as_posix())
+        print(icons_root)
+        self.setStyleSheet(
+            "QGroupBox::title{ color:white; }"
+            "QGroupBox::indicator { width: 20px; height: 20px; }"
+            "QGroupBox::indicator:unchecked { image: url(" + f"{icons_root}/small_arrow_right-light.png); " + "}"
+            "QGroupBox::indicator:checked { image: url(" + f"{icons_root}/small_arrow_down-light.png); " + "}"
+        )
+
+        self.setFixedHeight(self.sizeHint().height())
+        # signals
+        self.toggled.connect(self.toggleGroup)
+
+    def toggleGroup(self):
+        state = self.isChecked()
+        if state:
+            self.setFixedHeight(self.sizeHint().height())
+        else:
+            self.setFixedHeight(30)
+
+
 if __name__ == '__main__':
 
     app = QApplication(sys.argv)
@@ -121,10 +152,10 @@ if __name__ == '__main__':
     w = QWidget()
     w.setMinimumWidth(350)
     win.setCentralWidget(w)
-    l = QVBoxLayout()
-    l.setSpacing(0)
-    l.setAlignment(Qt.AlignTop)
-    w.setLayout(l)
+    layout = QVBoxLayout()
+    layout.setSpacing(0)
+    layout.setAlignment(Qt.AlignTop)
+    w.setLayout(layout)
 
     t = FrameLayout(title="Buttons")
     t.addWidget(QPushButton('a'))
@@ -146,8 +177,8 @@ if __name__ == '__main__':
     table.setHorizontalHeaderLabels(headers)
     f.addWidget(table)
 
-    l.addWidget(t)
-    l.addWidget(f)
+    layout.addWidget(t)
+    layout.addWidget(f)
 
     win.show()
     win.raise_()

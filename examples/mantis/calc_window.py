@@ -182,7 +182,7 @@ class MantisWindow(NodeEditorWindow):
                 "CalcNode_Div",
                 "CalcNode_S_UUID",
                 "CalcNode_S_MVX_File",
-                "CalcNode_S_MVX_File",
+                "CalcNode_T_MVX_File",
                 "CalcNode_Harvest",
                 "CalcNode_Join"
             ]

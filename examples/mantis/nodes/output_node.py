@@ -3,7 +3,7 @@ from examples.mantis.calc_config import *
 from examples.mantis.calc_node_base import *
 from pathlib import Path
 from pipelineeditor.utils import dump_exception
-from examples.mantis.nodes.colap import FrameLayout
+from examples.mantis.nodes.colap import FrameLayout, ColapseGB
 current_file_path = Path(__file__).parent.parent
 
 
@@ -51,7 +51,7 @@ class CalcNode_Output(CalcNode):
 
 
 @register_nodes(OP_NODE_T_MVX_FILE)
-class CalcNode_S_MVX_File(CalcNode):
+class CalcNode_T_MVX_File(CalcNode):
     icon = str(current_file_path.joinpath(r"icons\out.png"))
     op_code = OP_NODE_T_MVX_FILE
     op_title = "MVX File"
@@ -74,9 +74,22 @@ class CalcNode_S_MVX_File(CalcNode):
             layout.setAlignment(Qt.AlignTop)
             self.colaps_widget.setLayout(layout)
 
-            t = FrameLayout(title=self.__class__.__name__)
-            t.addWidget(QPushButton('test'))
-            t.addWidget(QLineEdit())
+            t = ColapseGB()
+            t.setTitle("File path")
+            t.setLayout(QFormLayout())
+            input_path = QLineEdit("")
+            input_path.setDisabled(True)
+            t.layout().addRow(QLabel("File: "), input_path)
+            t.setFixedHeight(t.sizeHint().height())
             layout.addWidget(t)
+
+            t2 = ColapseGB()
+            t2.setTitle("File path2")
+            t2.setLayout(QFormLayout())
+            input_path = QLineEdit("")
+            input_path.setDisabled(True)
+            t2.layout().addRow(QLabel("File: "), input_path)
+            t2.setFixedHeight(t2.sizeHint().height())
+            layout.addWidget(t2)
 
         return self.colaps_widget
