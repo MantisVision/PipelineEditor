@@ -143,10 +143,12 @@ class CalcNode_Harvest(CalcNode):
             dropir_cb.setObjectName("dropir_cb")
             dropir_cb.setMaximumWidth(60)
             dropir_cb.addItems(["True", "False"])
+
             no_join_cb = QComboBox()
             no_join_cb.setObjectName("no_join_cb")
             no_join_cb.addItems(["True", "False"])
             no_join_cb.setMaximumWidth(60)
+
             t = CollapseGB()
             t.setTitle("Harvest")
             t.setLayout(QFormLayout())
@@ -305,17 +307,16 @@ class CalcNode_Upload(CalcNode):
             layout.setAlignment(Qt.AlignTop)
             self.colaps_widget.setLayout(layout)
 
-            t = FrameLayout(title=self.op_title)
-            frame = QFrame()
-            frame.setLayout(QFormLayout())
-
             if not self.input_path_line_edit:
                 self.input_path_line_edit = QLineEdit()
                 self.input_path_line_edit.setReadOnly(True)
                 self.input_path_line_edit.textChanged.connect(self.onTextChange)
 
-            frame.layout().addRow(QLabel("File Path:"), self.input_path_line_edit)
-            t.addWidget(frame)
+            t = CollapseGB()
+            t.setTitle("File path")
+            t.setLayout(QFormLayout())
+            t.layout().addRow(QLabel("File Path:"), self.input_path_line_edit)
+            t.setFixedHeight(t.sizeHint().height())
             layout.addWidget(t)
 
         return self.colaps_widget
@@ -361,3 +362,117 @@ class CalcNode_Upload(CalcNode):
     def onTextChange(self):
         self.input_path = self.input_path_line_edit.text()
         self.eval()
+
+
+@register_nodes(OP_NODE_O_TSDF)
+class CalcNode_TSDF(CalcNode):
+    icon = str(current_file_path.joinpath(r"icons\test.png"))
+    op_code = OP_NODE_O_TSDF
+    op_title = "TSDF"
+    content_label = "TSDF"
+    content_label_obj_name = "tsdf_o_node_bg"
+    colaps_widget = None
+    input_path_line_edit = None
+    input_path = ""
+    output_path = ""
+
+    def __init__(self, scene) -> None:
+        super().__init__(scene, inputs=[2], outputs=[2])
+        self.createParamWidget()
+
+    def createParamWidget(self):
+        if not self.colaps_widget:
+            self.colaps_widget = QWidget()
+            self.colaps_widget.setMinimumWidth(250)
+            self.colaps_widget.setStyleSheet("")
+            self.colaps_widget.setObjectName(str(self.id))
+            layout = QVBoxLayout()
+            layout.setSpacing(0)
+            layout.setAlignment(Qt.AlignTop)
+            self.colaps_widget.setLayout(layout)
+
+            if not self.input_path_line_edit:
+                self.input_path_line_edit = QLineEdit()
+                self.input_path_line_edit.setDisabled(True)
+                self.input_path_line_edit.textChanged.connect(self.onTextChange)
+
+            dropir_cb = QComboBox()
+            dropir_cb.setObjectName("dropir_cb")
+            dropir_cb.setMaximumWidth(60)
+            dropir_cb.addItems(["True", "False"])
+            no_join_cb = QComboBox()
+            no_join_cb.setObjectName("no_join_cb")
+            no_join_cb.addItems(["True", "False"])
+            no_join_cb.setMaximumWidth(60)
+            scale = QLineEdit()
+            scale.setMaximumWidth(60)
+            fps_cb = QComboBox()
+            fps_cb.setObjectName("no_join_cb")
+            fps_cb.addItems(["5", "10", "15", "20", "25"])
+            fps_cb.setCurrentText("25")
+            fps_cb.setMaximumWidth(40)
+            t = CollapseGB()
+            t.setTitle("Harvest")
+            t.setLayout(QFormLayout())
+            t.layout().addRow(QLabel("File Path:"), self.input_path_line_edit)
+            t.layout().addRow(QLabel("Client:"), QLineEdit())
+            t.layout().addRow(QLabel("Build:"), QLineEdit())
+            t.layout().addRow(QLabel("Scale:"), scale)
+            t.layout().addRow(QLabel("Atlas Size:"), QLineEdit())
+            t.layout().addRow(QLabel("FPS:"), fps_cb)
+            t.layout().addRow(QLabel("Additional Params:"), QLineEdit())
+            t.layout().addRow(QCheckBox("Segmented"))
+            t.layout().addRow(QCheckBox("Local"))
+            t.setFixedHeight(t.sizeHint().height())
+            layout.addWidget(t)
+
+        return self.colaps_widget
+
+    def eval_impl(self):
+        input_node = self.getInput(0)
+        if not input_node:
+            self.gr_node.setToolTip("Not connected")
+            self.markInvalid()
+            return
+
+        if input_node.__class__.__name__ not in ["CalcNode_S_MVX_File", "CalcNode_Join"]:
+            self.gr_node.setToolTip("Input should be either MVX file or Join node")
+            if self.input_path_line_edit:
+                self.input_path_line_edit.setText("")
+            self.markInvalid()
+            return
+
+        val = input_node.eval()
+
+        if val is None:
+            self.gr_node.setToolTip("File path is missing")
+            if self.input_path_line_edit:
+                self.input_path_line_edit.setText("")
+            self.markInvalid()
+            return
+
+        if self.input_path_line_edit:
+            self.input_path_line_edit.setText(val)
+
+        if not Path(self.input_path).exists():
+            self.markInvalid()
+            self.markDescendantsDirty()
+            self.gr_node.setToolTip("File wasn't found")
+            return
+
+        self.markDirty(False)
+        self.markInvalid(False)
+        self.gr_node.setToolTip("")
+
+        if self.input_path_line_edit:
+            self.input_path_line_edit.setText(val)
+
+        self.output_path = "test/to/path"
+
+        return self.output_path
+
+    def onTextChange(self):
+        self.input_path = self.input_path_line_edit.text()
+        output_node = self.getOutput(0)
+        if output_node:
+            output_node.eval()

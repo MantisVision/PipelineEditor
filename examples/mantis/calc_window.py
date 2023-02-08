@@ -185,7 +185,8 @@ class MantisWindow(NodeEditorWindow):
                 "CalcNode_T_MVX_File",
                 "CalcNode_Harvest",
                 "CalcNode_Join",
-                "CalcNode_Upload"
+                "CalcNode_Upload",
+                "CalcNode_TSDF",
             ]
 
             print(node.__class__.__name__)
