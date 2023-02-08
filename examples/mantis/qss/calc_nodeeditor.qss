@@ -20,6 +20,7 @@ QDMNodeContentWidget QLabel#mvx_target_node_bg,
 QDMNodeContentWidget QLabel#uuid_source_node_bg,
 QDMNodeContentWidget QLabel#harvest_o_node_bg,
 QDMNodeContentWidget QLabel#join_o_node_bg,
+QDMNodeContentWidget QLabel#upload_o_node_bg,
 QDMNodeContentWidget QLabel#calc_node_div {
   background: transparent;
   height: 0px;
@@ -53,6 +54,10 @@ QDMNodeContentWidget QLabel#join_o_node_bg {
   padding-left: 40px;
   font-size: 30px;
 }
+QDMNodeContentWidget QLabel#upload_o_node_bg {
+  padding-left: 20px;
+  font-size: 30px;
+}
 QDMNodeContentWidget QLabel#calc_node_output {
   min-width: 150px;
   max-width: 150px;
@@ -73,4 +78,12 @@ QDMNodeContentWidget QLineEdit#calc_node_input {
 }
 QGraphicsView {
   selection-background-color: #fff;
+}
+ 
+QComboBox#no_join_cb,
+QComboBox#dropir_cb {
+  color: #e6e6e6;
+  background: #555;
+  border-color: #141414;
+  selection-background-color: #6e6e6e;
 }

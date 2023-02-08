@@ -108,9 +108,6 @@ class CalcNode_S_MVX_File(CalcNode):
 
         return self.colaps_widget
 
-    def onTextChange(self):
-        self.input_path = self.file_line_edit.text()
-
     def eval_impl(self):
         if not self.input_path:
             self.markInvalid()
@@ -132,8 +129,6 @@ class CalcNode_S_MVX_File(CalcNode):
 
         self.gr_node.setToolTip("")
 
-        self.evalChildren()
-
         return self.input_path
 
     def BrowseFile(self):
@@ -143,6 +138,12 @@ class CalcNode_S_MVX_File(CalcNode):
             return
 
         self.file_line_edit.setText(fname)
+
+    def onTextChange(self):
+        self.input_path = self.file_line_edit.text()
+        output_node = self.getOutput(0)
+        if output_node:
+            output_node.eval()
 
 
 @register_nodes(OP_NODE_S_UUID)

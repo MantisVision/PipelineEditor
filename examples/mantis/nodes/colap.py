@@ -114,7 +114,7 @@ class FrameLayout(QWidget):
             painter.end()
 
 
-class ColapseGB(QGroupBox):
+class CollapseGB(QGroupBox):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.initUI()

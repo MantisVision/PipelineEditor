@@ -2,7 +2,7 @@ from PyQt5.QtCore import *
 from pathlib import Path
 from examples.mantis.calc_config import *
 from examples.mantis.calc_node_base import *
-from examples.mantis.nodes.colap import FrameLayout
+from examples.mantis.nodes.colap import FrameLayout, CollapseGB
 from pipelineeditor.utils import dump_exception
 current_file_path = Path(__file__).parent.parent
 
@@ -139,12 +139,23 @@ class CalcNode_Harvest(CalcNode):
                 self.uuid_line_edit.setDisabled(True)
                 self.uuid_line_edit.textChanged.connect(self.onTextChange)
 
-            frame.layout().addRow(QLabel("UUID:"), self.uuid_line_edit)
-            frame.layout().addRow(QLabel("Method of Capture:"), QLineEdit())
-            frame.layout().addRow(QLabel("MV Session:"), QLineEdit())
-            frame.layout().addRow(QLabel("DropIR:"), QLineEdit())
-            frame.layout().addRow(QLabel("No Join:"), QLineEdit())
-            t.addWidget(frame)
+            dropir_cb = QComboBox()
+            dropir_cb.setObjectName("dropir_cb")
+            dropir_cb.setMaximumWidth(60)
+            dropir_cb.addItems(["True", "False"])
+            no_join_cb = QComboBox()
+            no_join_cb.setObjectName("no_join_cb")
+            no_join_cb.addItems(["True", "False"])
+            no_join_cb.setMaximumWidth(60)
+            t = CollapseGB()
+            t.setTitle("Harvest")
+            t.setLayout(QFormLayout())
+            t.layout().addRow(QLabel("UUID:"), self.uuid_line_edit)
+            t.layout().addRow(QLabel("Method of Capture:"), QLineEdit())
+            t.layout().addRow(QLabel("MV Session:"), QLineEdit())
+            t.layout().addRow(QLabel("DropIR:"), dropir_cb)
+            t.layout().addRow(QLabel("No Join:"), no_join_cb)
+            t.setFixedHeight(t.sizeHint().height())
             layout.addWidget(t)
 
         return self.colaps_widget
@@ -205,28 +216,26 @@ class CalcNode_Join(CalcNode):
 
     def createParamWidget(self):
         if not self.colaps_widget:
-            self.colaps_widget = QWidget()
-            self.colaps_widget.setMinimumWidth(250)
-            self.colaps_widget.setStyleSheet("")
-            self.colaps_widget.setObjectName(str(self.id))
+            if not self.colaps_widget:
+                self.colaps_widget = QWidget()
+                self.colaps_widget.setMinimumWidth(250)
+                self.colaps_widget.setStyleSheet("")
+                self.colaps_widget.setObjectName(str(self.id))
             layout = QVBoxLayout()
             layout.setSpacing(0)
             layout.setAlignment(Qt.AlignTop)
             self.colaps_widget.setLayout(layout)
 
-            t = FrameLayout(title=self.op_title)
-            frame = QFrame()
-            frame.setLayout(QFormLayout())
-
             if not self.uuid_line_edit:
-                self.uuid_line_edit = QLineEdit()
-                self.uuid_line_edit.setDisabled(True)
+                self.uuid_line_edit = QLineEdit("")
+                self.uuid_line_edit.setReadOnly(True)
                 self.uuid_line_edit.textChanged.connect(self.onTextChange)
 
-            frame.layout().addRow(QLabel("UUID:"), self.uuid_line_edit)
-            frame.layout().addRow(QLabel("MV Session:"), QLineEdit())
-            frame.layout().addRow(QLabel("Segmented:"), QLineEdit())
-            t.addWidget(frame)
+            t = CollapseGB()
+            t.setTitle("File path")
+            t.setLayout(QFormLayout())
+            t.layout().addRow(QLabel("File: "), self.uuid_line_edit)
+            t.setFixedHeight(t.sizeHint().height())
             layout.addWidget(t)
 
         return self.colaps_widget
@@ -245,7 +254,6 @@ class CalcNode_Join(CalcNode):
             return
 
         val = input_node.eval()
-
         if val is None:
             self.gr_node.setToolTip("Not a valid UUID")
             if self.uuid_line_edit:
@@ -257,8 +265,10 @@ class CalcNode_Join(CalcNode):
         self.markInvalid(False)
         self.gr_node.setToolTip("")
 
+        self.output_path = fr"C:\HARVEST\{val}\{val}_joined.mvx"
+
         if self.uuid_line_edit:
-            self.uuid_line_edit.setText(val)
+            self.uuid_line_edit.setText(self.output_path)
 
         return self.output_path
 
@@ -267,3 +277,87 @@ class CalcNode_Join(CalcNode):
         output_node = self.getOutput(0)
         if output_node:
             output_node.eval()
+
+
+@register_nodes(OP_NODE_O_UPLOAD)
+class CalcNode_Upload(CalcNode):
+    icon = str(current_file_path.joinpath(r"icons\test.png"))
+    op_code = OP_NODE_O_UPLOAD
+    op_title = "UPLOAD"
+    content_label = "UPLOAD"
+    content_label_obj_name = "upload_o_node_bg"
+    colaps_widget = None
+    input_path = ""
+    input_path_line_edit = ""
+
+    def __init__(self, scene) -> None:
+        super().__init__(scene, inputs=[1], outputs=[])
+        self.createParamWidget()
+
+    def createParamWidget(self):
+        if not self.colaps_widget:
+            self.colaps_widget = QWidget()
+            self.colaps_widget.setMinimumWidth(250)
+            self.colaps_widget.setStyleSheet("")
+            self.colaps_widget.setObjectName(str(self.id))
+            layout = QVBoxLayout()
+            layout.setSpacing(0)
+            layout.setAlignment(Qt.AlignTop)
+            self.colaps_widget.setLayout(layout)
+
+            t = FrameLayout(title=self.op_title)
+            frame = QFrame()
+            frame.setLayout(QFormLayout())
+
+            if not self.input_path_line_edit:
+                self.input_path_line_edit = QLineEdit()
+                self.input_path_line_edit.setReadOnly(True)
+                self.input_path_line_edit.textChanged.connect(self.onTextChange)
+
+            frame.layout().addRow(QLabel("File Path:"), self.input_path_line_edit)
+            t.addWidget(frame)
+            layout.addWidget(t)
+
+        return self.colaps_widget
+
+    def eval_impl(self):
+        input_node = self.getInput(0)
+        if not input_node:
+            self.gr_node.setToolTip("Not connected")
+            self.markInvalid()
+            return
+
+        if input_node.__class__.__name__ not in ["CalcNode_S_MVX_File", "CalcNode_Join"]:
+            self.gr_node.setToolTip("Input should be either MVX file or Join node")
+            if self.input_path_line_edit:
+                self.input_path_line_edit.setText("")
+            self.markInvalid()
+            return
+
+        val = input_node.eval()
+
+        if val is None:
+            self.gr_node.setToolTip("File path is missing")
+            if self.input_path_line_edit:
+                self.input_path_line_edit.setText("")
+            self.markInvalid()
+            return
+
+        if self.input_path_line_edit:
+            self.input_path_line_edit.setText(val)
+
+        if not Path(self.input_path).exists():
+            self.markInvalid()
+            self.markDescendantsDirty()
+            self.gr_node.setToolTip("File wasn't found")
+            return
+
+        self.markDirty(False)
+        self.markInvalid(False)
+        self.gr_node.setToolTip("")
+
+        return self.input_path
+
+    def onTextChange(self):
+        self.input_path = self.input_path_line_edit.text()
+        self.eval()

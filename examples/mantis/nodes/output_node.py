@@ -3,7 +3,7 @@ from examples.mantis.calc_config import *
 from examples.mantis.calc_node_base import *
 from pathlib import Path
 from pipelineeditor.utils import dump_exception
-from examples.mantis.nodes.colap import FrameLayout, ColapseGB
+from examples.mantis.nodes.colap import FrameLayout, CollapseGB
 current_file_path = Path(__file__).parent.parent
 
 
@@ -74,7 +74,7 @@ class CalcNode_T_MVX_File(CalcNode):
             layout.setAlignment(Qt.AlignTop)
             self.colaps_widget.setLayout(layout)
 
-            t = ColapseGB()
+            t = CollapseGB()
             t.setTitle("File path")
             t.setLayout(QFormLayout())
             input_path = QLineEdit("")
@@ -83,7 +83,7 @@ class CalcNode_T_MVX_File(CalcNode):
             t.setFixedHeight(t.sizeHint().height())
             layout.addWidget(t)
 
-            t2 = ColapseGB()
+            t2 = CollapseGB()
             t2.setTitle("File path2")
             t2.setLayout(QFormLayout())
             input_path = QLineEdit("")
