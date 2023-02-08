@@ -58,6 +58,8 @@ class CalcNode_T_MVX_File(CalcNode):
     content_label = "MVX"
     content_label_obj_name = "mvx_target_node_bg"
     colaps_widget = None
+    file_line_edit = ""
+    output_path = ""
 
     def __init__(self, scene) -> None:
         super().__init__(scene, inputs=[1], outputs=[])
@@ -76,20 +78,51 @@ class CalcNode_T_MVX_File(CalcNode):
 
             t = CollapseGB()
             t.setTitle("File path")
-            t.setLayout(QFormLayout())
-            input_path = QLineEdit("")
-            input_path.setDisabled(True)
-            t.layout().addRow(QLabel("File: "), input_path)
+            t.setLayout(QGridLayout())
+
+            if not self.file_line_edit:
+                self.file_line_edit = QLineEdit(self.output_path)
+                self.file_line_edit.textChanged.connect(self.onTextChange)
+
+            t.layout().addWidget(QLabel("File path:"), 0, 0)
+            t.layout().addWidget(self.file_line_edit, 0, 1)
+            browse_btn = QPushButton("...")
+            browse_btn.setMaximumWidth(24)
+            browse_btn.clicked.connect(self.BrowseFile)
+            t.layout().addWidget(browse_btn, 0, 2)
+            t.layout().setColumnStretch(1, 5)
             t.setFixedHeight(t.sizeHint().height())
             layout.addWidget(t)
 
-            t2 = CollapseGB()
-            t2.setTitle("File path2")
-            t2.setLayout(QFormLayout())
-            input_path = QLineEdit("")
-            input_path.setDisabled(True)
-            t2.layout().addRow(QLabel("File: "), input_path)
-            t2.setFixedHeight(t2.sizeHint().height())
-            layout.addWidget(t2)
-
         return self.colaps_widget
+
+    def eval_impl(self):
+        if not self.output_path:
+            self.markInvalid()
+            self.gr_node.setToolTip("File wasn't selected")
+            return
+
+        self.markDirty(False)
+        self.markInvalid(False)
+
+        self.markDescendantsInvalid(False)
+        self.markDescendantsDirty()
+
+        self.gr_node.setToolTip("")
+
+        return self.output_path
+
+    def BrowseFile(self):
+        fname, ffilter = QFileDialog.getOpenFileName(None, "Open a MVX file")
+
+        if not fname:
+            return
+
+        self.file_line_edit.setText(fname)
+
+    def onTextChange(self):
+        self.output_path = self.file_line_edit.text()
+        if not self.getInput().eval():
+            self.markInvalid()
+            self.gr_node.setToolTip("Input node is not vaild")
+            return

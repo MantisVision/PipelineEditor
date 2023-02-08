@@ -228,8 +228,9 @@ class QDMGraphicsView(QGraphicsView):
 
                     for socket in [self.drag_start_socket, item.socket]:
                         socket.node.onEdgeConnectionChanged(new_edge)
-                        if socket.is_input:
-                            socket.node.onInputChanged(new_edge)
+                        # TODO: check this uncomment this line
+                        # if socket.is_input:
+                        socket.node.onInputChanged(new_edge)
 
                     self.gr_scene.scene.history.store_history("Created new Edge", True)
                     return True

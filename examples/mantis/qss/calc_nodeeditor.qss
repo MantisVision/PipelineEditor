@@ -21,7 +21,7 @@ QDMNodeContentWidget QLabel#uuid_source_node_bg,
 QDMNodeContentWidget QLabel#harvest_o_node_bg,
 QDMNodeContentWidget QLabel#join_o_node_bg,
 QDMNodeContentWidget QLabel#upload_o_node_bg,
-QDMNodeContentWidget QLabel#tsdf_o_node_bg,
+QDMNodeContentWidget QLabel#tsdf נ                                                                                                                                   _o_node_bg,
 QDMNodeContentWidget QLabel#calc_node_div {
   background: transparent;
   height: 0px;

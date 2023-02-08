@@ -189,10 +189,7 @@ class MantisWindow(NodeEditorWindow):
                 "CalcNode_TSDF",
             ]
 
-            print(node.__class__.__name__)
-            print(colaps)
             if node.__class__.__name__ in colaps:
-                print("ASDSAD")
                 print(self.param_dock.widget().objectName())
                 if self.param_dock.widget().objectName() != str(node.id):
                     print("check params")

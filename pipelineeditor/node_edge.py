@@ -102,8 +102,9 @@ class Edge(Serializable):
             for socket in old_sockets:
                 if socket and socket.node:
                     socket.node.onEdgeConnectionChanged(self)
-                    if socket.is_input:
-                        socket.node.onInputChanged(self)
+                    # TODO: check this uncomment this line
+                    # if socket.is_input:
+                    socket.node.onInputChanged(self)
         except Exception as e:
             dump_exception(e)
 

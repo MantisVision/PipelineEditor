@@ -430,8 +430,10 @@ class CalcNode_TSDF(CalcNode):
 
     def eval_impl(self):
         input_node = self.getInput(0)
+        output_node = self.getOutput(0)
+
         if not input_node:
-            self.gr_node.setToolTip("Not connected")
+            self.gr_node.setToolTip("Input node not connected")
             self.markInvalid()
             return
 
@@ -439,6 +441,16 @@ class CalcNode_TSDF(CalcNode):
             self.gr_node.setToolTip("Input should be either MVX file or Join node")
             if self.input_path_line_edit:
                 self.input_path_line_edit.setText("")
+            self.markInvalid()
+            return
+
+        if not output_node:
+            self.gr_node.setToolTip("Output node not connected")
+            self.markInvalid()
+            return
+
+        if output_node.__class__.__name__ not in ["CalcNode_T_MVX_File"]:
+            self.gr_node.setToolTip("Output should be MVX file")
             self.markInvalid()
             return
 
@@ -467,7 +479,16 @@ class CalcNode_TSDF(CalcNode):
         if self.input_path_line_edit:
             self.input_path_line_edit.setText(val)
 
-        self.output_path = "test/to/path"
+        val = output_node.eval()
+
+        if val is None:
+            self.gr_node.setToolTip("File output path is missing")
+            if self.input_path_line_edit:
+                self.input_path_line_edit.setText("")
+            self.markInvalid()
+            return
+
+        self.output_path = val
 
         return self.output_path
 
