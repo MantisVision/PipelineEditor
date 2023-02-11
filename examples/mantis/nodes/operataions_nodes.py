@@ -7,102 +7,6 @@ from pipelineeditor.utils import dump_exception
 current_file_path = Path(__file__).parent.parent
 
 
-@register_nodes(OP_NODE_ADD)
-class CalcNode_Add(CalcNode):
-    icon = str(current_file_path.joinpath(r"icons\add.png"))
-    op_code = OP_NODE_ADD
-    op_title = "Add"
-    content_label = "+"
-    content_label_obj_name = "calc_node_bg"
-
-    def eval_operation(self, input1, input2):
-        return input1 + input2
-
-
-@register_nodes(OP_NODE_SUB)
-class CalcNode_Sub(CalcNode):
-    icon = str(current_file_path.joinpath(r"icons\sub.png"))
-    op_code = OP_NODE_SUB
-    op_title = "Subtract"
-    content_label = "-"
-    content_label_obj_name = "calc_node_bg"
-
-    def eval_operation(self, input1, input2):
-        return input1 - input2
-
-
-@register_nodes(OP_NODE_MUL)
-class CalcNode_Mul(CalcNode):
-    icon = str(current_file_path.joinpath(r"icons\mul.png"))
-    op_code = OP_NODE_MUL
-    op_title = "Multiply"
-    content_label = "*"
-    content_label_obj_name = "calc_node_mul"
-
-    def eval_operation(self, input1, input2):
-        return input1 * input2
-
-
-@register_nodes(OP_NODE_DIV)
-class CalcNode_Div(CalcNode):
-    icon = str(current_file_path.joinpath(r"icons\divide.png"))
-    op_code = OP_NODE_DIV
-    op_title = "Divide"
-    content_label = "/"
-    content_label_obj_name = "calc_node_div"
-    colaps_widget = None
-
-    def eval_operation(self, input1, input2):
-        return input1 / input2
-
-    def createParamWidget(self):
-
-        if not self.colaps_widget:
-            self.colaps_widget = QWidget()
-            self.colaps_widget.setMinimumWidth(250)
-            self.colaps_widget.setStyleSheet("")
-            self.colaps_widget.setObjectName(str(self.id))
-            layout = QVBoxLayout()
-            layout.setSpacing(0)
-            layout.setAlignment(Qt.AlignTop)
-            self.colaps_widget.setLayout(layout)
-
-            t = FrameLayout(title=self.__class__.__name__)
-            t.addWidget(QPushButton('test'))
-            t.addWidget(QLineEdit())
-            layout.addWidget(t)
-
-        return self.colaps_widget
-
-
-@register_nodes(OP_NODE_TEST)
-class CalcNode_Test(CalcNode):
-    icon = str(current_file_path.joinpath(r"icons\test.png"))
-    op_code = OP_NODE_TEST
-    op_title = "TEST"
-    content_label = "TEST"
-    content_label_obj_name = "calc_node_bg"
-    colaps_widget = None
-
-    def createParamWidget(self):
-        if not self.colaps_widget:
-            self.colaps_widget = QWidget()
-            self.colaps_widget.setMinimumWidth(250)
-            self.colaps_widget.setStyleSheet("")
-            self.colaps_widget.setObjectName(str(self.id))
-            layout = QVBoxLayout()
-            layout.setSpacing(0)
-            layout.setAlignment(Qt.AlignTop)
-            self.colaps_widget.setLayout(layout)
-
-            t = FrameLayout(title=self.__class__.__name__)
-            t.addWidget(QPushButton('test'))
-            t.addWidget(QLineEdit())
-            layout.addWidget(t)
-
-        return self.colaps_widget
-
-
 @register_nodes(OP_NODE_O_HARVEST)
 class CalcNode_Harvest(CalcNode):
     icon = str(current_file_path.joinpath(r"icons\test.png"))
@@ -114,6 +18,10 @@ class CalcNode_Harvest(CalcNode):
     output_path = ""
     _uuid = ""
     uuid_line_edit = None
+    dropir_cb = None
+    no_join_cb = None
+    method_of_capture_line = None
+    mv_session_line = None
 
     def __init__(self, scene) -> None:
         super().__init__(scene, inputs=[2], outputs=[2])
@@ -139,24 +47,26 @@ class CalcNode_Harvest(CalcNode):
                 self.uuid_line_edit.setDisabled(True)
                 self.uuid_line_edit.textChanged.connect(self.onTextChange)
 
-            dropir_cb = QComboBox()
-            dropir_cb.setObjectName("dropir_cb")
-            dropir_cb.setMaximumWidth(60)
-            dropir_cb.addItems(["True", "False"])
+            self.method_of_capture_line = QLineEdit()
+            self.mv_session_line = QLineEdit()
+            self.dropir_cb = QComboBox()
+            self.dropir_cb.setObjectName("dropir_cb")
+            self.dropir_cb.setMaximumWidth(60)
+            self.dropir_cb.addItems(["True", "False"])
 
-            no_join_cb = QComboBox()
-            no_join_cb.setObjectName("no_join_cb")
-            no_join_cb.addItems(["True", "False"])
-            no_join_cb.setMaximumWidth(60)
+            self.no_join_cb = QComboBox()
+            self.no_join_cb.setObjectName("no_join_cb")
+            self.no_join_cb.addItems(["True", "False"])
+            self.no_join_cb.setMaximumWidth(60)
 
             t = CollapseGB()
             t.setTitle("Harvest")
             t.setLayout(QFormLayout())
             t.layout().addRow(QLabel("UUID:"), self.uuid_line_edit)
-            t.layout().addRow(QLabel("Method of Capture:"), QLineEdit())
-            t.layout().addRow(QLabel("MV Session:"), QLineEdit())
-            t.layout().addRow(QLabel("DropIR:"), dropir_cb)
-            t.layout().addRow(QLabel("No Join:"), no_join_cb)
+            t.layout().addRow(QLabel("Method of Capture:"), self.method_of_capture_line)
+            t.layout().addRow(QLabel("MV Session:"), self.mv_session_line)
+            t.layout().addRow(QLabel("DropIR:"), self.dropir_cb)
+            t.layout().addRow(QLabel("No Join:"), self.no_join_cb)
             t.setFixedHeight(t.sizeHint().height())
             layout.addWidget(t)
 
@@ -168,6 +78,7 @@ class CalcNode_Harvest(CalcNode):
             self.gr_node.setToolTip("Not connected")
             self.markInvalid()
             return
+
         if input_node.__class__.__name__ != "CalcNode_S_UUID":
             self.gr_node.setToolTip("Input should be UUID node")
             if self.uuid_line_edit:
@@ -175,7 +86,7 @@ class CalcNode_Harvest(CalcNode):
             self.markInvalid()
             return
 
-        val = input_node.eval()
+        val = input_node.getVal()
 
         if val is None:
             self.gr_node.setToolTip("Not a valid UUID")
@@ -198,6 +109,28 @@ class CalcNode_Harvest(CalcNode):
         output_node = self.getOutput(0)
         if output_node:
             output_node.eval()
+
+    def serialize(self):
+        res = super().serialize()
+        res['uuid'] = self.uuid_line_edit.text()
+        res['method_of_capture'] = self.method_of_capture_line.text()
+        res['mv_session'] = self.mv_session_line.text()
+        res['drop_ir'] = self.dropir_cb.currentIndex()
+        res['no_join'] = self.no_join_cb.currentIndex()
+        return res
+
+    def deserialize(self, data, hashmap={}, restore_id=True):
+        res = super().deserialize(data, hashmap)
+        try:
+            self.uuid_line_edit.setText(data['uuid'])
+            self.method_of_capture_line.setText(data['method_of_capture'])
+            self.mv_session_line.setText(data['mv_session'])
+            self.dropir_cb.setCurrentIndex(data['drop_ir'])
+            self.no_join_cb.setCurrentIndex(data['no_join'])
+            return True & res
+        except Exception as e:
+            dump_exception(e)
+        return res
 
 
 @register_nodes(OP_NODE_O_JOIN)
@@ -280,6 +213,21 @@ class CalcNode_Join(CalcNode):
         if output_node:
             output_node.eval()
 
+    def serialize(self):
+        res = super().serialize()
+        res['uuid'] = self.uuid_line_edit.text()
+        res['output_path'] = self.output_path
+        return res
+
+    def deserialize(self, data, hashmap={}, restore_id=True):
+        res = super().deserialize(data, hashmap)
+        try:
+            value = data['uuid']
+            self.uuid_line_edit.setText(value)
+            return True & res
+        except Exception as e:
+            dump_exception(e)
+        return res
 
 @register_nodes(OP_NODE_O_UPLOAD)
 class CalcNode_Upload(CalcNode):
@@ -335,7 +283,7 @@ class CalcNode_Upload(CalcNode):
             self.markInvalid()
             return
 
-        val = input_node.eval()
+        val = input_node.getVal()
 
         if val is None:
             self.gr_node.setToolTip("File path is missing")
@@ -454,7 +402,7 @@ class CalcNode_TSDF(CalcNode):
             self.markInvalid()
             return
 
-        val = input_node.eval()
+        val = input_node.getVal()
 
         if val is None:
             self.gr_node.setToolTip("File path is missing")
@@ -497,3 +445,86 @@ class CalcNode_TSDF(CalcNode):
         output_node = self.getOutput(0)
         if output_node:
             output_node.eval()
+
+
+@register_nodes(OP_NODE_O_AUDIO)
+class CalcNode_T_MVX_File(CalcNode):
+    icon = str(current_file_path.joinpath(r"icons\out.png"))
+    op_code = OP_NODE_O_AUDIO
+    op_title = "Audio"
+    content_label = "AUDIO"
+    content_label_obj_name = "wav_o_audio_node_bg"
+    colaps_widget = None
+    file_line_edit = ""
+    input_path = ""
+    output_path = ""
+
+    def __init__(self, scene) -> None:
+        super().__init__(scene, inputs=[1], outputs=[])
+        self.createParamWidget()
+
+    def createParamWidget(self):
+        if not self.colaps_widget:
+            self.colaps_widget = QWidget()
+            self.colaps_widget.setMinimumWidth(250)
+            self.colaps_widget.setStyleSheet("")
+            self.colaps_widget.setObjectName(str(self.id))
+            layout = QVBoxLayout()
+            layout.setSpacing(0)
+            layout.setAlignment(Qt.AlignTop)
+            self.colaps_widget.setLayout(layout)
+
+            t = CollapseGB()
+            t.setTitle("File path")
+            t.setLayout(QFormLayout())
+
+            if not self.file_line_edit:
+                self.file_line_edit = QLineEdit(self.input_path)
+                self.file_line_edit.setReadOnly(True)
+                self.file_line_edit.textChanged.connect(self.onTextChange)
+
+            t.layout().addRow(QLabel("File path:"), self.file_line_edit)
+            t.setFixedHeight(t.sizeHint().height())
+            layout.addWidget(t)
+
+        return self.colaps_widget
+
+    def eval_impl(self):
+        input_node = self.getInput(0)
+
+        if not input_node:
+            self.gr_node.setToolTip("Not connected")
+            self.markInvalid()
+            return
+
+        if input_node.__class__.__name__ != "CalcNode_S_UUID":
+            self.gr_node.setToolTip("Input should be UUID node")
+            if self.file_line_edit:
+                self.file_line_edit.setText("")
+            self.markInvalid()
+            return
+
+        # val = input_node.eval()
+        val = input_node.getVal()
+
+        if val is None:
+            self.gr_node.setToolTip("Not a valid UUID")
+            if self.file_line_edit:
+                self.file_line_edit.setText("")
+            self.markInvalid()
+            return
+
+        self.markDirty(False)
+        self.markInvalid(False)
+        self.gr_node.setToolTip("")
+
+        self.output_path = fr"C:\HARVEST\{val}\{val}.wav"
+
+        if self.file_line_edit:
+            self.file_line_edit.setText(self.output_path)
+
+        return self.output_path
+
+    def onTextChange(self):
+        self.input_path = self.file_line_edit.text()
+        self.eval()

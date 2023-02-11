@@ -1,0 +1,92 @@
+{
+    "id": 2944189606560,
+    "scene_width": 64000,
+    "scene_height": 64000,
+    "nodes": [
+        {
+            "id": 2944190225840,
+            "title": "UUID",
+            "pos_x": -491.0,
+            "pos_y": -118.0,
+            "inputs": [],
+            "outputs": [
+                {
+                    "id": 2944190310496,
+                    "index": 0,
+                    "multi_edge": false,
+                    "position": 5,
+                    "socket_type": 3
+                }
+            ],
+            "content": {
+                "id": 1669645629280
+            },
+            "op_code": 3,
+            "uuid": "test"
+        },
+        {
+            "id": 2944190318672,
+            "title": "Harvest",
+            "pos_x": -219.0,
+            "pos_y": -100.0,
+            "inputs": [
+                {
+                    "id": 2944190318864,
+                    "index": 0,
+                    "multi_edge": false,
+                    "position": 2,
+                    "socket_type": 2
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 2944190318960,
+                    "index": 0,
+                    "multi_edge": false,
+                    "position": 5,
+                    "socket_type": 2
+                }
+            ],
+            "content": {
+                "id": 1669646256160
+            },
+            "op_code": 4,
+            "uuid": "",
+            "method_of_capture": "s",
+            "mv_session": "s",
+            "drop_ir": 1,
+            "no_join": 1
+        },
+        {
+            "id": 2944190327456,
+            "title": "JOIN",
+            "pos_x": 107.0,
+            "pos_y": -77.0,
+            "inputs": [
+                {
+                    "id": 2944190327648,
+                    "index": 0,
+                    "multi_edge": false,
+                    "position": 2,
+                    "socket_type": 2
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 2944190327744,
+                    "index": 0,
+                    "multi_edge": false,
+                    "position": 5,
+                    "socket_type": 2
+                }
+            ],
+            "content": {
+                "id": 1669646260768
+            },
+            "op_code": 5,
+            "uuid": "C:\\HARVEST\\test\\test_joined.mvx",
+            "output_path": ""
+        }
+    ],
+    "edges": []
+}

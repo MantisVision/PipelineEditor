@@ -29,39 +29,6 @@ class CalcInputContent(QDMNodeContentWidget):
         return res
 
 
-@register_nodes(OP_NODE_INPUT)
-class CalcNode_Input(CalcNode):
-    icon = str(current_file_path.joinpath(r"icons\in.png"))
-    op_code = OP_NODE_INPUT
-    op_title = "Input"
-    content_label_obj_name = "calc_node_input"
-
-    def __init__(self, scene) -> None:
-        super().__init__(scene, inputs=[], outputs=[3])
-        self.eval()
-
-    def initInnerClasses(self):
-        self.content = CalcInputContent(self)
-        self.gr_node = CalcGraphicsNode(self)
-        self.content.edit.textChanged.connect(self.onInputChanged)
-
-    def eval_impl(self):
-        u_val = self.content.edit.text()
-        s_val = int(u_val)
-        self.value = s_val
-        self.markDirty(False)
-        self.markInvalid(False)
-
-        self.markDescendantsInvalid(False)
-        self.markDescendantsDirty()
-
-        self.gr_node.setToolTip("")
-
-        self.evalChildren()
-
-        return self.value
-
-
 @register_nodes(OP_NODE_S_MVX_FILE)
 class CalcNode_S_MVX_File(CalcNode):
     icon = str(current_file_path.joinpath(r"icons\in.png"))
@@ -145,6 +112,24 @@ class CalcNode_S_MVX_File(CalcNode):
         if output_node:
             output_node.eval()
 
+    def getVal(self):
+        return self.input_path if not self.isInvalid() else None
+
+    def serialize(self):
+        res = super().serialize()
+        res['file_path'] = self.file_line_edit.text()
+        return res
+
+    def deserialize(self, data, hashmap={}, restore_id=True):
+        res = super().deserialize(data, hashmap)
+        try:
+            value = data['file_path']
+            self.file_line_edit.setText(value)
+            return True & res
+        except Exception as e:
+            dump_exception(e)
+        return res
+
 
 @register_nodes(OP_NODE_S_UUID)
 class CalcNode_S_UUID(CalcNode):
@@ -196,12 +181,28 @@ class CalcNode_S_UUID(CalcNode):
 
         self.gr_node.setToolTip("")
 
-        # self.evalChildren()
+        self.evalChildren()
 
         return self._uuid
 
     def onTextChange(self):
         self._uuid = self.uuid_line_edit.text()
-        output_node = self.getOutput(0)
-        if output_node:
-            output_node.eval()
+        self.eval()
+
+    def getVal(self):
+        return self._uuid if not self.isInvalid() else None
+
+    def serialize(self):
+        res = super().serialize()
+        res['uuid'] = self.uuid_line_edit.text()
+        return res
+
+    def deserialize(self, data, hashmap={}, restore_id=True):
+        res = super().deserialize(data, hashmap)
+        try:
+            value = data['uuid']
+            self.uuid_line_edit.setText(value)
+            return True & res
+        except Exception as e:
+            dump_exception(e)
+        return res
