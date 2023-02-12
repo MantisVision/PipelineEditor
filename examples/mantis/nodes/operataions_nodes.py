@@ -509,6 +509,7 @@ class CalcNode_O_Audio(CalcNode):
 
     def eval_impl(self):
         input_node = self.getInput(0)
+        output_node = self.getOutput(0)
 
         if not input_node:
             self.gr_node.setToolTip("Not connected")
@@ -522,6 +523,16 @@ class CalcNode_O_Audio(CalcNode):
             self.markInvalid()
             return
 
+        if not output_node:
+            self.gr_node.setToolTip("Output node not connected")
+            self.markInvalid()
+            return
+
+        if output_node.__class__.__name__ != "CalcNode_T_WAV_File":
+            self.gr_node.setToolTip("Output should be WAV file")
+            self.markInvalid()
+            return
+
         val = input_node.getVal()
 
         if val is None:
@@ -530,6 +541,15 @@ class CalcNode_O_Audio(CalcNode):
                 self.uuid_line_edit.setText("")
             self.markInvalid()
             return
+
+        val = output_node.eval()
+
+        if val is None:
+            self.gr_node.setToolTip("File output path is missing")
+            self.markInvalid()
+            return
+
+        self.output_path = val
 
         self.markDirty(False)
         self.markInvalid(False)
