@@ -174,7 +174,6 @@ class CalculatorSubWindow(NodeEditorWidget):
 
         if selected and action == eval_act:
             val = selected.eval()
-            print(val)
         elif selected and action == mark_dirty_act:
             selected.markDirty()
         elif selected and action == mark_dirty_desc_act:

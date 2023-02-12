@@ -48,18 +48,19 @@ class NodeEditorWindow(QMainWindow):
         self.status_bar_text = QLabel("")
 
     def createActions(self):
-        self.actNew    = QAction("&New",     self, triggered=self.onFileNew,    shortcut="Ctrl+N",       statusTip="Create new pipeline")
-        self.actOpen   = QAction("&Open",    self, triggered=self.onFileOpen,   shortcut="Ctrl+O",       statusTip="Open file")
-        self.actSave   = QAction("&Save",    self, triggered=self.onFileSave,   shortcut="Ctrl+S",       statusTip="Save file")
-        self.actSaveAs = QAction("Save &As", self, triggered=self.onFileSaveAs, shortcut="Ctrl+Shift+S", statusTip="Save file as...")
-        self.actExit   = QAction("E&xit",    self, triggered=self.close,        shortcut="ESC",          statusTip="Exit application")
+        self.actNew       = QAction("&New",         self, triggered=self.onFileNew,       shortcut="Ctrl+N",       statusTip="Create new pipeline")
+        self.actOpen      = QAction("&Open",        self, triggered=self.onFileOpen,      shortcut="Ctrl+O",       statusTip="Open file")
+        self.actSave      = QAction("&Save",        self, triggered=self.onFileSave,      shortcut="Ctrl+S",       statusTip="Save file")
+        self.actSaveAs    = QAction("Save &As",     self, triggered=self.onFileSaveAs,    shortcut="Ctrl+Shift+S", statusTip="Save file as...")
+        self.actExit      = QAction("E&xit",        self, triggered=self.close,           shortcut="ESC",          statusTip="Exit application")
 
-        self.actUndo   = QAction("&Undo",    self, triggered=self.onEditUndo,   shortcut="Ctrl+Z",       statusTip="Undo last operation")
-        self.actRedo   = QAction("&Redo",    self, triggered=self.onEditRedo,   shortcut="Ctrl+Y",       statusTip="Redo last operation")
-        self.actCopy   = QAction("&Copy",    self, triggered=self.onEditCopy,   shortcut="Ctrl+C",       statusTip="Copy Selected")
-        self.actPaste  = QAction("&Paste",   self, triggered=self.onEditPaste,  shortcut="Ctrl+V",       statusTip="Paste Selected")
-        self.actCut    = QAction("Cu&t",     self, triggered=self.onEditCut,    shortcut="Ctrl+X",       statusTip="Cut Selected")
-        self.actDelete = QAction("&Delete",  self, triggered=self.onEditDelete, shortcut="Del",          statusTip="Delete selected items")
+        self.actUndo      = QAction("&Undo",        self, triggered=self.onEditUndo,      shortcut="Ctrl+Z",       statusTip="Undo last operation")
+        self.actRedo      = QAction("&Redo",        self, triggered=self.onEditRedo,      shortcut="Ctrl+Y",       statusTip="Redo last operation")
+        self.actCopy      = QAction("&Copy",        self, triggered=self.onEditCopy,      shortcut="Ctrl+C",       statusTip="Copy Selected")
+        self.actPaste     = QAction("&Paste",       self, triggered=self.onEditPaste,     shortcut="Ctrl+V",       statusTip="Paste Selected")
+        self.actCut       = QAction("Cu&t",         self, triggered=self.onEditCut,       shortcut="Ctrl+X",       statusTip="Cut Selected")
+        self.actSelectAll = QAction("Select &All",  self, triggered=self.onEditSelectAll, shortcut="Ctrl+A",       statusTip="Select All")
+        self.actDelete    = QAction("&Delete",      self, triggered=self.onEditDelete,    shortcut="Del",          statusTip="Delete selected items")
 
     def createMenus(self):
         self.menubar = self.menuBar()
@@ -79,6 +80,8 @@ class NodeEditorWindow(QMainWindow):
         self.editMenu.addAction(self.actCopy)
         self.editMenu.addAction(self.actPaste)
         self.editMenu.addAction(self.actCut)
+        self.editMenu.addSeparator()
+        self.editMenu.addAction(self.actSelectAll)
         self.editMenu.addSeparator()
         self.editMenu.addAction(self.actDelete)
 
@@ -151,6 +154,10 @@ class NodeEditorWindow(QMainWindow):
     def onEditDelete(self):
         if self.getcurrentPipelineEditorWidget():
             self.getcurrentPipelineEditorWidget().scene.getView().deleteSelected()
+
+    def onEditSelectAll(self):
+        if self.getcurrentPipelineEditorWidget():
+            self.getcurrentPipelineEditorWidget().scene.getView().selectAll()
 
     def onEditCut(self):
         if self.getcurrentPipelineEditorWidget():

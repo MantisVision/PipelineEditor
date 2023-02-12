@@ -179,18 +179,17 @@ class MantisWindow(NodeEditorWindow):
             node = selected[0].node
             colaps = [
                 "CalcNode_S_UUID",
-                "CalcNode_Div",
-                "CalcNode_S_UUID",
                 "CalcNode_S_MVX_File",
                 "CalcNode_T_MVX_File",
                 "CalcNode_Harvest",
                 "CalcNode_Join",
                 "CalcNode_Upload",
                 "CalcNode_TSDF",
+                "CalcNode_O_Audio",
+                "CalcNode_T_WAV_File",
             ]
 
             if node.__class__.__name__ in colaps:
-                print(self.param_dock.widget().objectName())
                 if self.param_dock.widget().objectName() != str(node.id):
                     print("check params")
                 self.param_dock.setWidget(node.createParamWidget())
@@ -265,7 +264,6 @@ class MantisWindow(NodeEditorWindow):
         fnames, ffilter = QFileDialog.getOpenFileNames(self, "Open pipeline from file")
         try:
             for fname in fnames:
-                print(fname)
                 existing = self.findMdiChild(fname)
                 if existing:
                     self.mdiArea.setActiveSubWindow(existing)

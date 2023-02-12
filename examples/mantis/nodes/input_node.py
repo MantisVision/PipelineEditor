@@ -37,10 +37,10 @@ class CalcNode_S_MVX_File(CalcNode):
     content_label = "MVX"
     content_label_obj_name = "mvx_source_node_bg"
     colaps_widget = None
+    input_path = ""
 
     def __init__(self, scene) -> None:
         super().__init__(scene, inputs=[], outputs=[3])
-        self.input_path = ""
         self.file_line_edit = None
         self.createParamWidget()
 
@@ -94,6 +94,7 @@ class CalcNode_S_MVX_File(CalcNode):
         self.markDescendantsInvalid(False)
         self.markDescendantsDirty()
 
+        self.evalChildren()
         self.gr_node.setToolTip("")
 
         return self.input_path
@@ -108,9 +109,7 @@ class CalcNode_S_MVX_File(CalcNode):
 
     def onTextChange(self):
         self.input_path = self.file_line_edit.text()
-        output_node = self.getOutput(0)
-        if output_node:
-            output_node.eval()
+        self.eval()
 
     def getVal(self):
         return self.input_path if not self.isInvalid() else None

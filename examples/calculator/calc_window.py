@@ -253,7 +253,6 @@ class CalculatorWindow(NodeEditorWindow):
         fnames, ffilter = QFileDialog.getOpenFileNames(self, "Open pipeline from file")
         try:
             for fname in fnames:
-                print(fname)
                 existing = self.findMdiChild(fname)
                 if existing:
                     self.mdiArea.setActiveSubWindow(existing)

@@ -124,7 +124,6 @@ class CollapseGB(QGroupBox):
         self.setCheckable(True)
         self.setChecked(True)
         icons_root = (Path(__file__).parent.parent.joinpath("icons").as_posix())
-        print(icons_root)
         self.setStyleSheet(
             "QGroupBox::title{ color:white; }"
             "QGroupBox::indicator { width: 20px; height: 20px; }"

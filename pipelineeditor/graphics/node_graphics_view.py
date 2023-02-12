@@ -82,6 +82,22 @@ class QDMGraphicsView(QGraphicsView):
         if event.key() == 80:
             self.take_screenshot()
 
+        if event.key() == 65 and event.modifiers() & Qt.ControlModifier:
+            self.selectAll()
+
+    def selectAll(self):
+        for item in self.gr_scene.items():
+            item.setSelected(True)
+        current_selection = self.gr_scene.scene.getSelectedItems()
+
+        if current_selection != self.gr_scene.scene._last_selected_items:
+            if current_selection == []:
+                self.gr_scene.itemsDeselected.emit()
+            else:
+                self.gr_scene.itemSelected.emit()
+
+            self.gr_scene.scene._last_selected_items = current_selection
+
     def deleteSelected(self):
         for item in self.gr_scene.selectedItems():
             if isinstance(item, QDMGraphicsEdge):

@@ -213,6 +213,9 @@ class CalcNode_Join(CalcNode):
         if output_node:
             output_node.eval()
 
+    def getVal(self):
+        return self.output_path if not self.isInvalid() else None
+
     def serialize(self):
         res = super().serialize()
         res['uuid'] = self.uuid_line_edit.text()
@@ -228,6 +231,7 @@ class CalcNode_Join(CalcNode):
         except Exception as e:
             dump_exception(e)
         return res
+
 
 @register_nodes(OP_NODE_O_UPLOAD)
 class CalcNode_Upload(CalcNode):
@@ -310,6 +314,21 @@ class CalcNode_Upload(CalcNode):
     def onTextChange(self):
         self.input_path = self.input_path_line_edit.text()
         self.eval()
+
+    def serialize(self):
+        res = super().serialize()
+        res['file_path'] = self.input_path_line_edit.text()
+        return res
+
+    def deserialize(self, data, hashmap={}, restore_id=True):
+        res = super().deserialize(data, hashmap)
+        try:
+            value = data['file_path']
+            self.input_path_line_edit.setText(value)
+            return True & res
+        except Exception as e:
+            dump_exception(e)
+        return res
 
 
 @register_nodes(OP_NODE_O_TSDF)
@@ -448,19 +467,18 @@ class CalcNode_TSDF(CalcNode):
 
 
 @register_nodes(OP_NODE_O_AUDIO)
-class CalcNode_T_MVX_File(CalcNode):
+class CalcNode_O_Audio(CalcNode):
     icon = str(current_file_path.joinpath(r"icons\out.png"))
     op_code = OP_NODE_O_AUDIO
     op_title = "Audio"
     content_label = "AUDIO"
     content_label_obj_name = "wav_o_audio_node_bg"
     colaps_widget = None
-    file_line_edit = ""
-    input_path = ""
-    output_path = ""
+    _uuid = ""
+    uuid_line_edit = None
 
     def __init__(self, scene) -> None:
-        super().__init__(scene, inputs=[1], outputs=[])
+        super().__init__(scene, inputs=[1], outputs=[1])
         self.createParamWidget()
 
     def createParamWidget(self):
@@ -475,15 +493,15 @@ class CalcNode_T_MVX_File(CalcNode):
             self.colaps_widget.setLayout(layout)
 
             t = CollapseGB()
-            t.setTitle("File path")
+            t.setTitle("Input")
             t.setLayout(QFormLayout())
 
-            if not self.file_line_edit:
-                self.file_line_edit = QLineEdit(self.input_path)
-                self.file_line_edit.setReadOnly(True)
-                self.file_line_edit.textChanged.connect(self.onTextChange)
+            if not self.uuid_line_edit:
+                self.uuid_line_edit = QLineEdit(self._uuid)
+                self.uuid_line_edit.setReadOnly(True)
+                self.uuid_line_edit.textChanged.connect(self.onTextChange)
 
-            t.layout().addRow(QLabel("File path:"), self.file_line_edit)
+            t.layout().addRow(QLabel("UUID:"), self.uuid_line_edit)
             t.setFixedHeight(t.sizeHint().height())
             layout.addWidget(t)
 
@@ -499,18 +517,17 @@ class CalcNode_T_MVX_File(CalcNode):
 
         if input_node.__class__.__name__ != "CalcNode_S_UUID":
             self.gr_node.setToolTip("Input should be UUID node")
-            if self.file_line_edit:
-                self.file_line_edit.setText("")
+            if self.uuid_line_edit:
+                self.uuid_line_edit.setText("")
             self.markInvalid()
             return
 
-        # val = input_node.eval()
         val = input_node.getVal()
 
         if val is None:
             self.gr_node.setToolTip("Not a valid UUID")
-            if self.file_line_edit:
-                self.file_line_edit.setText("")
+            if self.uuid_line_edit:
+                self.uuid_line_edit.setText("")
             self.markInvalid()
             return
 
@@ -518,13 +535,29 @@ class CalcNode_T_MVX_File(CalcNode):
         self.markInvalid(False)
         self.gr_node.setToolTip("")
 
-        self.output_path = fr"C:\HARVEST\{val}\{val}.wav"
+        if self.uuid_line_edit:
+            self.uuid_line_edit.setText(val)
 
-        if self.file_line_edit:
-            self.file_line_edit.setText(self.output_path)
+        return self._uuid
 
-        return self.output_path
+    def getVal(self):
+        return self._uuid
 
     def onTextChange(self):
-        self.input_path = self.file_line_edit.text()
+        self._uuid = self.uuid_line_edit.text()
         self.eval()
+
+    def serialize(self):
+        res = super().serialize()
+        res['uuid'] = self.uuid_line_edit.text()
+        return res
+
+    def deserialize(self, data, hashmap={}, restore_id=True):
+        res = super().deserialize(data, hashmap)
+        try:
+            value = data['uuid']
+            self.uuid_line_edit.setText(value)
+            return True & res
+        except Exception as e:
+            dump_exception(e)
+        return res
