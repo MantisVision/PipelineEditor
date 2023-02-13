@@ -3,8 +3,6 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 
-from pipelineeditor.node_socket import *
-
 EDGE_CP_ROUNDNESS = 100     #: Bezier control point distance on the line
 WEIGHT_SOURCE = 0.2         #: factor for square edge to change the midpoint between start and end socket
 
@@ -126,9 +124,10 @@ class QDMGraphicsEdgeBezier(QDMGraphicsEdge):
         cpy_d = 0
 
         if self.edge.start_socket:
-            sspos = self.edge.start_socket._position
+            ssin = self.edge.start_socket.is_input
+            ssout = self.edge.start_socket.is_output
 
-            if (s[0] > d[0] and sspos in (RIGHT_TOP, RIGHT_BOTTOM)) or (s[0] < d[0] and sspos in (LEFT_TOP, LEFT_BOTTOM)):
+            if (s[0] > d[0] and ssout) or (s[0] < d[0] and ssin):
                 cpx_s = -cpx_s
                 cpx_d = -cpx_d
                 cpy_d = ((s[1] - d[1]) / math.fabs((s[1] - d[1]) if s[1] - d[1] != 0 else 0.001)) * EDGE_CP_ROUNDNESS

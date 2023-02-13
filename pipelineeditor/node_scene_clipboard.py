@@ -67,14 +67,14 @@ class SceneClipbaord():
 
         maxx -= 180
         maxy += 100
-        
+
         # Calculate selected object bbox and center
         # rel_bbox_center_x = (minx + maxx) / 2 - minx
         # rel_bbox_center_y = (miny + maxy) / 2 - miny
 
         mousex, mousey = mouse_scene_pos.x(), mouse_scene_pos.y()
 
-        self.scene.setSilentSelectionEvent()
+        self.scene.setSilentSelectionEvents()
         self.scene.doDeselectItems()
 
         created_node = []
@@ -97,7 +97,7 @@ class SceneClipbaord():
                 new_edge = Edge(self.scene)
                 new_edge.deserialize(edge_data, hashmap, restore_id=False)
 
-        self.scene.setSilentSelectionEvent(False)
+        self.scene.setSilentSelectionEvents(False)
 
         # Store history
         self.scene.history.store_history('Paste', True)

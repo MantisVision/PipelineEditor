@@ -154,7 +154,7 @@ class QDMGraphicsNode(QGraphicsItem):
 
         # outline
         path_outline = QPainterPath()
-        path_outline.addRoundedRect(0, 0, self.width, self.height, self.edge_roundness, self.edge_roundness)
+        path_outline.addRoundedRect(-1, -1, self.width, self.height, self.edge_roundness, self.edge_roundness)
         painter.setBrush(Qt.NoBrush)
         if self.hovered:
             painter.setPen(self._pen_hovered)

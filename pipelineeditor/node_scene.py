@@ -43,7 +43,7 @@ class Scene(Serializable):
         self.gr_scene = QDMGraphicsScene(self)
         self.gr_scene.setGrScene(self.scene_width, self.scene_height)
 
-    def setSilentSelectiomEvents(self, value=True):
+    def setSilentSelectionEvents(self, value=True):
         self._silent_selection_events = value
 
     def onItemSelected(self, silent=False):
@@ -79,7 +79,7 @@ class Scene(Serializable):
         return self.has_been_modified
 
     def getSelectedItems(self):
-        self.gr_scene.selectedItems()
+        return self.gr_scene.selectedItems()
 
     @property
     def has_been_modified(self):
