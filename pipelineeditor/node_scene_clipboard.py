@@ -54,9 +54,9 @@ class SceneClipbaord():
 
         # Calculate mouse pos
         view = self.scene.getView()
-        mouse_pos = view.last_mb_pos
+        mouse_scene_pos = view.last_mb_pos
 
-        minx, maxx, miny, maxy = 0, 0, 0, 0
+        minx, maxx, miny, maxy = 10000000, -10000000, 10000000, -10000000
 
         for node_data in data['nodes']:
             x, y = node_data['pos_x'], node_data['pos_y']
@@ -65,24 +65,30 @@ class SceneClipbaord():
             miny = min(y, miny)
             maxy = max(y, maxy)
 
+        maxx -= 180
+        maxy += 100
+        
         # Calculate selected object bbox and center
-        bbox_center_x = (minx + maxx) / 2
-        bbox_center_y = (miny + maxy) / 2
+        # rel_bbox_center_x = (minx + maxx) / 2 - minx
+        # rel_bbox_center_y = (miny + maxy) / 2 - miny
 
-        # Calculate offset of selected objects
-        offsetx = mouse_pos.x() - bbox_center_x
-        offsety = mouse_pos.y() - bbox_center_y
+        mousex, mousey = mouse_scene_pos.x(), mouse_scene_pos.y()
 
+        self.scene.setSilentSelectionEvent()
+        self.scene.doDeselectItems()
+
+        created_node = []
         # Create each node
         for node_data in data['nodes']:
-            cls_t = self.scene.get_node_class_from_data(node_data)
-            print(cls_t)
-            new_node = cls_t(self.scene)
+            new_node = self.scene.get_node_class_from_data(node_data)(self.scene)
             new_node.deserialize(node_data, hashmap, restore_id=False)
+            created_node.append(new_node)
 
             # readjust new_node position
-            pos = new_node.pos
-            new_node.setPos(pos.x() + offsetx, pos.y() + offsety)
+            posx, posy = new_node.pos.x(), new_node.pos.y()
+            newx, newy = mousex + posx - minx, mousey + posy - miny
+            new_node.setPos(newx, newy)
+            new_node.doSelect()
 
         # Create each edge
         if 'edges' in data:
@@ -90,5 +96,9 @@ class SceneClipbaord():
                 new_edge = Edge(self.scene)
                 new_edge.deserialize(edge_data, hashmap, restore_id=False)
 
+        self.scene.setSilentSelectionEvent(False)
+
         # Store history
         self.scene.history.store_history('Paste', True)
+
+        return created_node

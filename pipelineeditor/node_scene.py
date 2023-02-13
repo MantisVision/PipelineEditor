@@ -25,6 +25,7 @@ class Scene(Serializable):
 
         # init listeners
         self._has_been_modified = False
+        self._silent_selection_events = False
         self._has_been_modified_listeners = []
         self._item_selected_listeners = []
         self._items_deselected_listeners = []
@@ -42,23 +43,37 @@ class Scene(Serializable):
         self.gr_scene = QDMGraphicsScene(self)
         self.gr_scene.setGrScene(self.scene_width, self.scene_height)
 
-    def onItemSelected(self):
+    def setSilentSelectiomEvents(self, value=True):
+        self._silent_selection_events = value
+
+    def onItemSelected(self, silent=False):
+        if self._silent_selection_events:
+            return
+
         current_selected_items = self.getSelectedItems()
         if current_selected_items != self._last_selected_items:
             self._last_selected_items = current_selected_items
-            self.history.store_history("Selection Changed")
 
-            for callback in self._item_selected_listeners:
-                callback()
+            if not silent:
+                self.history.store_history("Selection Changed")
+                for callback in self._item_selected_listeners:
+                    callback()
 
-    def onItemsDeselected(self):
+    def onItemsDeselected(self, silent=False):
         self.resetLastSelectedStates()
         if self._last_selected_items != []:
             self._last_selected_items = []
-            self.history.store_history("Deselction items")
 
-            for callback in self._items_deselected_listeners:
-                callback()
+            if not silent:
+                self.history.store_history("Deselction items")
+                for callback in self._items_deselected_listeners:
+                    callback()
+
+    def doDeselectItems(self, silent=False):
+        for item in self.getSelectedItems():
+            item.setSelected(False)
+        if not silent:
+            self.onItemsDeselected()
 
     def isModified(self):
         return self.has_been_modified

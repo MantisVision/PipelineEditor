@@ -11,6 +11,8 @@ from pipelineeditor.graphics.node_graphics_view import QDMGraphicsView
 
 
 class NodeEditorWidget(QWidget):
+    SceneClass = Scene
+
     def __init__(self, parent=None) -> None:
         super().__init__(parent)
 
@@ -21,7 +23,7 @@ class NodeEditorWidget(QWidget):
         self.layout = QVBoxLayout()
         self.layout.setContentsMargins(0, 0, 0, 0)
         self.setLayout(self.layout)
-        self.scene = Scene()
+        self.scene = self.__class__.SceneClass()
 
         # Create graphics view
         self.view = QDMGraphicsView(self.scene.gr_scene, self)
