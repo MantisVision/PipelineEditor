@@ -31,9 +31,9 @@ class CalcInputContent(QDMNodeContentWidget):
 
 @register_nodes(OP_NODE_S_MVX_FILE)
 class CalcNode_S_MVX_File(CalcNode):
-    icon = str(current_file_path.joinpath(r"icons\in.png"))
+    icon = str(current_file_path.joinpath(r"icons\mvx.png"))
     op_code = OP_NODE_S_MVX_FILE
-    op_title = "MVX File"
+    op_title = "MVX Source File"
     content_label = "MVX"
     content_label_obj_name = "mvx_source_node_bg"
     colaps_widget = None
@@ -132,9 +132,9 @@ class CalcNode_S_MVX_File(CalcNode):
 
 @register_nodes(OP_NODE_S_UUID)
 class CalcNode_S_UUID(CalcNode):
-    icon = str(current_file_path.joinpath(r"icons\in.png"))
+    icon = str(current_file_path.joinpath(r"icons\uuid.png"))
     op_code = OP_NODE_S_UUID
-    op_title = "UUID"
+    op_title = "UUID Source"
     content_label = "UUID"
     content_label_obj_name = "uuid_source_node_bg"
     colaps_widget = None

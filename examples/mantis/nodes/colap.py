@@ -115,8 +115,9 @@ class FrameLayout(QWidget):
 
 
 class CollapseGB(QGroupBox):
-    def __init__(self, parent=None):
+    def __init__(self, size=0, parent=None):
         super().__init__(parent)
+        self.size = size if size else self.sizeHint().height()
         self.initUI()
 
     def initUI(self):
@@ -131,14 +132,14 @@ class CollapseGB(QGroupBox):
             "QGroupBox::indicator:checked { image: url(" + f"{icons_root}/small_arrow_down-light.png); " + "}"
         )
 
-        self.setFixedHeight(self.sizeHint().height())
+        self.setFixedHeight(self.size)
         # signals
         self.toggled.connect(self.toggleGroup)
 
     def toggleGroup(self):
         state = self.isChecked()
         if state:
-            self.setFixedHeight(self.sizeHint().height())
+            self.setFixedHeight(self.size)
         else:
             self.setFixedHeight(30)
 

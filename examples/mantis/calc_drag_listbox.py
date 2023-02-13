@@ -8,8 +8,9 @@ from pipelineeditor.utils import dump_exception
 
 
 class QDMDragListBox(QListWidget):
-    def __init__(self, parent=None) -> None:
+    def __init__(self, list_op_nodes=[], parent=None) -> None:
         super().__init__(parent)
+        self.list_op_nodes = list_op_nodes
         self.initUI()
 
     def initUI(self):
@@ -20,7 +21,7 @@ class QDMDragListBox(QListWidget):
 
     def addMyItems(self):
         # current_file_path = Path(__file__).parent
-        keys = list(CALC_NODES.keys())
+        keys = list(CALC_NODES.keys()) if not self.list_op_nodes else self.list_op_nodes
         keys.sort()
 
         for key in keys:

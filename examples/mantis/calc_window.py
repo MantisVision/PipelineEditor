@@ -12,7 +12,7 @@ from pipelineeditor.node_editor_window import NodeEditorWindow # noqa
 from examples.mantis.calc_sub_window import CalculatorSubWindow # noqa
 from examples.mantis.calc_drag_listbox import QDMDragListBox # noqa
 from examples.mantis.calc_config import * # noqa
-from examples.mantis.nodes.colap import FrameLayout # noqa
+from examples.mantis.nodes.colap import CollapseGB # noqa
 from qss import nodeeditor_dark_resources # noqa
 
 
@@ -199,10 +199,43 @@ class MantisWindow(NodeEditorWindow):
         pass
 
     def createNodeDock(self):
-        self.nodes_list_widget = QDMDragListBox()
-
         self.nodes_dock = QDockWidget("Nodes")
-        self.nodes_dock.setWidget(self.nodes_list_widget)
+        self.nodes_list_widget = QDMDragListBox([OP_NODE_S_MVX_FILE, OP_NODE_S_UUID])
+        self.nodes_list_widget.verticalScrollBar().hide()
+        self.nodes_list_widget2 = QDMDragListBox([OP_NODE_O_HARVEST, OP_NODE_O_JOIN, OP_NODE_O_UPLOAD, OP_NODE_O_TSDF, OP_NODE_O_AUDIO])
+        self.nodes_list_widget2.verticalScrollBar().hide()
+        self.nodes_list_widget3 = QDMDragListBox([OP_NODE_T_MVX_FILE, OP_NODE_T_WAV_FILE])
+        self.nodes_list_widget3.verticalScrollBar().hide()
+        frame = QFrame()
+        frame.setLayout(QVBoxLayout())
+        frame.layout().setSpacing(0)
+        frame.layout().setAlignment(Qt.AlignTop)
+
+        t = CollapseGB(self.nodes_list_widget.sizeHintForRow(0) * (self.nodes_list_widget.count() + 1))
+        t.setTitle("Input Nodes")
+        t.setLayout(QVBoxLayout())
+        t.layout().setContentsMargins(0, 0, 0, 0)
+        t.layout().addWidget(self.nodes_list_widget)
+        # t.setFixedHeight()
+        frame.layout().addWidget(t)
+
+        t2 = CollapseGB(self.nodes_list_widget2.sizeHintForRow(0) * (self.nodes_list_widget2.count() + 1))
+        t2.setTitle("Operation Nodes")
+        t2.setLayout(QVBoxLayout())
+        t2.layout().setContentsMargins(0, 0, 0, 0)
+        t2.layout().addWidget(self.nodes_list_widget2)
+        # t2.setFixedHeight()
+        frame.layout().addWidget(t2)
+
+        t3 = CollapseGB(self.nodes_list_widget3.sizeHintForRow(0) * (self.nodes_list_widget3.count() + 1))
+        t3.setTitle("Output Nodes")
+        t3.setLayout(QVBoxLayout())
+        t3.layout().setContentsMargins(0, 0, 0,0)
+        t3.layout().addWidget(self.nodes_list_widget3)
+        t3.setFixedHeight(self.nodes_list_widget3.sizeHint().height())
+        frame.layout().addWidget(t3)
+
+        self.nodes_dock.setWidget(frame)
         self.nodes_dock.setFloating(False)
 
         self.addDockWidget(Qt.LeftDockWidgetArea, self.nodes_dock)
