@@ -1,17 +1,17 @@
 {
-    "id": 2944189606560,
+    "id": 2894019384064,
     "scene_width": 64000,
     "scene_height": 64000,
     "nodes": [
         {
-            "id": 2944190225840,
-            "title": "UUID",
-            "pos_x": -491.0,
-            "pos_y": -118.0,
+            "id": 2894019610224,
+            "title": "UUID Source",
+            "pos_x": -507.0,
+            "pos_y": -196.0,
             "inputs": [],
             "outputs": [
                 {
-                    "id": 2944190310496,
+                    "id": 2894019629344,
                     "index": 0,
                     "multi_edge": false,
                     "position": 5,
@@ -19,74 +19,74 @@
                 }
             ],
             "content": {
-                "id": 1669645629280
+                "id": 2894019402848
             },
             "op_code": 3,
             "uuid": "test"
         },
         {
-            "id": 2944190318672,
-            "title": "Harvest",
+            "id": 2894019637792,
+            "title": "Audio",
             "pos_x": -219.0,
-            "pos_y": -100.0,
+            "pos_y": -180.0,
             "inputs": [
                 {
-                    "id": 2944190318864,
+                    "id": 2894019637984,
                     "index": 0,
                     "multi_edge": false,
                     "position": 2,
-                    "socket_type": 2
+                    "socket_type": 1
                 }
             ],
             "outputs": [
                 {
-                    "id": 2944190318960,
+                    "id": 2894019638080,
                     "index": 0,
                     "multi_edge": false,
                     "position": 5,
-                    "socket_type": 2
+                    "socket_type": 1
                 }
             ],
             "content": {
-                "id": 1669646256160
+                "id": 2894019411056
             },
-            "op_code": 4,
-            "uuid": "",
-            "method_of_capture": "s",
-            "mv_session": "s",
-            "drop_ir": 1,
-            "no_join": 1
+            "op_code": 8,
+            "uuid": "test"
         },
         {
-            "id": 2944190327456,
-            "title": "JOIN",
-            "pos_x": 107.0,
-            "pos_y": -77.0,
+            "id": 2894019637936,
+            "title": "WAV Target File",
+            "pos_x": 85.0,
+            "pos_y": -128.0,
             "inputs": [
                 {
-                    "id": 2944190327648,
+                    "id": 2894019610368,
                     "index": 0,
                     "multi_edge": false,
                     "position": 2,
-                    "socket_type": 2
+                    "socket_type": 1
                 }
             ],
-            "outputs": [
-                {
-                    "id": 2944190327744,
-                    "index": 0,
-                    "multi_edge": false,
-                    "position": 5,
-                    "socket_type": 2
-                }
-            ],
+            "outputs": [],
             "content": {
-                "id": 1669646260768
+                "id": 2894159201616
             },
-            "op_code": 5,
-            "uuid": "C:\\HARVEST\\test\\test_joined.mvx",
-            "output_path": ""
+            "op_code": 9,
+            "file_path": "C:/Personal/PipelineEditor/examples/mantis/graph.json4.txt"
         }
     ],
-    "edges": []
+    "edges": [
+        {
+            "id": 2894019637744,
+            "edge_type": 2,
+            "start": 2894019629344,
+            "end": 2894019637984
+        },
+        {
+            "id": 2894019637888,
+            "edge_type": 2,
+            "start": 2894019638080,
+            "end": 2894019610368
+        }
+    ]
 }

@@ -87,7 +87,8 @@ class CalcNode_T_MVX_File(CalcNode):
 
     def onTextChange(self):
         self.output_path = self.file_line_edit.text()
-        if not self.getInput().eval():
+        input_node = self.getInput()
+        if input_node and not self.getInput().eval():
             self.markInvalid()
             self.gr_node.setToolTip("Input node is not vaild")
             return
@@ -194,7 +195,8 @@ class CalcNode_T_WAV_File(CalcNode):
 
     def onTextChange(self):
         self.output_path = self.file_line_edit.text()
-        if not self.getInput().eval():
+        input_node = self.getInput()
+        if input_node and not self.getInput().eval():
             self.markInvalid()
             self.gr_node.setToolTip("Input node is not vaild")
             return

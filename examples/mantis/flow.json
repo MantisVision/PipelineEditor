@@ -1,36 +1,37 @@
 {
-    "id": 3110810381632,
+    "id": 1986824704672,
     "scene_width": 64000,
     "scene_height": 64000,
     "nodes": [
         {
-            "id": 3110810541488,
-            "title": "UUID",
-            "pos_x": -545.0,
-            "pos_y": -134.0,
+            "id": 1986824978240,
+            "title": "UUID Source",
+            "pos_x": -620.0,
+            "pos_y": -114.0,
             "inputs": [],
             "outputs": [
                 {
-                    "id": 3110810626144,
+                    "id": 1986825052672,
                     "index": 0,
-                    "multi_edge": true,
+                    "multi_edge": false,
                     "position": 5,
                     "socket_type": 3
                 }
             ],
             "content": {
-                "id": 3110810485952
+                "id": 2280937178736
             },
-            "op_code": 10
+            "op_code": 3,
+            "uuid": "test"
         },
         {
-            "id": 3110810635424,
+            "id": 1986824978288,
             "title": "Harvest",
-            "pos_x": -270.0,
-            "pos_y": -199.0,
+            "pos_x": -332.0,
+            "pos_y": -231.00000000000003,
             "inputs": [
                 {
-                    "id": 3110810635616,
+                    "id": 1986824975072,
                     "index": 0,
                     "multi_edge": false,
                     "position": 2,
@@ -39,54 +40,60 @@
             ],
             "outputs": [
                 {
-                    "id": 3110810635712,
-                    "index": 0,
-                    "multi_edge": true,
-                    "position": 5,
-                    "socket_type": 2
-                }
-            ],
-            "content": {
-                "id": 3110810488832
-            },
-            "op_code": 11
-        },
-        {
-            "id": 3110810647616,
-            "title": "JOIN",
-            "pos_x": -44.0,
-            "pos_y": -200.0,
-            "inputs": [
-                {
-                    "id": 3110810647808,
+                    "id": 1986824974928,
                     "index": 0,
                     "multi_edge": false,
-                    "position": 2,
-                    "socket_type": 2
-                }
-            ],
-            "outputs": [
-                {
-                    "id": 3110810647904,
-                    "index": 0,
-                    "multi_edge": true,
                     "position": 5,
                     "socket_type": 2
                 }
             ],
             "content": {
-                "id": 3110810491424
+                "id": 2280937183056
             },
-            "op_code": 12
+            "op_code": 4,
+            "uuid": "test",
+            "method_of_capture": "asd",
+            "mv_session": "asd",
+            "drop_ir": 1,
+            "no_join": 1
         },
         {
-            "id": 3110810648000,
+            "id": 1986824966528,
             "title": "Audio",
-            "pos_x": -274.0,
-            "pos_y": -31.0,
+            "pos_x": -384.25000000000006,
+            "pos_y": 62.000000000000014,
             "inputs": [
                 {
-                    "id": 3110810648192,
+                    "id": 1986825052960,
+                    "index": 0,
+                    "multi_edge": false,
+                    "position": 2,
+                    "socket_type": 1
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 1986825053056,
+                    "index": 0,
+                    "multi_edge": false,
+                    "position": 5,
+                    "socket_type": 1
+                }
+            ],
+            "content": {
+                "id": 2280937184928
+            },
+            "op_code": 8,
+            "uuid": "test"
+        },
+        {
+            "id": 1986825053296,
+            "title": "WAV Target File",
+            "pos_x": -159.00000000000003,
+            "pos_y": 58.250000000000014,
+            "inputs": [
+                {
+                    "id": 1986825053488,
                     "index": 0,
                     "multi_edge": false,
                     "position": 2,
@@ -95,38 +102,19 @@
             ],
             "outputs": [],
             "content": {
-                "id": 3110810494016
+                "id": 2280937188528
             },
-            "op_code": 15
+            "op_code": 9,
+            "file_path": "C:/Personal/PipelineEditor/.gitignore"
         },
         {
-            "id": 3110810648336,
-            "title": "UPLOAD",
-            "pos_x": 192.0,
-            "pos_y": -107.0,
+            "id": 1986858157536,
+            "title": "JOIN",
+            "pos_x": -112.25,
+            "pos_y": -220.00000000000003,
             "inputs": [
                 {
-                    "id": 3110810648528,
-                    "index": 0,
-                    "multi_edge": false,
-                    "position": 2,
-                    "socket_type": 1
-                }
-            ],
-            "outputs": [],
-            "content": {
-                "id": 3110810496032
-            },
-            "op_code": 13
-        },
-        {
-            "id": 3110810107232,
-            "title": "TSDF",
-            "pos_x": 186.0,
-            "pos_y": -273.0,
-            "inputs": [
-                {
-                    "id": 3110900171008,
+                    "id": 1986858157776,
                     "index": 0,
                     "multi_edge": false,
                     "position": 2,
@@ -135,26 +123,65 @@
             ],
             "outputs": [
                 {
-                    "id": 3110900171104,
+                    "id": 1986858157872,
                     "index": 0,
-                    "multi_edge": true,
+                    "multi_edge": false,
                     "position": 5,
                     "socket_type": 2
                 }
             ],
             "content": {
-                "id": 3110810497760
+                "id": 2280937190544
             },
-            "op_code": 14
+            "op_code": 5,
+            "uuid": "C:\\HARVEST\\test\\test_joined.mvx",
+            "output_path": "C:\\HARVEST\\test\\test_joined.mvx"
         },
         {
-            "id": 3110900173888,
-            "title": "MVX File",
-            "pos_x": 432.0,
-            "pos_y": -273.0,
+            "id": 1986858158784,
+            "title": "TSDF",
+            "pos_x": 118.74999999999991,
+            "pos_y": -296.2499999999999,
             "inputs": [
                 {
-                    "id": 3110900174080,
+                    "id": 1986858158976,
+                    "index": 0,
+                    "multi_edge": false,
+                    "position": 2,
+                    "socket_type": 2
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 1986858159072,
+                    "index": 0,
+                    "multi_edge": false,
+                    "position": 5,
+                    "socket_type": 2
+                }
+            ],
+            "content": {
+                "id": 2280937192704
+            },
+            "op_code": 7,
+            "file_path": "C:\\HARVEST\\test\\test_joined.mvx",
+            "client": "asd",
+            "build": "asd",
+            "scale": "asd",
+            "atlas_size": "asd",
+            "fps": "5",
+            "add_params": "asd",
+            "local": true,
+            "segmented": true
+        },
+        {
+            "id": 1986858161904,
+            "title": "MVX Target File",
+            "pos_x": 356.24999999999994,
+            "pos_y": -296.2499999999999,
+            "inputs": [
+                {
+                    "id": 1986858162096,
                     "index": 0,
                     "multi_edge": false,
                     "position": 2,
@@ -163,47 +190,75 @@
             ],
             "outputs": [],
             "content": {
-                "id": 3110810499200
+                "id": 2280937952240
             },
-            "op_code": 9
+            "op_code": 2,
+            "file_path": "C:/Personal/PipelineEditor/.gitignore"
+        },
+        {
+            "id": 1986858162384,
+            "title": "UPLOAD",
+            "pos_x": 101.24999999999997,
+            "pos_y": -110.00000000000001,
+            "inputs": [
+                {
+                    "id": 1986858162432,
+                    "index": 0,
+                    "multi_edge": false,
+                    "position": 2,
+                    "socket_type": 1
+                }
+            ],
+            "outputs": [],
+            "content": {
+                "id": 2280937954256
+            },
+            "op_code": 6,
+            "file_path": "C:\\HARVEST\\test\\test_joined.mvx"
         }
     ],
     "edges": [
         {
-            "id": 3110810635376,
+            "id": 1986824453376,
             "edge_type": 2,
-            "start": 3110810626144,
-            "end": 3110810635616
+            "start": 1986825052672,
+            "end": 1986824975072
         },
         {
-            "id": 3110810647568,
+            "id": 1986824966432,
             "edge_type": 2,
-            "start": 3110810635712,
-            "end": 3110810647808
+            "start": 1986825052672,
+            "end": 1986825052960
         },
         {
-            "id": 3110810647664,
+            "id": 1986825053248,
             "edge_type": 2,
-            "start": 3110810626144,
-            "end": 3110810648192
+            "start": 1986825053056,
+            "end": 1986825053488
         },
         {
-            "id": 3110810648288,
+            "id": 1986858157488,
             "edge_type": 2,
-            "start": 3110810647904,
-            "end": 3110810648528
+            "start": 1986824974928,
+            "end": 1986858157776
         },
         {
-            "id": 3110810540768,
+            "id": 1986858158736,
             "edge_type": 2,
-            "start": 3110810647904,
-            "end": 3110900171008
+            "start": 1986858157872,
+            "end": 1986858158976
         },
         {
-            "id": 3110900173840,
+            "id": 1986858161856,
             "edge_type": 2,
-            "start": 3110900171104,
-            "end": 3110900174080
+            "start": 1986858159072,
+            "end": 1986858162096
+        },
+        {
+            "id": 1986858162192,
+            "edge_type": 2,
+            "start": 1986858157872,
+            "end": 1986858162432
         }
     ]
 }

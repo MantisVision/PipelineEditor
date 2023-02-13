@@ -9,7 +9,7 @@ current_file_path = Path(__file__).parent.parent
 
 @register_nodes(OP_NODE_O_HARVEST)
 class CalcNode_Harvest(CalcNode):
-    icon = str(current_file_path.joinpath(r"icons\test.png"))
+    icon = str(current_file_path.joinpath(r"icons\ops.png"))
     op_code = OP_NODE_O_HARVEST
     op_title = "Harvest"
     content_label = "Harvest"
@@ -135,7 +135,7 @@ class CalcNode_Harvest(CalcNode):
 
 @register_nodes(OP_NODE_O_JOIN)
 class CalcNode_Join(CalcNode):
-    icon = str(current_file_path.joinpath(r"icons\test.png"))
+    icon = str(current_file_path.joinpath(r"icons\ops.png"))
     op_code = OP_NODE_O_JOIN
     op_title = "JOIN"
     content_label = "JOIN"
@@ -235,7 +235,7 @@ class CalcNode_Join(CalcNode):
 
 @register_nodes(OP_NODE_O_UPLOAD)
 class CalcNode_Upload(CalcNode):
-    icon = str(current_file_path.joinpath(r"icons\test.png"))
+    icon = str(current_file_path.joinpath(r"icons\ops.png"))
     op_code = OP_NODE_O_UPLOAD
     op_title = "UPLOAD"
     content_label = "UPLOAD"
@@ -333,7 +333,7 @@ class CalcNode_Upload(CalcNode):
 
 @register_nodes(OP_NODE_O_TSDF)
 class CalcNode_TSDF(CalcNode):
-    icon = str(current_file_path.joinpath(r"icons\test.png"))
+    icon = str(current_file_path.joinpath(r"icons\ops.png"))
     op_code = OP_NODE_O_TSDF
     op_title = "TSDF"
     content_label = "TSDF"
@@ -363,33 +363,40 @@ class CalcNode_TSDF(CalcNode):
                 self.input_path_line_edit.setDisabled(True)
                 self.input_path_line_edit.textChanged.connect(self.onTextChange)
 
-            dropir_cb = QComboBox()
-            dropir_cb.setObjectName("dropir_cb")
-            dropir_cb.setMaximumWidth(60)
-            dropir_cb.addItems(["True", "False"])
-            no_join_cb = QComboBox()
-            no_join_cb.setObjectName("no_join_cb")
-            no_join_cb.addItems(["True", "False"])
-            no_join_cb.setMaximumWidth(60)
-            scale = QLineEdit()
-            scale.setMaximumWidth(60)
-            fps_cb = QComboBox()
-            fps_cb.setObjectName("no_join_cb")
-            fps_cb.addItems(["5", "10", "15", "20", "25"])
-            fps_cb.setCurrentText("25")
-            fps_cb.setMaximumWidth(40)
+            self.client = QLineEdit()
+            self.build = QLineEdit()
+            self.atlas_size = QLineEdit()
+            self.add_params = QLineEdit()
+            self.local_cb = QCheckBox("Local")
+            self.segmented_cb = QCheckBox("Segmented")
+
+            self.dropir_cb = QComboBox()
+            self.dropir_cb.setObjectName("dropir_cb")
+            self.dropir_cb.setMaximumWidth(60)
+            self.dropir_cb.addItems(["True", "False"])
+            self.no_join_cb = QComboBox()
+            self.no_join_cb.setObjectName("no_join_cb")
+            self.no_join_cb.addItems(["True", "False"])
+            self.no_join_cb.setMaximumWidth(60)
+            self.scale = QLineEdit()
+            self.scale.setMaximumWidth(60)
+            self.fps_cb = QComboBox()
+            self.fps_cb.setObjectName("no_join_cb")
+            self.fps_cb.addItems(["5", "10", "15", "20", "25"])
+            self.fps_cb.setCurrentText("25")
+            self.fps_cb.setMaximumWidth(40)
             t = CollapseGB()
-            t.setTitle("Harvest")
+            t.setTitle("TSDF")
             t.setLayout(QFormLayout())
             t.layout().addRow(QLabel("File Path:"), self.input_path_line_edit)
-            t.layout().addRow(QLabel("Client:"), QLineEdit())
-            t.layout().addRow(QLabel("Build:"), QLineEdit())
-            t.layout().addRow(QLabel("Scale:"), scale)
-            t.layout().addRow(QLabel("Atlas Size:"), QLineEdit())
-            t.layout().addRow(QLabel("FPS:"), fps_cb)
-            t.layout().addRow(QLabel("Additional Params:"), QLineEdit())
-            t.layout().addRow(QCheckBox("Segmented"))
-            t.layout().addRow(QCheckBox("Local"))
+            t.layout().addRow(QLabel("Client:"), self.client)
+            t.layout().addRow(QLabel("Build:"), self.build)
+            t.layout().addRow(QLabel("Scale:"), self.scale)
+            t.layout().addRow(QLabel("Atlas Size:"), self.atlas_size)
+            t.layout().addRow(QLabel("FPS:"), self.fps_cb)
+            t.layout().addRow(QLabel("Additional Params:"), self.add_params)
+            t.layout().addRow(self.segmented_cb)
+            t.layout().addRow(self.local_cb)
             t.setFixedHeight(t.sizeHint().height())
             layout.addWidget(t)
 
@@ -465,10 +472,40 @@ class CalcNode_TSDF(CalcNode):
         if output_node:
             output_node.eval()
 
+    def serialize(self):
+        res = super().serialize()
+        res['file_path'] = self.input_path_line_edit.text()
+        res['client'] = self.client.text()
+        res['build'] = self.build.text()
+        res['scale'] = self.scale.text()
+        res['atlas_size'] = self.atlas_size.text()
+        res['fps'] = self.fps_cb.currentText()
+        res['add_params'] = self.add_params.text()
+        res['local'] = self.local_cb.isChecked()
+        res['segmented'] = self.segmented_cb.isChecked()
+        return res
+
+    def deserialize(self, data, hashmap={}, restore_id=True):
+        res = super().deserialize(data, hashmap)
+        try:
+            self.input_path_line_edit.setText(data['file_path'])
+            self.client.setText(data['client'])
+            self.build.setText(data['build'])
+            self.scale.setText(data['scale'])
+            self.atlas_size.setText(data['atlas_size'])
+            self.fps_cb.setCurrentText(data['fps'])
+            self.add_params.setText(data['add_params'])
+            self.local_cb.setChecked(data['local'])
+            self.segmented_cb.setChecked(data['segmented'])
+            return True & res
+        except Exception as e:
+            dump_exception(e)
+        return res
+
 
 @register_nodes(OP_NODE_O_AUDIO)
 class CalcNode_O_Audio(CalcNode):
-    icon = str(current_file_path.joinpath(r"icons\out.png"))
+    icon = str(current_file_path.joinpath(r"icons\ops.png"))
     op_code = OP_NODE_O_AUDIO
     op_title = "Audio"
     content_label = "AUDIO"
@@ -542,6 +579,9 @@ class CalcNode_O_Audio(CalcNode):
             self.markInvalid()
             return
 
+        if self.uuid_line_edit:
+            self.uuid_line_edit.setText(val)
+
         val = output_node.eval()
 
         if val is None:
@@ -554,9 +594,6 @@ class CalcNode_O_Audio(CalcNode):
         self.markDirty(False)
         self.markInvalid(False)
         self.gr_node.setToolTip("")
-
-        if self.uuid_line_edit:
-            self.uuid_line_edit.setText(val)
 
         return self._uuid
 

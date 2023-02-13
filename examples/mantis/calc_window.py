@@ -208,7 +208,7 @@ class MantisWindow(NodeEditorWindow):
         self.nodes_list_widget3.verticalScrollBar().hide()
         frame = QFrame()
         frame.setLayout(QVBoxLayout())
-        frame.layout().setSpacing(0)
+        frame.layout().setSpacing(10)
         frame.layout().setAlignment(Qt.AlignTop)
 
         t = CollapseGB(self.nodes_list_widget.sizeHintForRow(0) * (self.nodes_list_widget.count() + 1))
@@ -230,9 +230,9 @@ class MantisWindow(NodeEditorWindow):
         t3 = CollapseGB(self.nodes_list_widget3.sizeHintForRow(0) * (self.nodes_list_widget3.count() + 1))
         t3.setTitle("Output Nodes")
         t3.setLayout(QVBoxLayout())
-        t3.layout().setContentsMargins(0, 0, 0,0)
+        t3.layout().setContentsMargins(0, 0, 0, 0)
         t3.layout().addWidget(self.nodes_list_widget3)
-        t3.setFixedHeight(self.nodes_list_widget3.sizeHint().height())
+        # t3.setFixedHeight()
         frame.layout().addWidget(t3)
 
         self.nodes_dock.setWidget(frame)

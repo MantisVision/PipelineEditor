@@ -32,8 +32,8 @@ class CalculatorSubWindow(NodeEditorWidget):
     def fileLoad(self, fname):
         if super().fileLoad(fname):
             for node in self.scene.nodes:
-                if node.__class__.__name__ == "CalcNode_Output":
-                    node.eval()
+                # if node.__class__.__name__ == "CalcNode_Output":
+                node.eval()
             return True
         return False
 
