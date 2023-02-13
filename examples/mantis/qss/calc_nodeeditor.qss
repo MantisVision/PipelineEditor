@@ -23,6 +23,7 @@ QDMNodeContentWidget QLabel#join_o_node_bg,
 QDMNodeContentWidget QLabel#upload_o_node_bg,
 QDMNodeContentWidget QLabel#wav_o_audio_node_bg,
 QDMNodeContentWidget QLabel#tsdf_o_node_bg,
+QDMNodeContentWidget QLabel#wav_target_node_bg,
 QDMNodeContentWidget QLabel#calc_node_div {
   background: transparent;
   height: 0px;
@@ -40,7 +41,8 @@ QDMNodeContentWidget QLabel#mvx_source_node_bg {
   padding-left: 85px;
   font-size: 30px;
 }
-QDMNodeContentWidget QLabel#mvx_target_node_bg {
+QDMNodeContentWidget QLabel#mvx_target_node_bg,
+QDMNodeContentWidget QLabel#wav_target_node_bg {
   padding-left: 5px;
   font-size: 30px;
 }
@@ -60,10 +62,7 @@ QDMNodeContentWidget QLabel#upload_o_node_bg {
   padding-left: 20px;
   font-size: 30px;
 }
-QDMNodeContentWidget QLabel#tsdf_o_node_bg {
-  padding-left: 35px;
-  font-size: 30px;
-}
+QDMNodeContentWidget QLabel#tsdf_o_node_bg,
 QDMNodeContentWidget QLabel#wav_o_audio_node_bg {
   padding-left: 35px;
   font-size: 30px;

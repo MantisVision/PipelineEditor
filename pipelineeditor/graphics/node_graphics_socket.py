@@ -20,7 +20,7 @@ class QDMGraphicsSocket(QGraphicsItem):
         self._radius = 6
         self._socket_type = socket_type
         self._outline_width = 1
-        self._color_background = self.getSocketColor[self._socket_type]
+        self._color_background = self.getSocketColor(self._socket_type)
         self._color_outline = QColor("#FF000000")
         self._pen = QPen(self._color_outline)
         self._pen.setWidth(self._outline_width)
