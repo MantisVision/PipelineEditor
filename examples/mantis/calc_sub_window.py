@@ -12,7 +12,7 @@ from examples.mantis.calc_node_base import *
 class CalculatorSubWindow(NodeEditorWidget):
     def __init__(self, parent=None) -> None:
         super().__init__(parent)
-        self.setAttribute(Qt.WA_DeleteOnClose)
+        # self.setAttribute(Qt.WA_DeleteOnClose)
         self.scene.add_has_been_modified_listener(self.setTitle)
         self.scene.history.addHistoryRestoreListener(self.onHistoryRestored)
         self.scene.add_drag_enter_listener(self.onDragEnter)
@@ -216,8 +216,23 @@ class CalculatorSubWindow(NodeEditorWidget):
 
             if self.scene.getView().mode == MODE_EDGE_DRAG:
                 # If we were dragging edge
-                self.scene.getView().edgeDragEnd(new_calc_node.inputs[0].gr_socket)
-                new_calc_node.doSelect(True)
-                # new_calc_node.inputs[0].edges[-1].doSelect(True)
+                target_socket = self.determine_target_socket_of_node(self.scene.getView().drag_start_socket.is_output, new_calc_node)
+                if target_socket is not None:
+                    self.scene.getView().edgeDragEnd(target_socket.grSocket)
+                    self.finish_new_node_state(new_calc_node)
+
             else:
                 self.scene.history.store_history(f"Created {new_calc_node.__class__.__name__}")
+
+    def determine_target_socket_of_node(self, was_dragged_flag, new_calc_node):
+        target_socket = None
+        if was_dragged_flag:
+            if len(new_calc_node.inputs) > 0: target_socket = new_calc_node.inputs[0]
+        else:
+            if len(new_calc_node.outputs) > 0: target_socket = new_calc_node.outputs[0]
+        return target_socket
+
+    def finish_new_node_state(self, new_calc_node):
+        self.scene.doDeselectItems()
+        new_calc_node.grNode.doSelect(True)
+        new_calc_node.grNode.onSelected()

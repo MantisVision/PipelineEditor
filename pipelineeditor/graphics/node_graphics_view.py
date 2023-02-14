@@ -31,6 +31,7 @@ class QDMGraphicsView(QGraphicsView):
         self.zoom_step = 1
         self.zoom_range = [2, 15]
         self.zoom_clamp = True
+        self.last_scene_mouse_pos = QPoint(0, 0)
         self.last_mb_pos = None
         self.release_mb_pos = None
         self.cutline = QDMGraphicsCutline()
@@ -154,7 +155,7 @@ class QDMGraphicsView(QGraphicsView):
                 super().mousePressEvent(fakeEvent)
                 return
 
-        if type(item) is QDMGraphicsSocket and self.mode == MODE_NOOP:
+        if isinstance(item, QDMGraphicsSocket) and self.mode == MODE_NOOP:
             self.mode = MODE_EDGE_DRAG
             self.edgeDragStart(item)
             return
@@ -227,11 +228,11 @@ class QDMGraphicsView(QGraphicsView):
     def edgeDragEnd(self, item):
         self.mode = MODE_NOOP
 
-        self.drag_edge.remove()
+        self.drag_edge.remove(silent=True)
         self.drag_edge = None
 
         try:
-            if type(item) is QDMGraphicsSocket:
+            if isinstance(item, QDMGraphicsSocket):
                 if item.socket != self.drag_start_socket:
                     # if release dragging on socket (other than the first)
                     if not item.socket.multi_edge:
@@ -246,7 +247,7 @@ class QDMGraphicsView(QGraphicsView):
                         socket.node.onEdgeConnectionChanged(new_edge)
                         # TODO: check this uncomment this line
                         # if socket.is_input:
-                        socket.node.onInputChanged(new_edge)
+                        socket.node.onInputChanged(socket)
 
                     self.gr_scene.scene.history.store_history("Created new Edge", True)
                     return True
@@ -255,20 +256,25 @@ class QDMGraphicsView(QGraphicsView):
 
         return False
 
-    def mouseMoveEvent(self, event) -> None:
+    def mouseMoveEvent(self, event):
+        scenepos = self.mapToScene(event.pos())
+
         if self.mode == MODE_EDGE_DRAG:
-            pos = self.mapToScene(event.pos())
-            self.drag_edge.gr_edge.setDestination(pos.x(), pos.y())
-            self.drag_edge.gr_edge.update()
+            # according to sentry: 'NoneType' object has no attribute 'gr_edge'
+            if self.drag_edge is not None:
+                self.drag_edge.gr_edge.setDestination(scenepos.x(), scenepos.y())
+                self.drag_edge.gr_edge.update()
+            else:
+                print(">>> Want to update self.drag_edge gr_edge, but it's None!!!")
 
         if self.mode == MODE_EDGE_CUT:
-            pos = self.mapToScene(event.pos())
-            self.cutline._line_points.append(pos)
+            self.cutline._line_points.append(scenepos)
             self.cutline.update()
 
-        self.last_scne_mb_pos = self.mapToScene(event.pos())
+        self.last_scene_mouse_position = scenepos
 
-        self.scenePosChanged.emit(int(self.last_scne_mb_pos.x()), int(self.last_scne_mb_pos.y()))
+        self.scenePosChanged.emit(int(scenepos.x()), int(scenepos.y()))
+
         super().mouseMoveEvent(event)
 
     def distanceBetweenClickAndReleaseIsOff(self, event):

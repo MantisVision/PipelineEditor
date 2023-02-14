@@ -75,6 +75,8 @@ class CalculatorWindow(NodeEditorWindow):
         else:
             self.writeSettings()
             event.accept()
+            import sys
+            sys.exit(0)
 
     def createActions(self):
         super().createActions()

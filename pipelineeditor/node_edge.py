@@ -86,7 +86,7 @@ class Edge(Serializable):
         self.start_socket = None
         self.end_socket = None
 
-    def remove(self, silent_for_socket=None):
+    def remove(self, silent_for_socket=None, silent=False):
         old_sockets = [self.start_socket, self.end_socket]
 
         self.removeFromSocket()
@@ -102,6 +102,8 @@ class Edge(Serializable):
         try:
             for socket in old_sockets:
                 if socket and socket.node:
+                    if silent:
+                        continue
                     if silent_for_socket and socket == silent_for_socket:
                         continue
                     socket.node.onEdgeConnectionChanged(self)

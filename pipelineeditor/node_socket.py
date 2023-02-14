@@ -28,10 +28,15 @@ class Socket(Serializable):
         self.is_input = is_input
         self.is_output = not self.is_input
 
-        self.gr_socket = self.__class__.Socket_GR_Class(self, self._socket_type)
+        self.gr_socket = self.__class__.Socket_GR_Class(self)
         self.setSocketPosition()
 
         self.edges = []
+
+    def changeSocketType(self, new_socket_type):
+        if self._socket_type != new_socket_type:
+            self._socket_type = new_socket_type
+            self.gr_socket.changeSocketType()
 
     def delete(self):
         self.gr_socket.setParentItem(None)

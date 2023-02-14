@@ -10,6 +10,8 @@ from pipelineeditor.node_editor_widget import NodeEditorWidget
 
 
 class NodeEditorWindow(QMainWindow):
+    NodeEditorWidgetClass = NodeEditorWidget
+
     def __init__(self) -> None:
         super().__init__()
 
@@ -22,7 +24,7 @@ class NodeEditorWindow(QMainWindow):
     def initUI(self):
         self.createActions()
         self.createMenus()
-        self.node_editor = NodeEditorWidget(self)
+        self.node_editor = self.__class__.NodeEditorWidgetClass(self)
         self.setCentralWidget(self.node_editor)
         self.node_editor.scene.add_has_been_modified_listener(self.setTitle)
         self.createStatusBar()
@@ -37,9 +39,12 @@ class NodeEditorWindow(QMainWindow):
         self.statusBar().addPermanentWidget(widget)
         self.node_editor.view.scenePosChanged.connect(self.onSceneChanged)
 
-        self.setGeometry(200, 200, 800, 600)
+        # self.setGeometry(200, 200, 800, 600)
         self.setTitle()
         self.show()
+
+    def sizeHint(self):
+        return QSize(800, 600)
 
     def createStatusBar(self):
         self.statusBar().showMessage("")
@@ -64,8 +69,11 @@ class NodeEditorWindow(QMainWindow):
 
     def createMenus(self):
         self.menubar = self.menuBar()
-        self.filemenu = self.menubar.addMenu('&File')
+        self.createFileMenu()
+        self.createEditMenu()
 
+    def createFileMenu(self):
+        self.filemenu = self.menubar.addMenu('&File')
         self.filemenu.addAction(self.actNew)
         self.filemenu.addSeparator()
         self.filemenu.addAction(self.actOpen)
@@ -74,6 +82,7 @@ class NodeEditorWindow(QMainWindow):
         self.filemenu.addSeparator()
         self.filemenu.addAction(self.actExit)
 
+    def createEditMenu(self):
         self.editMenu = self.menubar.addMenu('&Edit')
         self.editMenu.addAction(self.actUndo)
         self.editMenu.addAction(self.actRedo)
@@ -98,8 +107,10 @@ class NodeEditorWindow(QMainWindow):
 
     def onFileOpen(self):
         if self.save_dlg:
-            fname, ffilter = QFileDialog.getOpenFileName(self, "Open pipeline from file")
-
+            fname, ffilter = QFileDialog.getOpenFileName(self, "Open pipeline from file", self.getFileDialogDirectory(), self.getFileDialogFilter())
+            print("##############")
+            print(fname)
+            print("##############")
             if not fname:
                 return
 
@@ -128,7 +139,7 @@ class NodeEditorWindow(QMainWindow):
         if not current_editor:
             return False
 
-        fname, ffilter = QFileDialog.getSaveFileName(self, "Save pipeline to file")
+        fname, ffilter = QFileDialog.getSaveFileName(self, "Save pipeline to file", self.getFileDialogDirectory(), self.getFileDialogFilter())
 
         if not fname:
             return False
@@ -184,7 +195,14 @@ class NodeEditorWindow(QMainWindow):
                 print("Json is not contain any node")
                 return
 
-            self.getcurrentPipelineEditorWidget().scene.clipboard.deserializeFromClipboard(data)
+            return self.getcurrentPipelineEditorWidget().scene.clipboard.deserializeFromClipboard(data)
+
+    def getFileDialogDirectory(self):
+        # TODO: change this dir
+        return r"C:\Personal\PipelineEditor\examples\mantis"
+
+    def getFileDialogFilter(self):
+        return 'Graph (*.json);;All files (*)'
 
     def print_msg(self, msg, color='black', msecs=3000):
         QTimer.singleShot(msecs, lambda: self.status_bar_text.setText(""))

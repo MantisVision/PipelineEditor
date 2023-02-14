@@ -75,6 +75,8 @@ class MantisWindow(NodeEditorWindow):
         else:
             self.writeSettings()
             event.accept()
+            import sys
+            sys.exit(0)
 
     def createActions(self):
         super().createActions()
@@ -294,7 +296,7 @@ class MantisWindow(NodeEditorWindow):
             dump_exception(e)
 
     def onFileOpen(self):
-        fnames, ffilter = QFileDialog.getOpenFileNames(self, "Open pipeline from file")
+        fnames, ffilter = QFileDialog.getOpenFileNames(self, "Open pipeline from file", self.getFileDialogDirectory(), self.getFileDialogFilter())
         try:
             for fname in fnames:
                 existing = self.findMdiChild(fname)

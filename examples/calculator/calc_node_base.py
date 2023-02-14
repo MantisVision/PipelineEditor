@@ -107,7 +107,7 @@ class CalcNode(Node):
             self.gr_node.setToolTip(str(e))
             dump_exception(e)
 
-    def onInputChanged(self, new_edge):
+    def onInputChanged(self, socket=None):
         self.markDirty()
         self.eval()
 
