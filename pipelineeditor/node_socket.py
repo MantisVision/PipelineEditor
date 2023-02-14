@@ -73,8 +73,8 @@ class Socket(Serializable):
         return self.node.getSocketsPosition(self._index, self._position, self.count_on_this_node_side)
 
     def determineMultiEdges(self, data):
-        if 'multi_edges' in data:
-            return data['multi_edges']
+        if 'multi_edge' in data:
+            return data['multi_edge']
         else:
             return data['position'] in (RIGHT_TOP, RIGHT_TOP)
 

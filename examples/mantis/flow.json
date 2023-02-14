@@ -13,7 +13,7 @@
                 {
                     "id": 1986825052672,
                     "index": 0,
-                    "multi_edge": false,
+                    "multi_edge": true,
                     "position": 5,
                     "socket_type": 3
                 }
@@ -125,7 +125,7 @@
                 {
                     "id": 1986858157872,
                     "index": 0,
-                    "multi_edge": false,
+                    "multi_edge": true,
                     "position": 5,
                     "socket_type": 2
                 }
