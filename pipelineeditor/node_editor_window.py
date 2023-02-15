@@ -66,6 +66,7 @@ class NodeEditorWindow(QMainWindow):
         self.actCut       = QAction("Cu&t",         self, triggered=self.onEditCut,       shortcut="Ctrl+X",       statusTip="Cut Selected")
         self.actSelectAll = QAction("Select &All",  self, triggered=self.onEditSelectAll, shortcut="Ctrl+A",       statusTip="Select All")
         self.actDelete    = QAction("&Delete",      self, triggered=self.onEditDelete,    shortcut="Del",          statusTip="Delete selected items")
+        self.actBake      = QAction("&Bake",        self, triggered=self.onRunBake,       shortcut="Ctrl+B",       statusTip="Bake graph into pipeline")
 
     def createMenus(self):
         self.menubar = self.menuBar()
@@ -93,6 +94,8 @@ class NodeEditorWindow(QMainWindow):
         self.editMenu.addAction(self.actSelectAll)
         self.editMenu.addSeparator()
         self.editMenu.addAction(self.actDelete)
+        self.editMenu.addSeparator()
+        self.editMenu.addAction(self.actBake)
 
     def setTitle(self):
         title = "Pipeline Editor - "
@@ -196,6 +199,22 @@ class NodeEditorWindow(QMainWindow):
                 return
 
             return self.getcurrentPipelineEditorWidget().scene.clipboard.deserializeFromClipboard(data)
+
+    def onRunBake(self):
+        self.tree_of_nodes = []
+        for node in self.getcurrentPipelineEditorWidget().scene.nodes:
+            # print(node)
+            if node.__class__.__name__ == "CalcNode_S_UUID":
+                self.traverse(node)
+
+    def traverse(self, node):
+        if not node.getOutputs:
+            return
+
+        for out in node.getOutputs():
+            print(out)
+            self.tree_of_nodes.append(out)
+            self.traverse(out)
 
     def getFileDialogDirectory(self):
         # TODO: change this dir

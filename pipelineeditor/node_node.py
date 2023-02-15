@@ -220,17 +220,19 @@ class Node(Serializable):
 
     def getInputs(self, index=0):
         ins = []
-        for edge in self.inputs[index].edges:
-            other_socket = edge.getOtherSocket(self.inputs[index])
-            ins.append(other_socket.node)
+        if self.inputs:
+            for edge in self.inputs[index].edges:
+                other_socket = edge.getOtherSocket(self.inputs[index])
+                ins.append(other_socket.node)
 
         return ins
 
     def getOutputs(self, index=0):
         outs = []
-        for edge in self.outs[index].edges:
-            other_socket = edge.getOtherSocket(self.inpoutsuts[index])
-            outs.append(other_socket.node)
+        if self.outputs:
+            for edge in self.outputs[index].edges:
+                other_socket = edge.getOtherSocket(self.outputs[index])
+                outs.append(other_socket.node)
 
         return outs
 
