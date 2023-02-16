@@ -116,13 +116,14 @@ class CalcNode_S_MVX_File(CalcNode):
 
     def serialize(self):
         res = super().serialize()
-        res['file_path'] = self.file_line_edit.text()
+        res['uuid'] = ""
+        res['params']['file_path'] = self.file_line_edit.text()
         return res
 
     def deserialize(self, data, hashmap={}, restore_id=True):
         res = super().deserialize(data, hashmap)
         try:
-            value = data['file_path']
+            value = data['params']['file_path']
             self.file_line_edit.setText(value)
             return True & res
         except Exception as e:
@@ -194,12 +195,14 @@ class CalcNode_S_UUID(CalcNode):
     def serialize(self):
         res = super().serialize()
         res['uuid'] = self.uuid_line_edit.text()
+        res['params'] = {}
+        res['params']['uuid'] = self.uuid_line_edit.text()
         return res
 
     def deserialize(self, data, hashmap={}, restore_id=True):
         res = super().deserialize(data, hashmap)
         try:
-            value = data['uuid']
+            value = data['params']['uuid']
             self.uuid_line_edit.setText(value)
             return True & res
         except Exception as e:

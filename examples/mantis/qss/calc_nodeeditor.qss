@@ -51,7 +51,7 @@ QDMNodeContentWidget QLabel#uuid_source_node_bg {
   font-size: 30px;
 }
 QDMNodeContentWidget QLabel#harvest_o_node_bg {
-  padding-left: 22px;
+  padding-left: 10px;
   font-size: 30px;
 }
 QDMNodeContentWidget QLabel#join_o_node_bg {
@@ -88,11 +88,20 @@ QDMNodeContentWidget QLineEdit#calc_node_input {
 QGraphicsView {
   selection-background-color: #fff;
 }
- 
+
 QComboBox#no_join_cb,
+QComboBox#fps_cb,
 QComboBox#dropir_cb {
   color: #e6e6e6;
   background: #555;
   border-color: #141414;
   selection-background-color: #6e6e6e;
+}
+
+QCheckBox#local_cb,
+QCheckBox#segmented_cb {
+  color: #e6e6e6;
+}
+QCheckBox#local_cb::indicator:checked {
+
 }

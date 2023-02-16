@@ -1,0 +1,23 @@
+{
+    "input": {
+        "id": 1986824978240,
+        "title": "UUID Source",
+        "pos_x": -620.0,
+        "pos_y": -114.0,
+        "inputs": [],
+        "outputs": [
+            {
+                "id": 1986825052672,
+                "index": 0,
+                "multi_edge": true,
+                "position": 5,
+                "socket_type": 3
+            }
+        ],
+        "content": {
+            "id": 2451471190480
+        },
+        "op_code": 3,
+        "uuid": "test"
+    }
+}

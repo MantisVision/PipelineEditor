@@ -95,14 +95,15 @@ class CalcNode_T_MVX_File(CalcNode):
 
     def serialize(self):
         res = super().serialize()
-        res['file_path'] = self.file_line_edit.text()
+        res['uuid'] = ""
+        res['params'] = {}
+        res['params']['file_path'] = self.file_line_edit.text()
         return res
 
     def deserialize(self, data, hashmap={}, restore_id=True):
         res = super().deserialize(data, hashmap)
         try:
-            value = data['file_path']
-            self.file_line_edit.setText(value)
+            self.file_line_edit.setText(data['params']['file_path'])
             return True & res
         except Exception as e:
             dump_exception(e)
@@ -203,14 +204,15 @@ class CalcNode_T_WAV_File(CalcNode):
 
     def serialize(self):
         res = super().serialize()
-        res['file_path'] = self.file_line_edit.text()
+        res['uuid'] = ""
+        res['params'] = {}
+        res['params']['file_path'] = self.file_line_edit.text()
         return res
 
     def deserialize(self, data, hashmap={}, restore_id=True):
         res = super().deserialize(data, hashmap)
         try:
-            value = data['file_path']
-            self.file_line_edit.setText(value)
+            self.file_line_edit.setText(data['params']['file_path'])
             return True & res
         except Exception as e:
             dump_exception(e)
