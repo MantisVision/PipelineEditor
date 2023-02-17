@@ -15,7 +15,7 @@ class CalcOutputContent(QDMNodeContentWidget):
 
 
 @register_nodes(OP_NODE_T_MVX_FILE)
-class CalcNode_T_MVX_File(CalcNode):
+class CalcNode_T_MVX_File(MVOutputNode):
 
     icon = str(current_file_path.joinpath(r"icons\mvx.png"))
     op_code = OP_NODE_T_MVX_FILE
@@ -111,7 +111,7 @@ class CalcNode_T_MVX_File(CalcNode):
 
 
 @register_nodes(OP_NODE_T_WAV_FILE)
-class CalcNode_T_WAV_File(CalcNode):
+class CalcNode_T_WAV_File(MVOutputNode):
     icon = str(current_file_path.joinpath(r"icons\wav.png"))
     op_code = OP_NODE_T_WAV_FILE
     op_title = "WAV Target File"

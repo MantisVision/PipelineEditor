@@ -8,7 +8,7 @@ current_file_path = Path(__file__).parent.parent
 
 
 @register_nodes(OP_NODE_O_JOIN)
-class CalcNode_Join(CalcNode):
+class CalcNode_Join(MVOperationsNode):
     icon = str(current_file_path.joinpath(r"icons\ops.png"))
     op_code = OP_NODE_O_JOIN
     op_title = "JOIN"
@@ -111,14 +111,14 @@ class CalcNode_Join(CalcNode):
         res = super().serialize()
         res['uuid'] = self.uuid_line_edit.text()
         res['params'] = {}
+        res['params']['uuid'] = self.uuid_line_edit.text()
         res['params']['output_path'] = self.output_path
         return res
 
     def deserialize(self, data, hashmap={}, restore_id=True):
         res = super().deserialize(data, hashmap)
         try:
-            value = data['params']['uuid']
-            self.uuid_line_edit.setText(value)
+            self.uuid_line_edit.setText(data['uuid'])
             return True & res
         except Exception as e:
             dump_exception(e)

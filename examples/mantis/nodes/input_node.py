@@ -30,7 +30,7 @@ class CalcInputContent(QDMNodeContentWidget):
 
 
 @register_nodes(OP_NODE_S_MVX_FILE)
-class CalcNode_S_MVX_File(CalcNode):
+class CalcNode_S_MVX_File(MVInputNode):
     icon = str(current_file_path.joinpath(r"icons\mvx.png"))
     op_code = OP_NODE_S_MVX_FILE
     op_title = "MVX Source File"
@@ -132,7 +132,7 @@ class CalcNode_S_MVX_File(CalcNode):
 
 
 @register_nodes(OP_NODE_S_UUID)
-class CalcNode_S_UUID(CalcNode):
+class CalcNode_S_UUID(MVInputNode):
     icon = str(current_file_path.joinpath(r"icons\uuid.png"))
     op_code = OP_NODE_S_UUID
     op_title = "UUID Source"

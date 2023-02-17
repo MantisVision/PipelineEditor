@@ -8,7 +8,7 @@ current_file_path = Path(__file__).parent.parent
 
 
 @register_nodes(OP_NODE_O_TSDF)
-class CalcNode_TSDF(CalcNode):
+class CalcNode_TSDF(MVOperationsNode):
     icon = str(current_file_path.joinpath(r"icons\ops.png"))
     op_code = OP_NODE_O_TSDF
     op_title = "TSDF"
@@ -176,15 +176,15 @@ class CalcNode_TSDF(CalcNode):
     def deserialize(self, data, hashmap={}, restore_id=True):
         res = super().deserialize(data, hashmap)
         try:
-            self.input_path_line_edit.setText(data['file_path'])
-            self.client.setText(data['client'])
-            self.build.setText(data['build'])
-            self.scale.setText(data['scale'])
-            self.atlas_size.setText(data['atlas_size'])
-            self.fps_cb.setCurrentText(data['fps'])
-            self.add_params.setText(data['add_params'])
-            self.local_cb.setChecked(data['local'])
-            self.segmented_cb.setChecked(data['segmented'])
+            self.input_path_line_edit.setText(data['params']['file_path'])
+            self.client.setText(data['params']['client'])
+            self.build.setText(data['params']['build'])
+            self.scale.setText(data['params']['scale'])
+            self.atlas_size.setText(data['params']['atlas_size'])
+            self.fps_cb.setCurrentText(data['params']['fps'])
+            self.add_params.setText(data['params']['add_params'])
+            self.local_cb.setChecked(data['params']['local'])
+            self.segmented_cb.setChecked(data['params']['segmented'])
             return True & res
         except Exception as e:
             dump_exception(e)

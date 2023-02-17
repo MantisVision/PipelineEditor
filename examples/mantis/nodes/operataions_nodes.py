@@ -8,7 +8,7 @@ current_file_path = Path(__file__).parent.parent
 
 
 @register_nodes(OP_NODE_O_AUDIO)
-class CalcNode_O_Audio(CalcNode):
+class CalcNode_O_Audio(MVOperationsNode):
     icon = str(current_file_path.joinpath(r"icons\ops.png"))
     op_code = OP_NODE_O_AUDIO
     op_title = "Audio"

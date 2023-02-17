@@ -121,3 +121,15 @@ class CalcNode(Node):
         res = super().deserialize(data, hashmap, restore_id)
         # print(f"Deserialize CalcNode {self.__class__.__name__} res: {res}")
         return res
+
+
+class MVOperationsNode(CalcNode):
+    pass
+
+
+class MVInputNode(CalcNode):
+    pass
+
+
+class MVOutputNode(CalcNode):
+    pass

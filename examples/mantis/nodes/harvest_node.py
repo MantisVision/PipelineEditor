@@ -8,7 +8,7 @@ current_file_path = Path(__file__).parent.parent
 
 
 @register_nodes(OP_NODE_O_HARVEST)
-class CalcNode_Harvest(CalcNode):
+class CalcNode_Harvest(MVOperationsNode):
     icon = str(current_file_path.joinpath(r"icons\ops.png"))
     op_code = OP_NODE_O_HARVEST
     op_title = "HARVEST"

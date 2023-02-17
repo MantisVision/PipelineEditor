@@ -8,7 +8,7 @@ current_file_path = Path(__file__).parent.parent
 
 
 @register_nodes(OP_NODE_O_UPLOAD)
-class CalcNode_Upload(CalcNode):
+class CalcNode_Upload(MVOperationsNode):
     icon = str(current_file_path.joinpath(r"icons\ops.png"))
     op_code = OP_NODE_O_UPLOAD
     op_title = "UPLOAD"

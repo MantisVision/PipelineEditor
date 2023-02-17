@@ -9,6 +9,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 from pipelineeditor.utils import dump_exception, pp # noqa
 from pipelineeditor.utils import loadStylesheets # noqa
 from pipelineeditor.node_editor_window import NodeEditorWindow # noqa
+from examples.mantis.calc_node_base import * # noqa
 from examples.mantis.calc_sub_window import CalculatorSubWindow # noqa
 from examples.mantis.calc_drag_listbox import QDMDragListBox # noqa
 from examples.mantis.calc_config import * # noqa
@@ -313,6 +314,87 @@ class MantisWindow(NodeEditorWindow):
                         pipeline_editor.close()
         except Exception as e:
             dump_exception(e)
+
+    def onRunBake(self):
+        self.tree_of_nodes = []
+        for node in self.getcurrentPipelineEditorWidget().scene.nodes:
+            if isinstance(node, MVInputNode):
+                with open("test_flow.json", 'w') as fd:
+                    data = self.createFlow(node)
+                    self.traverse(node, fd)
+        print(self.tree_of_nodes)
+
+        # node = self.tree_of_nodes[0]
+        # if node.getInput().id == data['id']:
+        #     data['next'] = [self.createFlow(node)]
+
+        # current = data['next'][0]
+        # node = self.tree_of_nodes[1]
+        # if node.getInput().id == current['id']:
+        #     current['next'].append(self.createFlow(node))
+
+        # current = current['next'][0]
+        # node = self.tree_of_nodes[2]
+        # if node.getInput().id == current['id']:
+        #     current['next'].append(self.createFlow(node))
+
+        # current = current['next'][0]
+        # node = self.tree_of_nodes[3]
+        # if node.getInput().id == current['id']:
+        #     current['next'].append(self.createFlow(node))
+
+        # current = current['next'][0]
+        # node = self.tree_of_nodes[4]
+        # if node.getInput().id == current['id']:
+        #     current['next'].append(self.createFlow(node))
+
+        for node in self.tree_of_nodes:
+            current = data
+            self.iterdict(node, current)
+
+        print(data)
+
+    def iterdict(self, node, current):
+        while current:
+            if node.getInput().id == current['id']:
+                current['next'].append(self.createFlow(node))
+            if current['next']:
+                current = current['next'][0]
+                # for child in current['next']:
+                #     return self.iterdict(node, child)
+            else:
+                break
+
+    def traverse(self, node, fd=0):
+        if not node.getOutputs:
+            return
+
+        for out in node.getOutputs():
+            if isinstance(out, MVOutputNode):
+                continue
+            self.tree_of_nodes.append(out)
+            self.traverse(out)
+
+    def createFlow(self, node):
+        data = node.serialize()
+        flow = {
+            'uuid': "",
+            'flow': {
+                'type': "",
+                'params': {
+                },
+            },
+            'next': [],
+            'retries': 0
+        }
+        flow['uuid'] = data['uuid']
+        flow['id'] = data['id']
+        flow['flow']['type'] = data['title']
+        flow['flow']['params'] = data['params']
+
+        return flow
+        # flow['params'] =
+        # json.dump(data, fd)
 
     def createMdiChild(self, child_widget=None):
         pipeline_editor = child_widget if child_widget else CalculatorSubWindow()
