@@ -201,40 +201,7 @@ class NodeEditorWindow(QMainWindow):
             return self.getcurrentPipelineEditorWidget().scene.clipboard.deserializeFromClipboard(data)
 
     def onRunBake(self):
-        self.tree_of_nodes = []
-        for node in self.getcurrentPipelineEditorWidget().scene.nodes:
-            # print(node)
-            if node.__class__.__name__ == "CalcNode_S_UUID":
-                with open("test_flow.json", 'w') as fd:
-                    self.createFlow(node, f, True)
-                    self.traverse(node, fd)
-
-    def traverse(self, node, fd=0):
-        if not node.getOutputs:
-            return
-
-        for out in node.getOutputs():
-            print(out)
-            self.tree_of_nodes.append(out)
-            self.traverse(out)
-
-    def createFlow(self, node, fd, root=False):
-        data = node.serialize()
-        flow = {
-            'uuid': "",
-            'flow': {
-                'type': "",
-                'params': {
-                },
-            },
-            'next': [],
-            'retries': 0
-        }
-        flow['uuid'] = data['uuid']
-        flow['id'] = data['id']
-        flow['flow']['type'] = data['title'],
-        # flow['params'] = 
-        json.dump(data, fd)
+        pass
 
     def getFileDialogDirectory(self):
         # TODO: change this dir

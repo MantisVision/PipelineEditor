@@ -19,10 +19,13 @@
                 }
             ],
             "content": {
-                "id": 2059784195952
+                "id": 1479751439344
             },
             "op_code": 3,
-            "uuid": "test"
+            "uuid": "test",
+            "params": {
+                "uuid": "test"
+            }
         },
         {
             "id": 1986824978288,
@@ -48,14 +51,16 @@
                 }
             ],
             "content": {
-                "id": 2059784200128
+                "id": 1479751443664
             },
             "op_code": 4,
             "uuid": "test",
-            "method_of_capture": "asd",
-            "mv_session": "asd",
-            "drop_ir": 1,
-            "no_join": 1
+            "params": {
+                "method_of_capture": "",
+                "mv_session": "",
+                "drop_ir": 0,
+                "no_join": 0
+            }
         },
         {
             "id": 1986824966528,
@@ -81,10 +86,13 @@
                 }
             ],
             "content": {
-                "id": 2059784202576
+                "id": 1479751447984
             },
             "op_code": 8,
-            "uuid": "test"
+            "uuid": "test",
+            "params": {
+                "uuid": "test"
+            }
         },
         {
             "id": 1986825053296,
@@ -102,10 +110,13 @@
             ],
             "outputs": [],
             "content": {
-                "id": 2059784205024
+                "id": 1479751449856
             },
             "op_code": 9,
-            "file_path": "C:/Personal/PipelineEditor/.gitignore"
+            "uuid": "",
+            "params": {
+                "file_path": "C:/Personal/PipelineEditor/examples/mantis/minimap.py"
+            }
         },
         {
             "id": 1986858157536,
@@ -131,11 +142,13 @@
                 }
             ],
             "content": {
-                "id": 2059784206896
+                "id": 1479751763280
             },
             "op_code": 5,
-            "uuid": "C:\\HARVEST\\test\\test_joined.mvx",
-            "output_path": "C:\\HARVEST\\test\\test_joined.mvx"
+            "uuid": "test",
+            "params": {
+                "output_path": "C:\\HARVEST\\test\\test_joined.mvx"
+            }
         },
         {
             "id": 1986858158784,
@@ -161,18 +174,21 @@
                 }
             ],
             "content": {
-                "id": 2059784569328
+                "id": 1479751766016
             },
             "op_code": 7,
-            "file_path": "C:\\HARVEST\\test\\test_joined.mvx",
-            "client": "asd",
-            "build": "asd",
-            "scale": "asd",
-            "atlas_size": "asd",
-            "fps": "5",
-            "add_params": "asd",
-            "local": true,
-            "segmented": true
+            "uuid": "",
+            "params": {
+                "file_path": "C:\\HARVEST\\test\\test_joined.mvx",
+                "client": "asd",
+                "build": "asd",
+                "scale": "asd",
+                "atlas_size": "asd",
+                "fps": "5",
+                "add_params": "asd",
+                "local": true,
+                "segmented": true
+            }
         },
         {
             "id": 1986858161904,
@@ -190,10 +206,13 @@
             ],
             "outputs": [],
             "content": {
-                "id": 2059784573504
+                "id": 1479751770480
             },
             "op_code": 2,
-            "file_path": "C:/Personal/PipelineEditor/.gitignore"
+            "uuid": "",
+            "params": {
+                "file_path": "C:/Personal/PipelineEditor/examples/mantis/minimap.py"
+            }
         },
         {
             "id": 1986858162384,
@@ -211,10 +230,13 @@
             ],
             "outputs": [],
             "content": {
-                "id": 2059784575376
+                "id": 1479751772352
             },
             "op_code": 6,
-            "file_path": "C:\\HARVEST\\test\\test_joined.mvx"
+            "uuid": "",
+            "params": {
+                "file_path": "C:\\HARVEST\\test\\test_joined.mvx"
+            }
         },
         {
             "id": 2059922327728,
@@ -240,14 +262,16 @@
                 }
             ],
             "content": {
-                "id": 2059784578544
+                "id": 1479751774656
             },
             "op_code": 4,
             "uuid": "",
-            "method_of_capture": "",
-            "mv_session": "",
-            "drop_ir": 0,
-            "no_join": 0
+            "params": {
+                "method_of_capture": "",
+                "mv_session": "",
+                "drop_ir": 0,
+                "no_join": 0
+            }
         }
     ],
     "edges": [
