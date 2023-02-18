@@ -75,7 +75,7 @@ class MVNode_Join(MVOperationsNode):
             self.markInvalid()
             return
 
-        val = input_node.eval()
+        val = input_node.getVal()
 
         if val is None:
             self.gr_node.setToolTip("Not a valid UUID")
