@@ -113,6 +113,9 @@ class MVNode_Harvest(MVOperationsNode):
 
         return val
 
+    def getVal(self):
+        return self._uuid if not self.isInvalid() else None
+
     def onTextChange(self):
         self._uuid = self.uuid_line_edit.text()
         output_node = self.getOutput(0)
@@ -130,7 +133,7 @@ class MVNode_Harvest(MVOperationsNode):
         return res
 
     def deserialize(self, data, hashmap={}, restore_id=True):
-        res = super().deserialize(data, hashmap)
+        res = super().deserialize(data, hashmap, restore_id)
         try:
             self.uuid_line_edit.setText(data['uuid'])
             self.method_of_capture_line.setText(data['params']['method_of_capture'])

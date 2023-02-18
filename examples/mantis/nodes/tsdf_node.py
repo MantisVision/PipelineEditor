@@ -174,7 +174,7 @@ class MVNode_TSDF(MVOperationsNode):
         return res
 
     def deserialize(self, data, hashmap={}, restore_id=True):
-        res = super().deserialize(data, hashmap)
+        res = super().deserialize(data, hashmap, restore_id)
         try:
             self.input_path_line_edit.setText(data['params']['file_path'])
             self.client.setText(data['params']['client'])

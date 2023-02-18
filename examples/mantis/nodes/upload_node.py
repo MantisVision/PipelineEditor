@@ -97,7 +97,7 @@ class MVNode_Upload(MVOperationsNode):
         return res
 
     def deserialize(self, data, hashmap={}, restore_id=True):
-        res = super().deserialize(data, hashmap)
+        res = super().deserialize(data, hashmap, restore_id)
         try:
             value = data['params']['file_path']
             self.input_path_line_edit.setText(value)

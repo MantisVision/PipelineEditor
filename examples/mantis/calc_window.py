@@ -192,6 +192,7 @@ class MantisWindow(NodeEditorWindow):
         selected = active_mdi_child.scene.gr_scene.selectedItems()
         if selected:
             node = selected[0].node
+            print(node.id)
             colaps = [
                 "MVNode_S_UUID",
                 "MVNode_S_MVX_File",
@@ -334,7 +335,6 @@ class MantisWindow(NodeEditorWindow):
                 with open("test_flow.json", 'w') as fd:
                     data = self.createFlow(node)
                     self.traverse(node, fd)
-        print(self.tree_of_nodes)
 
         # node = self.tree_of_nodes[0]
         # if node.getInput().id == data['id']:

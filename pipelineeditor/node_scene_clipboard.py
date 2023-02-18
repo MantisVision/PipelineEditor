@@ -81,7 +81,6 @@ class SceneClipbaord():
         # Create each node
         for node_data in data['nodes']:
             new_node = self.scene.get_node_class_from_data(node_data)(self.scene)
-            print(new_node)
             new_node.deserialize(node_data, hashmap, restore_id=False)
             created_node.append(new_node)
 

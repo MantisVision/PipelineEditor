@@ -116,7 +116,7 @@ class MVNode_Join(MVOperationsNode):
         return res
 
     def deserialize(self, data, hashmap={}, restore_id=True):
-        res = super().deserialize(data, hashmap)
+        res = super().deserialize(data, hashmap, restore_id)
         try:
             self.uuid_line_edit.setText(data['uuid'])
             return True & res
