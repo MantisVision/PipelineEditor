@@ -67,6 +67,7 @@ class NodeEditorWindow(QMainWindow):
         self.actSelectAll = QAction("Select &All",  self, triggered=self.onEditSelectAll, shortcut="Ctrl+A",       statusTip="Select All")
         self.actDelete    = QAction("&Delete",      self, triggered=self.onEditDelete,    shortcut="Del",          statusTip="Delete selected items")
         self.actBake      = QAction("&Bake",        self, triggered=self.onRunBake,       shortcut="Ctrl+B",       statusTip="Bake graph into pipeline")
+        self.onEvalAll    = QAction("&Eval All",    self, triggered=self.onEvalAll,       shortcut="Ctrl+E",       statusTip="Evaluate all nodes")
 
     def createMenus(self):
         self.menubar = self.menuBar()
@@ -96,6 +97,7 @@ class NodeEditorWindow(QMainWindow):
         self.editMenu.addAction(self.actDelete)
         self.editMenu.addSeparator()
         self.editMenu.addAction(self.actBake)
+        self.editMenu.addAction(self.onEvalAll)
 
     def setTitle(self):
         title = "Pipeline Editor - "
@@ -200,6 +202,10 @@ class NodeEditorWindow(QMainWindow):
 
             return self.getcurrentPipelineEditorWidget().scene.clipboard.deserializeFromClipboard(data)
 
+    def onEvalAll(self):
+        for node in self.getcurrentPipelineEditorWidget().scene.nodes:
+            node.eval()
+
     def onRunBake(self):
         pass
 
@@ -222,7 +228,8 @@ class NodeEditorWindow(QMainWindow):
         return self.centralWidget()
 
     def isModified(self):
-        return self.getcurrentPipelineEditorWidget().scene.isModified()
+        pipline_editor = self.getcurrentPipelineEditorWidget()
+        return pipline_editor.scene.isModified() if pipline_editor else False
 
     def closeEvent(self, event) -> None:
         if self.save_dlg():
