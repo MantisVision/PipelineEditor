@@ -7,7 +7,7 @@ from pipelineeditor.node_socket import *
 from pipelineeditor.utils import dump_exception
 
 
-class CalcMVGraphicsNode(QDMGraphicsNode):
+class MVGraphicsNode(QDMGraphicsNode):
     def initSizes(self):
         super().initSizes()
         self.width = 160
@@ -61,7 +61,7 @@ class MVNode(Node):
 
     def initInnerClasses(self):
         self.content = MVContentWidget(self)
-        self.gr_node = CalcMVGraphicsNode(self)
+        self.gr_node = MVGraphicsNode(self)
 
     def initSettings(self):
         super().initSettings()
@@ -112,6 +112,9 @@ class MVNode(Node):
         self.markDirty()
         self.eval()
 
+    # def remove(self):
+    #     super().remove()
+
     def serialize(self):
         res = super().serialize()
         res['op_code'] = self.__class__.op_code
@@ -119,7 +122,6 @@ class MVNode(Node):
 
     def deserialize(self, data, hashmap={}, restore_id=True):
         res = super().deserialize(data, hashmap, restore_id)
-        # print(f"Deserialize MVNode {self.__class__.__name__} res: {res}")
         return res
 
 

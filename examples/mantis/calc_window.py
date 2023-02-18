@@ -169,6 +169,18 @@ class MantisWindow(NodeEditorWindow):
             action.triggered.connect(self.windowMapper.map)
             self.windowMapper.setMapping(action, window)
 
+    def onEditDelete(self):
+        # Hide param_dock widget if deleted node colaps widget is attached to it
+        active_mdi_child = self.activeMdiChild()
+        selected = active_mdi_child.scene.gr_scene.selectedItems()
+        for sel in selected:
+            if hasattr(sel, "node") and hasattr(sel.node, "colaps_widget"):
+                if sel.node.colaps_widget == self.param_dock.widget():
+                    self.param_dock.hide()
+                    break
+
+        return super().onEditDelete()
+
     def onNodeWindowToolbar(self):
         if self.nodes_dock.isVisible():
             self.nodes_dock.hide()
