@@ -15,7 +15,7 @@ class CalcOutputContent(QDMNodeContentWidget):
 
 
 @register_nodes(OP_NODE_T_MVX_FILE)
-class CalcNode_T_MVX_File(MVOutputNode):
+class MVNode_T_MVX_File(MVOutputNode):
 
     icon = str(current_file_path.joinpath(r"icons\mvx.png"))
     op_code = OP_NODE_T_MVX_FILE
@@ -111,7 +111,7 @@ class CalcNode_T_MVX_File(MVOutputNode):
 
 
 @register_nodes(OP_NODE_T_WAV_FILE)
-class CalcNode_T_WAV_File(MVOutputNode):
+class MVNode_T_WAV_File(MVOutputNode):
     icon = str(current_file_path.joinpath(r"icons\wav.png"))
     op_code = OP_NODE_T_WAV_FILE
     op_title = "WAV Target File"
@@ -164,7 +164,7 @@ class CalcNode_T_WAV_File(MVOutputNode):
             self.markInvalid()
             return
 
-        if input_node.__class__.__name__ != "CalcNode_O_Audio":
+        if input_node.__class__.__name__ != "MVNode_O_Audio":
             self.gr_node.setToolTip("Input should be Audio node")
             if self.uuid_line_edit:
                 self.uuid_line_edit.setText("")

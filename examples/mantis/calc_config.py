@@ -8,7 +8,7 @@ OP_NODE_O_UPLOAD = 6
 OP_NODE_O_TSDF = 7
 OP_NODE_O_AUDIO = 8
 OP_NODE_T_WAV_FILE = 9
-CALC_NODES = {}
+MV_NODES = {}
 
 
 class ConfException(Exception):
@@ -24,9 +24,9 @@ class OpCodeNotRegistered(ConfException):
 
 
 def register_nodes_now(op_code, class_reference):
-    if op_code in CALC_NODES:
-        raise InvalidNodeRegistration(f"Duplication of registration at {op_code}. Node {CALC_NODES[op_code]} already exists.")
-    CALC_NODES[op_code] = class_reference
+    if op_code in MV_NODES:
+        raise InvalidNodeRegistration(f"Duplication of registration at {op_code}. Node {MV_NODES[op_code]} already exists.")
+    MV_NODES[op_code] = class_reference
 
 
 def register_nodes(op_code):
@@ -37,10 +37,10 @@ def register_nodes(op_code):
 
 
 def get_class_from_op_code(op_code):
-    if op_code not in CALC_NODES:
+    if op_code not in MV_NODES:
         raise OpCodeNotRegistered(f"op_code {op_code} is not registered.")
 
-    return CALC_NODES[op_code]
+    return MV_NODES[op_code]
 
 
 from examples.mantis.nodes import * # noqa

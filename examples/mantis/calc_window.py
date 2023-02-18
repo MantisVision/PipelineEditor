@@ -31,7 +31,7 @@ class MantisWindow(NodeEditorWindow):
         self.empty_icon = QIcon(".")
 
         print("Registered Nodes:")
-        pp(CALC_NODES)
+        pp(MV_NODES)
 
         self.mdiArea = QMdiArea()
         self.mdiArea.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)
@@ -181,15 +181,15 @@ class MantisWindow(NodeEditorWindow):
         if selected:
             node = selected[0].node
             colaps = [
-                "CalcNode_S_UUID",
-                "CalcNode_S_MVX_File",
-                "CalcNode_T_MVX_File",
-                "CalcNode_Harvest",
-                "CalcNode_Join",
-                "CalcNode_Upload",
-                "CalcNode_TSDF",
-                "CalcNode_O_Audio",
-                "CalcNode_T_WAV_File",
+                "MVNode_S_UUID",
+                "MVNode_S_MVX_File",
+                "MVNode_T_MVX_File",
+                "MVNode_Harvest",
+                "MVNode_Join",
+                "MVNode_Upload",
+                "MVNode_TSDF",
+                "MVNode_O_Audio",
+                "MVNode_T_WAV_File",
             ]
 
             if node.__class__.__name__ in colaps:

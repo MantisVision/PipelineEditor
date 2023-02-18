@@ -8,7 +8,7 @@ current_file_path = Path(__file__).parent.parent
 
 
 @register_nodes(OP_NODE_O_UPLOAD)
-class CalcNode_Upload(MVOperationsNode):
+class MVNode_Upload(MVOperationsNode):
     icon = str(current_file_path.joinpath(r"icons\ops.png"))
     op_code = OP_NODE_O_UPLOAD
     op_title = "UPLOAD"
@@ -54,7 +54,7 @@ class CalcNode_Upload(MVOperationsNode):
             self.markInvalid()
             return
 
-        if input_node.__class__.__name__ not in ["CalcNode_S_MVX_File", "CalcNode_Join"]:
+        if input_node.__class__.__name__ not in ["MVNode_S_MVX_File", "MVNode_Join"]:
             self.gr_node.setToolTip("Input should be either MVX file or Join node")
             if self.input_path_line_edit:
                 self.input_path_line_edit.setText("")

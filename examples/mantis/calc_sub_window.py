@@ -32,14 +32,13 @@ class CalculatorSubWindow(NodeEditorWidget):
     def fileLoad(self, fname):
         if super().fileLoad(fname):
             for node in self.scene.nodes:
-                # if node.__class__.__name__ == "CalcNode_Output":
                 node.eval()
             return True
         return False
 
     def doEvalOutputs(self):
         for node in self.scene.nodes:
-            if node.__class__.__name__ == "CalcNode_Output":
+            if node.__class__.__name__ == "MVNode_Output":
                 node.eval()
 
     def onHistoryRestored(self):
@@ -50,7 +49,7 @@ class CalculatorSubWindow(NodeEditorWidget):
 
     def initNodesContextMenu(self):
         context_menu = QMenu(self)
-        keys = list(CALC_NODES.keys())
+        keys = list(MV_NODES.keys())
         keys.sort()
 
         for key in keys:
@@ -60,10 +59,10 @@ class CalculatorSubWindow(NodeEditorWidget):
 
     def initNewNodeActions(self):
         self.node_actions = {}
-        keys = list(CALC_NODES.keys())
+        keys = list(MV_NODES.keys())
         keys.sort()
         for key in keys:
-            node = CALC_NODES[key]
+            node = MV_NODES[key]
             self.node_actions[node.op_code] = QAction(QIcon(node.icon), node.op_title)
             self.node_actions[node.op_code].setData(node.op_code)
 
@@ -210,29 +209,31 @@ class CalculatorSubWindow(NodeEditorWidget):
         action = context_menu.exec_(self.mapToGlobal(event.pos()))
 
         if action:
-            new_calc_node = get_class_from_op_code(action.data())(self.scene)
+            new_node = get_class_from_op_code(action.data())(self.scene)
             scene_pos = self.scene.getView().mapToScene(event.pos())
-            new_calc_node.setPos(scene_pos.x(), scene_pos.y())
+            new_node.setPos(scene_pos.x(), scene_pos.y())
 
             if self.scene.getView().mode == MODE_EDGE_DRAG:
                 # If we were dragging edge
-                target_socket = self.determine_target_socket_of_node(self.scene.getView().drag_start_socket.is_output, new_calc_node)
+                target_socket = self.determine_target_socket_of_node(self.scene.getView().drag_start_socket.is_output, new_node)
                 if target_socket is not None:
-                    self.scene.getView().edgeDragEnd(target_socket.grSocket)
-                    self.finish_new_node_state(new_calc_node)
+                    self.scene.getView().edgeDragEnd(target_socket.gr_socket)
+                    self.finish_new_node_state(new_node)
 
             else:
-                self.scene.history.store_history(f"Created {new_calc_node.__class__.__name__}")
+                self.scene.history.store_history(f"Created {new_node.__class__.__name__}")
 
-    def determine_target_socket_of_node(self, was_dragged_flag, new_calc_node):
+    def determine_target_socket_of_node(self, was_dragged_flag, new_node):
         target_socket = None
         if was_dragged_flag:
-            if len(new_calc_node.inputs) > 0: target_socket = new_calc_node.inputs[0]
+            if len(new_node.inputs) > 0:
+                target_socket = new_node.inputs[0]
         else:
-            if len(new_calc_node.outputs) > 0: target_socket = new_calc_node.outputs[0]
+            if len(new_node.outputs) > 0:
+                target_socket = new_node.outputs[0]
         return target_socket
 
-    def finish_new_node_state(self, new_calc_node):
+    def finish_new_node_state(self, new_node):
         self.scene.doDeselectItems()
-        new_calc_node.grNode.doSelect(True)
-        new_calc_node.grNode.onSelected()
+        new_node.gr_node.doSelect(True)
+        new_node.gr_node.onSelected()

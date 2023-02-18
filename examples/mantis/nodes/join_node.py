@@ -8,7 +8,7 @@ current_file_path = Path(__file__).parent.parent
 
 
 @register_nodes(OP_NODE_O_JOIN)
-class CalcNode_Join(MVOperationsNode):
+class MVNode_Join(MVOperationsNode):
     icon = str(current_file_path.joinpath(r"icons\ops.png"))
     op_code = OP_NODE_O_JOIN
     op_title = "JOIN"
@@ -68,7 +68,7 @@ class CalcNode_Join(MVOperationsNode):
             self.markInvalid()
             return
 
-        if input_node.__class__.__name__ not in ["CalcNode_S_UUID", "CalcNode_Harvest"]:
+        if input_node.__class__.__name__ not in ["MVNode_S_UUID", "MVNode_Harvest"]:
             self.gr_node.setToolTip("Input should be either UUID or Harvest node")
             if self.uuid_line_edit:
                 self.uuid_line_edit.setText("")

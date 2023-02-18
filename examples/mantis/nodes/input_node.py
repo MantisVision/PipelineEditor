@@ -30,7 +30,7 @@ class CalcInputContent(QDMNodeContentWidget):
 
 
 @register_nodes(OP_NODE_S_MVX_FILE)
-class CalcNode_S_MVX_File(MVInputNode):
+class MVNode_S_MVX_File(MVInputNode):
     icon = str(current_file_path.joinpath(r"icons\mvx.png"))
     op_code = OP_NODE_S_MVX_FILE
     op_title = "MVX Source File"
@@ -117,6 +117,7 @@ class CalcNode_S_MVX_File(MVInputNode):
     def serialize(self):
         res = super().serialize()
         res['uuid'] = ""
+        res['params'] = {}
         res['params']['file_path'] = self.file_line_edit.text()
         return res
 
@@ -132,7 +133,7 @@ class CalcNode_S_MVX_File(MVInputNode):
 
 
 @register_nodes(OP_NODE_S_UUID)
-class CalcNode_S_UUID(MVInputNode):
+class MVNode_S_UUID(MVInputNode):
     icon = str(current_file_path.joinpath(r"icons\uuid.png"))
     op_code = OP_NODE_S_UUID
     op_title = "UUID Source"

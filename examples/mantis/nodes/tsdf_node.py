@@ -8,7 +8,7 @@ current_file_path = Path(__file__).parent.parent
 
 
 @register_nodes(OP_NODE_O_TSDF)
-class CalcNode_TSDF(MVOperationsNode):
+class MVNode_TSDF(MVOperationsNode):
     icon = str(current_file_path.joinpath(r"icons\ops.png"))
     op_code = OP_NODE_O_TSDF
     op_title = "TSDF"
@@ -97,7 +97,7 @@ class CalcNode_TSDF(MVOperationsNode):
             self.markInvalid()
             return
 
-        if input_node.__class__.__name__ not in ["CalcNode_S_MVX_File", "CalcNode_Join"]:
+        if input_node.__class__.__name__ not in ["MVNode_S_MVX_File", "MVNode_Join"]:
             self.gr_node.setToolTip("Input should be either MVX file or Join node")
             if self.input_path_line_edit:
                 self.input_path_line_edit.setText("")
@@ -109,7 +109,7 @@ class CalcNode_TSDF(MVOperationsNode):
             self.markInvalid()
             return
 
-        if output_node.__class__.__name__ not in ["CalcNode_T_MVX_File"]:
+        if output_node.__class__.__name__ not in ["MVNode_T_MVX_File"]:
             self.gr_node.setToolTip("Output should be MVX file")
             self.markInvalid()
             return

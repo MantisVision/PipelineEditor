@@ -7,7 +7,7 @@ from pipelineeditor.node_socket import *
 from pipelineeditor.utils import dump_exception
 
 
-class CalcGraphicsNode(QDMGraphicsNode):
+class CalcMVGraphicsNode(QDMGraphicsNode):
     def initSizes(self):
         super().initSizes()
         self.width = 160
@@ -38,13 +38,13 @@ class CalcGraphicsNode(QDMGraphicsNode):
         )
 
 
-class CalcContentWidget(QDMNodeContentWidget):
+class MVContentWidget(QDMNodeContentWidget):
     def initUI(self):
         lbl = QLabel(self.node.content_label, self)
         lbl.setObjectName(self.node.content_label_obj_name)
 
 
-class CalcNode(Node):
+class MVNode(Node):
     icon = ""
     op_code = 0
     op_title = "Undefined"
@@ -60,8 +60,8 @@ class CalcNode(Node):
         self.markDirty()
 
     def initInnerClasses(self):
-        self.content = CalcContentWidget(self)
-        self.gr_node = CalcGraphicsNode(self)
+        self.content = MVContentWidget(self)
+        self.gr_node = CalcMVGraphicsNode(self)
 
     def initSettings(self):
         super().initSettings()
@@ -119,17 +119,17 @@ class CalcNode(Node):
 
     def deserialize(self, data, hashmap={}, restore_id=True):
         res = super().deserialize(data, hashmap, restore_id)
-        # print(f"Deserialize CalcNode {self.__class__.__name__} res: {res}")
+        # print(f"Deserialize MVNode {self.__class__.__name__} res: {res}")
         return res
 
 
-class MVOperationsNode(CalcNode):
+class MVOperationsNode(MVNode):
     pass
 
 
-class MVInputNode(CalcNode):
+class MVInputNode(MVNode):
     pass
 
 
-class MVOutputNode(CalcNode):
+class MVOutputNode(MVNode):
     pass

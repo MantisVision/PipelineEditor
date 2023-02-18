@@ -8,7 +8,7 @@ current_file_path = Path(__file__).parent.parent
 
 
 @register_nodes(OP_NODE_O_HARVEST)
-class CalcNode_Harvest(MVOperationsNode):
+class MVNode_Harvest(MVOperationsNode):
     icon = str(current_file_path.joinpath(r"icons\ops.png"))
     op_code = OP_NODE_O_HARVEST
     op_title = "HARVEST"
@@ -88,7 +88,7 @@ class CalcNode_Harvest(MVOperationsNode):
             self.markInvalid()
             return
 
-        if input_node.__class__.__name__ != "CalcNode_S_UUID":
+        if input_node.__class__.__name__ != "MVNode_S_UUID":
             self.gr_node.setToolTip("Input should be UUID node")
             if self.uuid_line_edit:
                 self.uuid_line_edit.setText("")

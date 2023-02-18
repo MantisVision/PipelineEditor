@@ -21,7 +21,7 @@ class QDMDragListBox(QListWidget):
 
     def addMyItems(self):
         # current_file_path = Path(__file__).parent
-        keys = list(CALC_NODES.keys()) if not self.list_op_nodes else self.list_op_nodes
+        keys = list(MV_NODES.keys()) if not self.list_op_nodes else self.list_op_nodes
         keys.sort()
 
         for key in keys:
