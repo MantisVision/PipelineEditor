@@ -111,6 +111,9 @@ class MVNode_S_MVX_File(MVInputNode):
         self.input_path = self.file_line_edit.text()
         self.eval()
 
+    def setInputContent(self, val):
+        self.file_line_edit.setText(val)
+
     def getVal(self):
         return self.input_path if not self.isInvalid() else None
 

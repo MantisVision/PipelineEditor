@@ -109,26 +109,29 @@ class CalculatorSubWindow(NodeEditorWidget):
 
             event.setDropAction(Qt.MoveAction)
             event.accept()
+
         # Drop File from Windows Explorer
         elif event.mimeData().hasUrls():
-            op_code = OP_NODE_INPUT
+            op_code = OP_NODE_S_MVX_FILE
             mouse_pos = event.pos()
             scene_pos = self.scene.getView().mapToScene(mouse_pos)
 
-            # TODO: Fix dragging files in input files
             for i, url in enumerate(event.mimeData().urls()):
                 print(f"DROP: {op_code} - {str(url)} mouse at: {mouse_pos} scene at: {scene_pos}")
 
                 try:
-                    offset = i * 20
-                    node = get_class_from_op_code(OP_NODE_INPUT)(self.scene)
-                    node.setPos(scene_pos.x() + offset, scene_pos.y() + offset)
-                    # node.setContentTitle(Path((url.toString())).name) # Need to fix node content
-                    self.scene.history.store_history(f"Created Node {node.__class__.__name__}")
+                    if Path(url.toLocalFile()).exists() and Path(url.toLocalFile()).suffix == ".mvx":
+                        offset = i * 20
+                        node = get_class_from_op_code(OP_NODE_S_MVX_FILE)(self.scene)
+                        node.setPos(scene_pos.x() + offset, scene_pos.y() + offset)
+                        node.setInputContent(url.toLocalFile())
+                        self.scene.history.store_history(f"Created Node {node.__class__.__name__}")
+                    else:
+                        raise ValueError("File type is not supported")
                 except Exception as e:
                     dump_exception(e)
 
-            event.setDropAction(Qt.MoveAction)
+            event.setDropAction(Qt.CopyAction)
             event.accept()
         else:
             print("... ignore drop event, not in requested format")
