@@ -6,6 +6,7 @@ from pipelineeditor.utils import dump_exception
 from examples.mantis.nodes.colap import CollapseGB
 current_file_path = Path(__file__).parent.parent
 
+
 @register_nodes(OP_NODE_T_MVX_FILE)
 class MVNode_T_MVX_File(MVOutputNode):
 
@@ -34,7 +35,7 @@ class MVNode_T_MVX_File(MVOutputNode):
             self.colaps_widget.setLayout(layout)
 
             t = CollapseGB()
-            t.setTitle("File path")
+            t.setTitle("Output")
             t.setLayout(QGridLayout())
 
             if not self.file_line_edit:
@@ -129,7 +130,7 @@ class MVNode_T_WAV_File(MVOutputNode):
             self.colaps_widget.setLayout(layout)
 
             t = CollapseGB()
-            t.setTitle("File path")
+            t.setTitle("Output")
             t.setLayout(QGridLayout())
 
             if not self.file_line_edit:

@@ -3,7 +3,7 @@ from examples.mantis.mv_config import *
 from examples.mantis.mv_node_base import *
 from pathlib import Path
 from pipelineeditor.utils import dump_exception
-from examples.mantis.nodes.colap import FrameLayout
+from examples.mantis.nodes.colap import CollapseGB
 current_file_path = Path(__file__).parent.parent
 
 @register_nodes(OP_NODE_S_MVX_FILE)
@@ -15,10 +15,10 @@ class MVNode_S_MVX_File(MVInputNode):
     content_label_obj_name = "mvx_source_node_bg"
     colaps_widget = None
     input_path = ""
+    input_path_line_edit = None
 
     def __init__(self, scene) -> None:
         super().__init__(scene, inputs=[], outputs=[3])
-        self.file_line_edit = None
         self.createParamWidget()
 
     def createParamWidget(self):
@@ -32,23 +32,23 @@ class MVNode_S_MVX_File(MVInputNode):
             layout.setAlignment(Qt.AlignTop)
             self.colaps_widget.setLayout(layout)
 
-            t = FrameLayout(title=self.op_title)
-            frame = QFrame()
-            frame.setLayout(QGridLayout())
+            inputGB = CollapseGB()
+            inputGB.setTitle("Input")
+            inputGB.setLayout(QGridLayout())
 
-            if not self.file_line_edit:
-                self.file_line_edit = QLineEdit(self.input_path)
-                self.file_line_edit.textChanged.connect(self.onTextChange)
+            if not self.input_path_line_edit:
+                self.input_path_line_edit = QLineEdit(self.input_path)
+                self.input_path_line_edit.textChanged.connect(self.onTextChange)
 
-            frame.layout().addWidget(QLabel("File path:"), 0, 0)
-            frame.layout().addWidget(self.file_line_edit, 0, 1)
+            inputGB.layout().addWidget(QLabel("File path:"), 0, 0)
+            inputGB.layout().addWidget(self.input_path_line_edit, 0, 1)
             browse_btn = QPushButton("...")
             browse_btn.setMaximumWidth(24)
             browse_btn.clicked.connect(self.BrowseFile)
-            frame.layout().addWidget(browse_btn, 0, 2)
-            frame.layout().setColumnStretch(1, 5)
-            t.addWidget(frame)
-            layout.addWidget(t)
+            inputGB.layout().addWidget(browse_btn, 0, 2)
+            inputGB.layout().setColumnStretch(1, 5)
+            inputGB.setFixedHeight(inputGB.sizeHint().height())
+            layout.addWidget(inputGB)
 
         return self.colaps_widget
 
@@ -82,14 +82,14 @@ class MVNode_S_MVX_File(MVInputNode):
         if not fname:
             return
 
-        self.file_line_edit.setText(fname)
+        self.input_path_line_edit.setText(fname)
 
     def onTextChange(self):
-        self.input_path = self.file_line_edit.text()
+        self.input_path = self.input_path_line_edit.text()
         self.eval()
 
     def setInputContent(self, val):
-        self.file_line_edit.setText(val)
+        self.input_path_line_edit.setText(val)
 
     def getVal(self):
         return self.input_path if not self.isInvalid() else None
@@ -98,14 +98,14 @@ class MVNode_S_MVX_File(MVInputNode):
         res = super().serialize()
         res['uuid'] = ""
         res['params'] = {}
-        res['params']['file_path'] = self.file_line_edit.text()
+        res['params']['file_path'] = self.input_path_line_edit.text()
         return res
 
     def deserialize(self, data, hashmap={}, restore_id=True):
         res = super().deserialize(data, hashmap, restore_id)
         try:
             value = data['params']['file_path']
-            self.file_line_edit.setText(value)
+            self.input_path_line_edit.setText(value)
             return True & res
         except Exception as e:
             dump_exception(e)
@@ -138,15 +138,18 @@ class MVNode_S_UUID(MVInputNode):
             layout.setAlignment(Qt.AlignTop)
             self.colaps_widget.setLayout(layout)
 
-            t = FrameLayout(title=self.op_title)
-            frame = QFrame()
-            frame.setLayout(QFormLayout())
             if not self.uuid_line_edit:
                 self.uuid_line_edit = QLineEdit(self._uuid)
                 self.uuid_line_edit.textChanged.connect(self.onTextChange)
-            frame.layout().addRow(QLabel("UUID:"), self.uuid_line_edit)
-            t.addWidget(frame)
-            layout.addWidget(t)
+
+            inputGB = CollapseGB()
+            inputGB.setTitle("Input")
+            inputGB.setLayout(QFormLayout())
+            inputGB.layout().addRow(QLabel("UUID:"), self.uuid_line_edit)
+            inputGB.setFixedHeight(inputGB.sizeHint().height())
+            layout.addWidget(inputGB)
+
+            layout.addWidget(inputGB)
 
         return self.colaps_widget
 
