@@ -19,7 +19,7 @@ class MVNode_O_Audio(MVOperationsNode):
     uuid_line_edit = None
 
     def __init__(self, scene) -> None:
-        super().__init__(scene, inputs=[1], outputs=[1])
+        super().__init__(scene, inputs=[2], outputs=[2])
         self.createParamWidget()
 
     def createParamWidget(self):

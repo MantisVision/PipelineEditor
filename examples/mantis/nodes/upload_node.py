@@ -19,7 +19,7 @@ class MVNode_Upload(MVOperationsNode):
     input_path_line_edit = ""
 
     def __init__(self, scene) -> None:
-        super().__init__(scene, inputs=[1], outputs=[])
+        super().__init__(scene, inputs=[2], outputs=[])
         self.createParamWidget()
 
     def createParamWidget(self):
