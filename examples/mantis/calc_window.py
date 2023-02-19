@@ -329,63 +329,43 @@ class MantisWindow(NodeEditorWindow):
             dump_exception(e)
 
     def onRunBake(self):
-        self.tree_of_nodes = []
+        pipelines = []
+        data = []
+        if not self.getcurrentPipelineEditorWidget():
+            return
+
         for node in self.getcurrentPipelineEditorWidget().scene.nodes:
             if isinstance(node, MVInputNode):
-                with open("test_flow.json", 'w') as fd:
-                    data = self.createFlow(node)
-                    self.traverse(node, fd)
+                pipelines.append([])
+                data.append([])
+                data[-1] = self.createFlow(node)
+                self.traverse(node, pipelines[-1])
 
-        # node = self.tree_of_nodes[0]
-        # if node.getInput().id == data['id']:
-        #     data['next'] = [self.createFlow(node)]
-
-        # current = data['next'][0]
-        # node = self.tree_of_nodes[1]
-        # if node.getInput().id == current['id']:
-        #     current['next'].append(self.createFlow(node))
-
-        # current = current['next'][0]
-        # node = self.tree_of_nodes[2]
-        # if node.getInput().id == current['id']:
-        #     current['next'].append(self.createFlow(node))
-
-        # current = current['next'][0]
-        # node = self.tree_of_nodes[3]
-        # if node.getInput().id == current['id']:
-        #     current['next'].append(self.createFlow(node))
-
-        # current = current['next'][0]
-        # node = self.tree_of_nodes[4]
-        # if node.getInput().id == current['id']:
-        #     current['next'].append(self.createFlow(node))
-
-        for node in self.tree_of_nodes:
-            current = data
-            self.iterdict(node, current)
+        for i, tree_of_nodes in enumerate(pipelines):
+            for node in tree_of_nodes:
+                current = data[i]
+                self.traverse_dict(node, current)
 
         print(data)
 
-    def iterdict(self, node, current):
-        while current:
-            if node.getInput().id == current['id']:
-                current['next'].append(self.createFlow(node))
-            if current['next']:
-                current = current['next'][0]
-                # for child in current['next']:
-                #     return self.iterdict(node, child)
-            else:
-                break
-
-    def traverse(self, node, fd=0):
+    def traverse_tree(self, node, tree_of_nodes):
         if not node.getOutputs:
             return
 
         for out in node.getOutputs():
             if isinstance(out, MVOutputNode):
                 continue
-            self.tree_of_nodes.append(out)
-            self.traverse(out)
+            tree_of_nodes.append(out)
+            self.traverse(out, tree_of_nodes)
+
+    def traverse_dict(self, node, current):
+        while current:
+            if node.getInput().id == current['id']:
+                current['next'].append(self.createFlow(node))
+            if current['next']:
+                current = current['next'][0]
+            else:
+                break
 
     def createFlow(self, node):
         data = node.serialize()
@@ -405,16 +385,12 @@ class MantisWindow(NodeEditorWindow):
         flow['flow']['params'] = data['params']
 
         return flow
-        # flow['params'] =
-        # json.dump(data, fd)
 
     def createMdiChild(self, child_widget=None):
         pipeline_editor = child_widget if child_widget else CalculatorSubWindow()
         sub_window = self.mdiArea.addSubWindow(pipeline_editor)
         sub_window.setWindowIcon(self.empty_icon)
         # TODO: Submit here callback function on item selection (only for nodes)
-        # pipeline_editor.scene.add_item_selected_listener(self.testSelection)
-        # pipeline_editor.scene.add_items_deselected_listener(self.onNodeClick)
         pipeline_editor.scene.add_item_doubleclick_listener(self.onNodeClick)
         pipeline_editor.scene.history.addHistoryModifiedListener(self.updateEditMenu)
         pipeline_editor.addCloseEventListener(self.onSubwindowClose)
