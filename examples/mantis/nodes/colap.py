@@ -115,9 +115,10 @@ class FrameLayout(QWidget):
 
 
 class CollapseGB(QGroupBox):
-    def __init__(self, size=30, parent=None):
+    def __init__(self, size=30, list_nodes=False, parent=None):
         super().__init__(parent)
         self.size = size
+        self.list_modes = list_nodes
         self.initUI()
 
     def initUI(self):
@@ -139,7 +140,10 @@ class CollapseGB(QGroupBox):
     def toggleGroup(self):
         state = self.isChecked()
         if state:
-            self.setFixedHeight(self.sizeHint().height())
+            if self.list_modes:
+                self.setFixedHeight(self.size)
+            else:
+                self.setFixedHeight(self.sizeHint().height())
         else:
             self.setFixedHeight(30)
 

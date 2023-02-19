@@ -6,6 +6,7 @@ from pipelineeditor.utils import dump_exception
 from examples.mantis.nodes.colap import CollapseGB
 current_file_path = Path(__file__).parent.parent
 
+
 @register_nodes(OP_NODE_S_MVX_FILE)
 class MVNode_S_MVX_File(MVInputNode):
     icon = str(current_file_path.joinpath(r"icons\mvx.png"))
