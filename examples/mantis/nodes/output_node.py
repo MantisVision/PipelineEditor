@@ -3,7 +3,7 @@ from examples.mantis.mv_config import *
 from examples.mantis.mv_node_base import *
 from pathlib import Path
 from pipelineeditor.utils import dump_exception
-from examples.mantis.nodes.colap import FrameLayout, CollapseGB
+from examples.mantis.nodes.colap import CollapseGB
 current_file_path = Path(__file__).parent.parent
 
 @register_nodes(OP_NODE_T_MVX_FILE)
