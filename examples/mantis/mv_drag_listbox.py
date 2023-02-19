@@ -35,7 +35,6 @@ class QDMDragListBox(QListWidget):
         item.setSizeHint(QSize(32, 32))
 
         item.setFlags(Qt.ItemIsEnabled | Qt.ItemIsSelectable | Qt.ItemIsDragEnabled)
-
         # setup data inside item object
         item.setData(Qt.UserRole, pixmap)
         item.setData(Qt.UserRole + 1, op_code)
@@ -43,6 +42,10 @@ class QDMDragListBox(QListWidget):
     def startDrag(self, *args, **kwargs):
         try:
             item = self.currentItem()
+
+            # clear selection (cosmetic change only)
+            item.setSelected(False)
+
             pixmap = QPixmap(item.data(Qt.UserRole))
             op_code = item.data(Qt.UserRole + 1)
 
