@@ -1,12 +1,13 @@
+from pathlib import Path
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
-from pathlib import Path
+
 from examples.mantis.mv_config import *
-from pipelineeditor.node_editor_widget import NodeEditorWidget
-from pipelineeditor.utils import dump_exception
-from pipelineeditor.node_edge import EDGE_TYPE_BEZIER, EDGE_TYPE_DIRECT, EDGE_TYPE_SQUARE
-from pipelineeditor.graphics.node_graphics_view import MODE_EDGE_DRAG
 from examples.mantis.mv_node_base import *
+from pipelineeditor.utils import dump_exception
+from pipelineeditor.node_editor_widget import NodeEditorWidget
+from pipelineeditor.graphics.node_graphics_view import MODE_EDGE_DRAG
+from pipelineeditor.node_edge import EDGE_TYPE_BEZIER, EDGE_TYPE_DIRECT, EDGE_TYPE_SQUARE
 
 
 class MVSubWindow(NodeEditorWidget):
@@ -84,8 +85,6 @@ class MVSubWindow(NodeEditorWidget):
             event.setAccepted(False)
 
     def onDrop(self, event):
-        # print("MV subwindow: onDrop")
-        # print(f"mimeData: {event.mimeData().text()}|")
         # Drop File from Nodes ListBox
         if event.mimeData().hasFormat(LISTBOX_MIMETYPE):
             eventData = event.mimeData().data(LISTBOX_MIMETYPE)

@@ -5,15 +5,15 @@ from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
-from pipelineeditor.utils import dump_exception, pp # noqa
-from pipelineeditor.utils import loadStylesheets # noqa
+from examples.mantis.mv_config import *                        # noqa
+from examples.mantis.mv_sub_window import MVSubWindow          # noqa
 from pipelineeditor.node_editor_window import NodeEditorWindow # noqa
-from examples.mantis.mv_node_base import * # noqa
-from examples.mantis.mv_sub_window import MVSubWindow # noqa
-from examples.mantis.mv_drag_listbox import QDMDragListBox # noqa
-from examples.mantis.mv_config import * # noqa
-from examples.mantis.nodes.colap import CollapseGB # noqa
-from qss import nodeeditor_dark_resources # noqa
+from examples.mantis.mv_node_base import *                     # noqa
+from examples.mantis.mv_drag_listbox import QDMDragListBox     # noqa
+from examples.mantis.nodes.colap import CollapseGB             # noqa
+from pipelineeditor.utils import loadStylesheets               # noqa
+from pipelineeditor.utils import dump_exception, pp            # noqa
+from qss import nodeeditor_dark_resources                      # noqa
 
 
 class MantisWindow(NodeEditorWindow):
@@ -92,18 +92,24 @@ class MantisWindow(NodeEditorWindow):
         self.actAbout = QAction("&About", self, statusTip="Show the application's About box", triggered=self.about)
 
     def createMenus(self):
-        super().createMenus()
+        self.menubar = self.menuBar()
+        self.createFileMenu()
+        self.createEditMenu()
+        self.createWindowMenu()
+        self.createRunMenu()
+        self.createHelpMenu()
 
-        self.windowMenu = self.menuBar().addMenu("&Window")
-        self.updateWindowMenu()
         self.windowMenu.aboutToShow.connect(self.updateWindowMenu)
-
-        self.menuBar().addSeparator()
-
-        self.helpMenu = self.menuBar().addMenu("&Help")
-        self.helpMenu.addAction(self.actAbout)
         self.editMenu.aboutToShow.connect(self.updateEditMenu)
         self.runMenu.aboutToShow.connect(self.updateRunMenu)
+
+    def createWindowMenu(self):
+        self.windowMenu = self.menuBar().addMenu("&Window")
+        self.updateWindowMenu()
+
+    def createHelpMenu(self):
+        self.helpMenu = self.menuBar().addMenu("&Help")
+        self.helpMenu.addAction(self.actAbout)
 
     def updateMenus(self):
         active = self.activeMdiChild()
@@ -126,6 +132,7 @@ class MantisWindow(NodeEditorWindow):
             hasMdiChild = active is not None
 
             self.actPaste.setEnabled(hasMdiChild)
+            self.actSelectAll.setEnabled(hasMdiChild)
             self.actCut.setEnabled(hasMdiChild and active.hasSelectedItems())
             self.actCopy.setEnabled(hasMdiChild and active.hasSelectedItems())
             self.actDelete.setEnabled(hasMdiChild and active.hasSelectedItems())
@@ -232,6 +239,7 @@ class MantisWindow(NodeEditorWindow):
         self.nodes_list_widget2.verticalScrollBar().hide()
         self.nodes_list_widget3 = QDMDragListBox([OP_NODE_T_MVX_FILE, OP_NODE_T_WAV_FILE])
         self.nodes_list_widget3.verticalScrollBar().hide()
+
         frame = QFrame()
         frame.setLayout(QVBoxLayout())
         frame.layout().setSpacing(10)
