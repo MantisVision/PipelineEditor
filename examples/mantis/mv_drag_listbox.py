@@ -3,7 +3,7 @@ from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 from pathlib import Path
 
-from examples.mantis.calc_config import *
+from examples.mantis.mv_config import *
 from pipelineeditor.utils import dump_exception
 
 

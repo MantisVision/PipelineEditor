@@ -49,7 +49,7 @@ class MVNode(Node):
     op_code = 0
     op_title = "Undefined"
     content_label = ""
-    content_label_obj_name = "calc_node_bg"
+    content_label_obj_name = "mv_node_bg"
 
     def __init__(self, scene, inputs=[2, 2], outputs=[1]) -> None:
         super().__init__(scene, self.__class__.op_title, inputs, outputs)

@@ -130,8 +130,8 @@ class NodeEditorWindow(QMainWindow):
             return self.onFileSaveAs()
 
         current_editor.fileSave()
-        self.print_msg(f"Successfully saved to {current_editor.filename}")
-        # self.statusBar().showMessage(f"Successfully saved to {self.getcurrentPipelineEditorWidget().filename}", 3000)
+        # self.print_msg(f"Successfully saved to {current_editor.filename}")
+        self.statusBar().showMessage(f"Successfully saved to {current_editor.filename}", 3000)
 
         if hasattr(current_editor, "setTitle"):
             current_editor.setTitle()
@@ -155,7 +155,6 @@ class NodeEditorWindow(QMainWindow):
             self.setTitle()
 
         current_editor.fileSave(fname)
-        # self.print_msg(f"Successfully saved to {current_editor.filename}")
 
         return True
 

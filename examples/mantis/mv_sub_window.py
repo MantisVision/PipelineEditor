@@ -1,15 +1,15 @@
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from pathlib import Path
-from examples.mantis.calc_config import *
+from examples.mantis.mv_config import *
 from pipelineeditor.node_editor_widget import NodeEditorWidget
 from pipelineeditor.utils import dump_exception
 from pipelineeditor.node_edge import EDGE_TYPE_BEZIER, EDGE_TYPE_DIRECT, EDGE_TYPE_SQUARE
 from pipelineeditor.graphics.node_graphics_view import MODE_EDGE_DRAG
-from examples.mantis.calc_node_base import *
+from examples.mantis.mv_node_base import *
 
 
-class CalculatorSubWindow(NodeEditorWidget):
+class MVSubWindow(NodeEditorWidget):
     def __init__(self, parent=None) -> None:
         super().__init__(parent)
         # self.setAttribute(Qt.WA_DeleteOnClose)
@@ -74,7 +74,7 @@ class CalculatorSubWindow(NodeEditorWidget):
         self._close_event_listeners.append(callback)
 
     def onDragEnter(self, event):
-        print("Calc subwindow: onDragEnter")
+        print("MV subwindow: onDragEnter")
         print(f"mimeData: {event.mimeData()}|")
 
         if event.mimeData().hasFormat(LISTBOX_MIMETYPE) or event.mimeData().hasUrls():
@@ -84,8 +84,8 @@ class CalculatorSubWindow(NodeEditorWidget):
             event.setAccepted(False)
 
     def onDrop(self, event):
-        print("Calc subwindow: onDrop")
-        print(f"mimeData: {event.mimeData().text()}|")
+        # print("MV subwindow: onDrop")
+        # print(f"mimeData: {event.mimeData().text()}|")
         # Drop File from Nodes ListBox
         if event.mimeData().hasFormat(LISTBOX_MIMETYPE):
             eventData = event.mimeData().data(LISTBOX_MIMETYPE)

@@ -1,12 +1,12 @@
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from pathlib import Path
-from examples.mantis.calc_config import *
+from examples.mantis.mv_config import *
 from pipelineeditor.node_editor_widget import NodeEditorWidget
 from pipelineeditor.utils import dump_exception
 from pipelineeditor.node_edge import EDGE_TYPE_BEZIER, EDGE_TYPE_DIRECT, EDGE_TYPE_SQUARE
 from pipelineeditor.graphics.node_graphics_view import MODE_EDGE_DRAG
-from examples.mantis.calc_node_base import *
+from examples.mantis.mv_node_base import *
 
 
 class CalculatorSubWindow(NodeEditorWidget):

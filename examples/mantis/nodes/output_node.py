@@ -1,18 +1,10 @@
 from PyQt5.QtCore import *
-from examples.mantis.calc_config import *
-from examples.mantis.calc_node_base import *
+from examples.mantis.mv_config import *
+from examples.mantis.mv_node_base import *
 from pathlib import Path
 from pipelineeditor.utils import dump_exception
 from examples.mantis.nodes.colap import FrameLayout, CollapseGB
 current_file_path = Path(__file__).parent.parent
-
-
-class CalcOutputContent(QDMNodeContentWidget):
-    def initUI(self):
-        self.lbl = QLabel("42", self)
-        self.lbl.setAlignment(Qt.AlignLeft)
-        self.lbl.setObjectName(self.node.content_label_obj_name)
-
 
 @register_nodes(OP_NODE_T_MVX_FILE)
 class MVNode_T_MVX_File(MVOutputNode):

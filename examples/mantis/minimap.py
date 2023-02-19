@@ -26,7 +26,7 @@ class MyApp(QWidget):
 
         self.begin, self.destination = QPoint(), QPoint()
 
-        self.CalcRectFromMid(self.mid_point)
+        self.MVRectFromMid(self.mid_point)
 
         painter = QPainter(self.current_pixmap)
         painter.setPen(self._pen)
@@ -53,7 +53,7 @@ class MyApp(QWidget):
             if not self.isRectInBounds(self.destination):
                 return
 
-            self.CalcRectFromMid(self.destination)
+            self.MVRectFromMid(self.destination)
             self.paintROI()
 
     def mouseReleaseEvent(self, event):
@@ -70,7 +70,7 @@ class MyApp(QWidget):
         painter.drawRect(self.rect_roi.normalized())
         self.update()
 
-    def CalcRectFromMid(self, point):
+    def MVRectFromMid(self, point):
         self.roi_top_left  = QPoint(point.x() - self.roi_width // 2, point.y() - self.roi_height // 2)
         self.roi_bot_right = QPoint(point.x() + self.roi_width // 2, point.y() + self.roi_height // 2)
         self.rect_roi = QRect(self.roi_top_left, self.roi_bot_right)

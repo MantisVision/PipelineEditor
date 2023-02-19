@@ -1,5 +1,4 @@
 import sys
-import json
 from pathlib import Path
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
@@ -9,10 +8,10 @@ sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 from pipelineeditor.utils import dump_exception, pp # noqa
 from pipelineeditor.utils import loadStylesheets # noqa
 from pipelineeditor.node_editor_window import NodeEditorWindow # noqa
-from examples.mantis.calc_node_base import * # noqa
-from examples.mantis.calc_sub_window import CalculatorSubWindow # noqa
-from examples.mantis.calc_drag_listbox import QDMDragListBox # noqa
-from examples.mantis.calc_config import * # noqa
+from examples.mantis.mv_node_base import * # noqa
+from examples.mantis.mv_sub_window import MVSubWindow # noqa
+from examples.mantis.mv_drag_listbox import QDMDragListBox # noqa
+from examples.mantis.mv_config import * # noqa
 from examples.mantis.nodes.colap import CollapseGB # noqa
 from qss import nodeeditor_dark_resources # noqa
 
@@ -60,9 +59,9 @@ class MantisWindow(NodeEditorWindow):
         widget = QWidget(self)
         widget.setLayout(QHBoxLayout())
         spacerItem = QSpacerItem(0, 0, QSizePolicy.Preferred, QSizePolicy.Preferred)
-        widget.layout().addItem(spacerItem)
         widget.layout().addWidget(self.status_bar_text)
-        # widget.layout().addWidget(self.status_mouse_pos)
+        widget.layout().addItem(spacerItem)
+        widget.layout().addWidget(self.status_mouse_pos)
 
         self.statusBar().addPermanentWidget(widget)
         self.readSettings()
@@ -317,9 +316,9 @@ class MantisWindow(NodeEditorWindow):
                 if existing:
                     self.mdiArea.setActiveSubWindow(existing)
                 else:
-                    pipeline_editor = CalculatorSubWindow()
+                    pipeline_editor = MVSubWindow()
                     if pipeline_editor.fileLoad(fname):
-                        self.statusBar().showMessage(f"File {fname} opened successfully.")
+                        self.statusBar().showMessage(f"File {fname} opened successfully.", 3000)
                         pipeline_editor.setTitle()
                         sub_window = self.createMdiChild(pipeline_editor)
                         sub_window.show()
@@ -335,11 +334,14 @@ class MantisWindow(NodeEditorWindow):
             return
 
         for node in self.getcurrentPipelineEditorWidget().scene.nodes:
+            if node.isInvalid():
+                self.print_msg("Some node are not valid, can't bake Pipline", color='red')
+                return
             if isinstance(node, MVInputNode):
                 pipelines.append([])
                 data.append([])
                 data[-1] = self.createFlow(node)
-                self.traverse(node, pipelines[-1])
+                self.traverse_tree(node, pipelines[-1])
 
         for i, tree_of_nodes in enumerate(pipelines):
             for node in tree_of_nodes:
@@ -356,7 +358,7 @@ class MantisWindow(NodeEditorWindow):
             if isinstance(out, MVOutputNode):
                 continue
             tree_of_nodes.append(out)
-            self.traverse(out, tree_of_nodes)
+            self.traverse_tree(out, tree_of_nodes)
 
     def traverse_dict(self, node, current):
         while current:
@@ -387,7 +389,7 @@ class MantisWindow(NodeEditorWindow):
         return flow
 
     def createMdiChild(self, child_widget=None):
-        pipeline_editor = child_widget if child_widget else CalculatorSubWindow()
+        pipeline_editor = child_widget if child_widget else MVSubWindow()
         sub_window = self.mdiArea.addSubWindow(pipeline_editor)
         sub_window.setWindowIcon(self.empty_icon)
         # TODO: Submit here callback function on item selection (only for nodes)
@@ -416,12 +418,12 @@ class MantisWindow(NodeEditorWindow):
         QMessageBox.about(
             self,
             "About Piepline Editor",
-            "The <b>Piepline Editor</b> calculator example demonstrates how to write multiple "
+            "The <b>Piepline Editor</b> Mantis Pipeline example demonstrates how to write multiple "
             "document interface applications using Qt. For more information please visit: "
             "<a href='https://github.com/ZikriBen/pipelineeditor'> Git Repository</a>"
         )
 
-    def print_msg(self, msg, color='black', msecs=3000):
-        QTimer.singleShot(msecs, lambda: self.status_bar_text.setText(""))
-        self.status_bar_text.setStyleSheet(f"color : {color}")
-        self.status_bar_text.setText(msg)
+    # def print_msg(self, msg, color='black', msecs=3000):
+    #     QTimer.singleShot(msecs, lambda: self.status_bar_text.setText(""))
+    #     self.status_bar_text.setStyleSheet(f"color : {color}")
+    #     self.status_bar_text.setText(msg)

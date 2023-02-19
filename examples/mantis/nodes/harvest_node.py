@@ -1,7 +1,7 @@
 from PyQt5.QtCore import *
 from pathlib import Path
-from examples.mantis.calc_config import *
-from examples.mantis.calc_node_base import *
+from examples.mantis.mv_config import *
+from examples.mantis.mv_node_base import *
 from examples.mantis.nodes.colap import CollapseGB
 from pipelineeditor.utils import dump_exception
 current_file_path = Path(__file__).parent.parent

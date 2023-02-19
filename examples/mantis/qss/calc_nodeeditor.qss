@@ -12,8 +12,8 @@ QDMNodeContentWidget QLineEdit {
 QDMNodeContentWidget QLabel {
   color: #e0e0e0;
 }
-QDMNodeContentWidget QLabel#calc_node_bg,
-QDMNodeContentWidget QLabel#calc_node_mul,
+QDMNodeContentWidget QLabel#mv_node_bg,
+QDMNodeContentWidget QLabel#mv_node_bg,
 QDMNodeContentWidget QLabel#mvx_source_node_bg,
 QDMNodeContentWidget QLabel#mvx_target_node_bg,
 QDMNodeContentWidget QLabel#mvx_target_node_bg,
@@ -24,7 +24,7 @@ QDMNodeContentWidget QLabel#upload_o_node_bg,
 QDMNodeContentWidget QLabel#wav_o_audio_node_bg,
 QDMNodeContentWidget QLabel#tsdf_o_node_bg,
 QDMNodeContentWidget QLabel#wav_target_node_bg,
-QDMNodeContentWidget QLabel#calc_node_div {
+QDMNodeContentWidget QLabel#mv_node_bg {
   background: transparent;
   height: 0px;
   color: #373737;
@@ -32,10 +32,6 @@ QDMNodeContentWidget QLabel#calc_node_div {
   max-height: 49px;
   min-height: 49px;
   padding-left: 94px;
-}
-QDMNodeContentWidget QLabel#calc_node_mul,
-QDMNodeContentWidget QLabel#calc_node_div {
-  padding-top: 12px;
 }
 QDMNodeContentWidget QLabel#mvx_source_node_bg {
   padding-left: 85px;
@@ -66,24 +62,6 @@ QDMNodeContentWidget QLabel#tsdf_o_node_bg,
 QDMNodeContentWidget QLabel#wav_o_audio_node_bg {
   padding-left: 35px;
   font-size: 30px;
-}
-QDMNodeContentWidget QLabel#calc_node_output {
-  min-width: 150px;
-  max-width: 150px;
-  min-height: 45px;
-  max-height: 45px;
-  margin-left: 10px;
-  margin-top: 5px;
-  font-size: 28px;
-}
-QDMNodeContentWidget QLineEdit#calc_node_input {
-  background: transparent;
-  width: 140px;
-  height: 36px;
-  margin-left: 5px;
-  font-size: 28px;
-  max-height: 32px;
-  min-height: 32px;
 }
 QGraphicsView {
   selection-background-color: #fff;

@@ -1,33 +1,10 @@
 from PyQt5.QtCore import *
-from examples.mantis.calc_config import *
-from examples.mantis.calc_node_base import *
+from examples.mantis.mv_config import *
+from examples.mantis.mv_node_base import *
 from pathlib import Path
 from pipelineeditor.utils import dump_exception
 from examples.mantis.nodes.colap import FrameLayout
 current_file_path = Path(__file__).parent.parent
-
-
-class CalcInputContent(QDMNodeContentWidget):
-    def initUI(self):
-        self.edit = QLineEdit("1", self)
-        self.edit.setAlignment(Qt.AlignRight)
-        self.edit.setObjectName(self.node.content_label_obj_name)
-
-    def serialize(self):
-        res = super().serialize()
-        res['value'] = self.edit.text()
-        return res
-
-    def deserialize(self, data, hashmap={}, restore_id=True):
-        res = super().deserialize(data, hashmap, restore_id)
-        try:
-            value = data['value']
-            self.edit.setText(value)
-            return True & res
-        except Exception as e:
-            dump_exception(e)
-        return res
-
 
 @register_nodes(OP_NODE_S_MVX_FILE)
 class MVNode_S_MVX_File(MVInputNode):

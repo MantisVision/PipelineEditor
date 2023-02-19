@@ -9,9 +9,9 @@ sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 from pipelineeditor.utils import dump_exception, pp # noqa
 from pipelineeditor.utils import loadStylesheets # noqa
 from pipelineeditor.node_editor_window import NodeEditorWindow # noqa
-from examples.mantis.calc_sub_window import CalculatorSubWindow # noqa
-from examples.mantis.calc_drag_listbox import QDMDragListBox # noqa
-from examples.mantis.calc_config import * # noqa
+from examples.mantis.mv_sub_window import CalculatorSubWindow # noqa
+from examples.mantis.mv_drag_listbox import QDMDragListBox # noqa
+from examples.mantis.mv_config import * # noqa
 from examples.mantis.nodes.colap import FrameLayout # noqa
 from qss import nodeeditor_dark_resources # noqa
 
