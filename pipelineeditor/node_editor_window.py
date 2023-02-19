@@ -53,26 +53,27 @@ class NodeEditorWindow(QMainWindow):
         self.status_bar_text = QLabel("")
 
     def createActions(self):
-        self.actNew       = QAction("&New",         self, triggered=self.onFileNew,       shortcut="Ctrl+N",       statusTip="Create new pipeline")
-        self.actOpen      = QAction("&Open",        self, triggered=self.onFileOpen,      shortcut="Ctrl+O",       statusTip="Open file")
-        self.actSave      = QAction("&Save",        self, triggered=self.onFileSave,      shortcut="Ctrl+S",       statusTip="Save file")
-        self.actSaveAs    = QAction("Save &As",     self, triggered=self.onFileSaveAs,    shortcut="Ctrl+Shift+S", statusTip="Save file as...")
-        self.actExit      = QAction("E&xit",        self, triggered=self.close,           shortcut="ESC",          statusTip="Exit application")
-
-        self.actUndo      = QAction("&Undo",        self, triggered=self.onEditUndo,      shortcut="Ctrl+Z",       statusTip="Undo last operation")
-        self.actRedo      = QAction("&Redo",        self, triggered=self.onEditRedo,      shortcut="Ctrl+Y",       statusTip="Redo last operation")
-        self.actCopy      = QAction("&Copy",        self, triggered=self.onEditCopy,      shortcut="Ctrl+C",       statusTip="Copy Selected")
-        self.actPaste     = QAction("&Paste",       self, triggered=self.onEditPaste,     shortcut="Ctrl+V",       statusTip="Paste Selected")
-        self.actCut       = QAction("Cu&t",         self, triggered=self.onEditCut,       shortcut="Ctrl+X",       statusTip="Cut Selected")
-        self.actSelectAll = QAction("Select &All",  self, triggered=self.onEditSelectAll, shortcut="Ctrl+A",       statusTip="Select All")
-        self.actDelete    = QAction("&Delete",      self, triggered=self.onEditDelete,    shortcut="Del",          statusTip="Delete selected items")
-        self.actBake      = QAction("&Bake",        self, triggered=self.onRunBake,       shortcut="Ctrl+B",       statusTip="Bake graph into pipeline")
-        self.onEvalAll    = QAction("&Eval All",    self, triggered=self.onEvalAll,       shortcut="Ctrl+E",       statusTip="Evaluate all nodes")
+        self.actNew         = QAction("&New",           self, triggered=self.onFileNew,       shortcut="Ctrl+N",       statusTip="Create new pipeline")
+        self.actOpen        = QAction("&Open",          self, triggered=self.onFileOpen,      shortcut="Ctrl+O",       statusTip="Open file")
+        self.actSave        = QAction("&Save",          self, triggered=self.onFileSave,      shortcut="Ctrl+S",       statusTip="Save file")
+        self.actSaveAs      = QAction("Save &As",       self, triggered=self.onFileSaveAs,    shortcut="Ctrl+Shift+S", statusTip="Save file as...")
+        self.actExit        = QAction("E&xit",          self, triggered=self.close,           shortcut="ESC",          statusTip="Exit application")
+        self.actUndo        = QAction("&Undo",          self, triggered=self.onEditUndo,      shortcut="Ctrl+Z",       statusTip="Undo last operation")
+        self.actRedo        = QAction("&Redo",          self, triggered=self.onEditRedo,      shortcut="Ctrl+Y",       statusTip="Redo last operation")
+        self.actCopy        = QAction("&Copy",          self, triggered=self.onEditCopy,      shortcut="Ctrl+C",       statusTip="Copy Selected")
+        self.actPaste       = QAction("&Paste",         self, triggered=self.onEditPaste,     shortcut="Ctrl+V",       statusTip="Paste Selected")
+        self.actCut         = QAction("Cu&t",           self, triggered=self.onEditCut,       shortcut="Ctrl+X",       statusTip="Cut Selected")
+        self.actSelectAll   = QAction("Select &All",    self, triggered=self.onEditSelectAll, shortcut="Ctrl+A",       statusTip="Select All")
+        self.actDelete      = QAction("&Delete",        self, triggered=self.onEditDelete,    shortcut="Del",          statusTip="Delete selected items")
+        self.onEvalSelected = QAction("&Eval Selected", self, triggered=self.onEvalSelected,  shortcut="Ctrl+E",       statusTip="Evaluate selected nodes")
+        self.onEvalAll      = QAction("Eval All",       self, triggered=self.onEvalAll,       shortcut="Ctrl+Shift+E", statusTip="Evaluate all nodes")
+        self.actBake        = QAction("&Bake",          self, triggered=self.onRunBake,       shortcut="Ctrl+B",       statusTip="Bake graph into pipeline")
 
     def createMenus(self):
         self.menubar = self.menuBar()
         self.createFileMenu()
         self.createEditMenu()
+        self.createRunMenu()
 
     def createFileMenu(self):
         self.filemenu = self.menubar.addMenu('&File')
@@ -95,9 +96,13 @@ class NodeEditorWindow(QMainWindow):
         self.editMenu.addAction(self.actSelectAll)
         self.editMenu.addSeparator()
         self.editMenu.addAction(self.actDelete)
-        self.editMenu.addSeparator()
-        self.editMenu.addAction(self.actBake)
-        self.editMenu.addAction(self.onEvalAll)
+
+    def createRunMenu(self):
+        self.runMenu = self.menubar.addMenu('&Run')
+        self.runMenu.addAction(self.onEvalSelected)
+        self.runMenu.addAction(self.onEvalAll)
+        self.runMenu.addSeparator()
+        self.runMenu.addAction(self.actBake)
 
     def setTitle(self):
         title = "Pipeline Editor - "
@@ -201,9 +206,15 @@ class NodeEditorWindow(QMainWindow):
 
             return self.getcurrentPipelineEditorWidget().scene.clipboard.deserializeFromClipboard(data)
 
+    def onEvalSelected(self):
+        for sel in self.getcurrentPipelineEditorWidget().scene.getSelectedItems():
+            if hasattr(sel, 'node'):
+                sel.node.eval()
+
     def onEvalAll(self):
-        for node in self.getcurrentPipelineEditorWidget().scene.nodes:
-            node.eval()
+        for sel in self.getcurrentPipelineEditorWidget().scene.nodes:
+            if hasattr(sel, 'eval'):
+                sel.eval()
 
     def onRunBake(self):
         pass

@@ -103,6 +103,7 @@ class MantisWindow(NodeEditorWindow):
         self.helpMenu = self.menuBar().addMenu("&Help")
         self.helpMenu.addAction(self.actAbout)
         self.editMenu.aboutToShow.connect(self.updateEditMenu)
+        self.runMenu.aboutToShow.connect(self.updateRunMenu)
 
     def updateMenus(self):
         active = self.activeMdiChild()
@@ -130,6 +131,16 @@ class MantisWindow(NodeEditorWindow):
             self.actDelete.setEnabled(hasMdiChild and active.hasSelectedItems())
             self.actUndo.setEnabled(hasMdiChild and active.canUndo())
             self.actRedo.setEnabled(hasMdiChild and active.canRedo())
+        except Exception as e:
+            dump_exception(e)
+
+    def updateRunMenu(self):
+        try:
+            active = self.activeMdiChild()
+            hasMdiChild = active is not None
+            self.onEvalSelected.setEnabled(hasMdiChild and active.hasSelectedItems())
+            self.onEvalAll.setEnabled(hasMdiChild)
+            self.actBake.setEnabled(hasMdiChild)
         except Exception as e:
             dump_exception(e)
 
@@ -191,7 +202,7 @@ class MantisWindow(NodeEditorWindow):
         selected = active_mdi_child.scene.gr_scene.selectedItems()
         if selected:
             node = selected[0].node
-            print(node.id)
+            print(node.id, node.isInvalid())
             colaps = [
                 "MVNode_S_UUID",
                 "MVNode_S_MVX_File",
@@ -333,8 +344,10 @@ class MantisWindow(NodeEditorWindow):
         if not self.getcurrentPipelineEditorWidget():
             return
 
+        print(len(self.getcurrentPipelineEditorWidget().scene.nodes))
         for node in self.getcurrentPipelineEditorWidget().scene.nodes:
             if node.isInvalid():
+                print(node)
                 self.print_msg("Some node are not valid, can't bake Pipline", color='red')
                 return
             if isinstance(node, MVInputNode):
@@ -422,8 +435,3 @@ class MantisWindow(NodeEditorWindow):
             "document interface applications using Qt. For more information please visit: "
             "<a href='https://github.com/ZikriBen/pipelineeditor'> Git Repository</a>"
         )
-
-    # def print_msg(self, msg, color='black', msecs=3000):
-    #     QTimer.singleShot(msecs, lambda: self.status_bar_text.setText(""))
-    #     self.status_bar_text.setStyleSheet(f"color : {color}")
-    #     self.status_bar_text.setText(msg)
