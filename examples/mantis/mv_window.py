@@ -47,6 +47,7 @@ class MantisWindow(NodeEditorWindow):
         self.windowMapper.mapped[QWidget].connect(self.setActiveSubWindow)
 
         self.createNodeDock()
+        self.createMinimapDock()
         self.createParameterDock()
         self.createActions()
         self.createMenus()
@@ -271,8 +272,20 @@ class MantisWindow(NodeEditorWindow):
 
         self.addDockWidget(Qt.LeftDockWidgetArea, self.nodes_dock)
 
+    def createMinimapDock(self):
+        self.minimap = QWidget()
+        self.minimap.setMinimumWidth(250)
+
+        self.minimap_dock = QDockWidget("Minimap")
+        self.minimap_dock.setWidget(self.minimap)
+        self.minimap_dock.setFloating(False)
+
+        self.addDockWidget(Qt.RightDockWidgetArea, self.minimap_dock)
+        self.minimap_dock.setVisible(True)
+
     def createParameterDock(self):
         self.colaps_widget = QWidget()
+        self.colaps_widget.setMinimumHeight(10)
         self.colaps_widget.setMinimumWidth(250)
 
         self.param_dock = QDockWidget("Parameter")
@@ -280,7 +293,7 @@ class MantisWindow(NodeEditorWindow):
         self.param_dock.setFloating(False)
 
         self.addDockWidget(Qt.RightDockWidgetArea, self.param_dock)
-        self.param_dock.setVisible(False)
+        self.param_dock.setVisible(True)
 
     def createStatusBar(self):
         self.statusBar().showMessage("")

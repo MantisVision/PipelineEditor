@@ -18,6 +18,7 @@ class Scene(Serializable):
         super().__init__()
         self.nodes = []
         self.edges = []
+        self.gr_scene = None
         self.scene_width = 6400
         self.scene_height = 6400
         self.history = SceneHistory(self)
