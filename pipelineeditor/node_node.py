@@ -7,6 +7,10 @@ from pipelineeditor.utils import dump_exception
 
 
 class Node(Serializable):
+    GraphicNodeClass = QDMGraphicsNode
+    NodeContent = QDMNodeContentWidget
+    SokcetClass = Socket
+
     def __init__(self, scene, title="New Node", inputs=[], outputs=[]) -> None:
         super().__init__()
         self._title = title
@@ -28,8 +32,8 @@ class Node(Serializable):
         self._is_invalid = False
 
     def initInnerClasses(self):
-        self.content = QDMNodeContentWidget(self)
-        self.gr_node = QDMGraphicsNode(self)
+        self.content = self.__class__.NodeContent(self)
+        self.gr_node = self.__class__.GraphicNodeClass(self)
 
     def initSettings(self):
         self._socket_gap = 20
@@ -37,6 +41,15 @@ class Node(Serializable):
         self.output_socket_position = RIGHT_TOP
         self.input_multi_edge = False
         self.output_multi_edge = True
+
+        self.socket_offsets = {
+            LEFT_BOTTOM: -1,
+            LEFT_CENTER: -1,
+            LEFT_TOP: -1,
+            RIGHT_BOTTOM: 1,
+            RIGHT_CENTER: 1,
+            RIGHT_TOP: 1
+        }
 
     def initSockets(self, inputs, outputs, reset=True):
         """ Create sockets for inputs and outputs """
@@ -52,7 +65,7 @@ class Node(Serializable):
         # Create new sockets
         counter = 0
         for i in inputs:
-            socket = Socket(
+            socket = self.__class__.SokcetClass(
                 node=self,
                 index=counter,
                 position=self.input_socket_position,
@@ -66,7 +79,7 @@ class Node(Serializable):
 
         counter = 0
         for o in outputs:
-            socket = Socket(
+            socket = self.__class__.SokcetClass(
                 node=self,
                 index=counter,
                 position=self.output_socket_position,
@@ -86,6 +99,9 @@ class Node(Serializable):
         self.markDirty()
         self.markDescendantsDirty()
 
+    def isSelected(self):
+        return self.gr_node.isSelected()
+
     def doSelect(self, new_state=True):
         self.gr_node.doSelect(new_state)
 
@@ -95,7 +111,7 @@ class Node(Serializable):
                 edge.updatePositions()
 
     def getSocketsPosition(self, index, position, num_out_off=1):
-        x = 0 if position in (LEFT_TOP, LEFT_CENTER, LEFT_BOTTOM) else self.gr_node.width
+        x = self.socket_offsets[position] if (position in (LEFT_TOP, LEFT_CENTER, LEFT_BOTTOM)) else self.gr_node.width + self.socket_offsets[position]
 
         if position in (LEFT_BOTTOM, RIGHT_BOTTOM):
             y = self.gr_node.height - self.gr_node.edge_roundness - self.gr_node._title_vertical_padding - index * self._socket_gap
@@ -154,8 +170,46 @@ class Node(Serializable):
     # Traversing nodes functions
     def getInput(self, index=0):
         try:
+            input_socket = self.inputs[index]
+
+            if len(input_socket.edges) == 0:
+                return None
+
+            connecting_edge = input_socket.edges[0]
+            other_socket = connecting_edge.getOtherSocket(self.inputs[index])
+            return other_socket.node
+        except Exception as e:
+            dump_exception(e)
+            return None
+
+    def getInputWithSocket(self, index=0):
+        try:
+            input_socket = self.inputs[index]
+            if len(input_socket.edges) == 0:
+                return None, None
+            connecting_edge = input_socket.edges[0]
+            other_socket = connecting_edge.getOtherSocket(self.inputs[index])
+            return other_socket.node, other_socket
+        except Exception as e:
+            dump_exception(e)
+            return None, None
+
+    def getInputWithSocketIndex(self, index=0):
+        try:
             edge = self.inputs[index].edges[0]
             socket = edge.getOtherSocket(self.inputs[index])
+            return socket.node, socket.index
+        except IndexError:
+            # print("EXC: Trying to get input with socket index %d, but none is attached to" % index, self)
+            return None, None
+        except Exception as e:
+            dump_exception(e)
+            return None, None
+
+    def getOutput(self, index=0):
+        try:
+            edge = self.outputs[index].edges[0]
+            socket = edge.getOtherSocket(self.outputs[index])
             return socket.node
         except IndexError:
             print("Exception: trying to get input but nothing attached")
@@ -166,17 +220,19 @@ class Node(Serializable):
 
     def getInputs(self, index=0):
         ins = []
-        for edge in self.inputs[index].edges:
-            other_socket = edge.getOtherSocket(self.inputs[index])
-            ins.append(other_socket.node)
+        if self.inputs:
+            for edge in self.inputs[index].edges:
+                other_socket = edge.getOtherSocket(self.inputs[index])
+                ins.append(other_socket.node)
 
         return ins
 
     def getOutputs(self, index=0):
         outs = []
-        for edge in self.outs[index].edges:
-            other_socket = edge.getOtherSocket(self.inpoutsuts[index])
-            outs.append(other_socket.node)
+        if self.outputs:
+            for edge in self.outputs[index].edges:
+                other_socket = edge.getOtherSocket(self.outputs[index])
+                outs.append(other_socket.node)
 
         return outs
 
@@ -203,7 +259,7 @@ class Node(Serializable):
     def onMarkedInvalid(self):
         pass
 
-    def eval(self):
+    def eval(self, index=0):
         self.markDirty(False)
         self.markInvalid(False)
         return 0
@@ -253,8 +309,55 @@ class Node(Serializable):
             ('pos_y', self.gr_node.scenePos().y()),
             ('inputs', [socket.serialize() for socket in self.inputs]),
             ('outputs', [socket.serialize() for socket in self.outputs]),
-            ('content', self.content.serialize())
+            ('content', self.content.serialize() if isinstance(self.content, Serializable) else {})
         ])
+
+    # def deserialize(self, data, hashmap={}, restore_id=True):
+    #     try:
+    #         if restore_id:
+    #             self.id = data['id']
+    #         hashmap[data['id']] = self
+
+    #         self.setPos(data['pos_x'], data['pos_y'])
+    #         self.title = data['title']
+
+    #         data['inputs'].sort(key=lambda socket: socket['index'] + socket['position'] * 1000)
+    #         data['outputs'].sort(key=lambda socket: socket['index'] + socket['position'] * 1000)
+    #         num_inputs = len(data['inputs'])
+    #         num_outputs = len(data['outputs'])
+
+    #         self.inputs = []
+    #         for socket_data in data['inputs']:
+    #             new_socket = Socket(
+    #                 node=self,
+    #                 index=socket_data['index'],
+    #                 position=socket_data['position'],
+    #                 socket_type=socket_data['socket_type'],
+    #                 count_on_this_node_side=num_inputs,
+    #                 is_input=True
+    #             )
+    #             new_socket.deserialize(socket_data, hashmap, restore_id)
+    #             self.inputs.append(new_socket)
+
+    #         self.outputs = []
+    #         for socket_data in data['outputs']:
+    #             new_socket = Socket(
+    #                 node=self,
+    #                 index=socket_data['index'],
+    #                 position=socket_data['position'],
+    #                 socket_type=socket_data['socket_type'],
+    #                 count_on_this_node_side=num_outputs,
+    #                 is_input=False
+    #             )
+    #             new_socket.deserialize(socket_data, hashmap, restore_id)
+    #             self.outputs.append(new_socket)
+    #     except Exception as e:
+    #         dump_exception(e)
+
+    #     # Deserialize node content
+    #     res = self.content.deserialize(data['content'], hashmap)
+
+    #     return True & res
 
     def deserialize(self, data, hashmap={}, restore_id=True):
         try:
@@ -265,40 +368,53 @@ class Node(Serializable):
             self.setPos(data['pos_x'], data['pos_y'])
             self.title = data['title']
 
-            data['inputs'].sort(key=lambda socket: socket['index'] + socket['position'] * 1000)
-            data['outputs'].sort(key=lambda socket: socket['index'] + socket['position'] * 1000)
+            data['inputs'].sort(key=lambda socket: socket['index'] + socket['position'] * 10000)
+            data['outputs'].sort(key=lambda socket: socket['index'] + socket['position'] * 10000)
             num_inputs = len(data['inputs'])
             num_outputs = len(data['outputs'])
 
-            self.inputs = []
             for socket_data in data['inputs']:
-                new_socket = Socket(
-                    node=self,
-                    index=socket_data['index'],
-                    position=socket_data['position'],
-                    socket_type=socket_data['socket_type'],
-                    count_on_this_node_side=num_inputs,
-                    is_input=True
-                )
-                new_socket.deserialize(socket_data, hashmap, restore_id)
-                self.inputs.append(new_socket)
+                found = None
+                for socket in self.inputs:
+                    # print("\t", socket, socket.index, "=?", socket_data['index'])
+                    if socket._index == socket_data['index']:
+                        found = socket
+                        break
+                if found is None:
+                    print("deserialization of socket data has not found input socket with index:", socket_data['index'])
+                    print("actual socket data:", socket_data)
+                    # we can create new socket for this
+                    found = self.__class__.Socket_class(
+                        node=self, index=socket_data['index'], position=socket_data['position'],
+                        socket_type=socket_data['socket_type'], count_on_this_node_side=num_inputs,
+                        is_input=True
+                    )
+                    self.inputs.append(found)  # append newly created input to the list
+                found.deserialize(socket_data, hashmap, restore_id)
 
-            self.outputs = []
             for socket_data in data['outputs']:
-                new_socket = Socket(
-                    node=self,
-                    index=socket_data['index'],
-                    position=socket_data['position'],
-                    socket_type=socket_data['socket_type'],
-                    count_on_this_node_side=num_outputs,
-                    is_input=False
-                )
-                new_socket.deserialize(socket_data, hashmap, restore_id)
-                self.outputs.append(new_socket)
+                found = None
+                for socket in self.outputs:
+                    # print("\t", socket, socket.index, "=?", socket_data['index'])
+                    if socket._index == socket_data['index']:
+                        found = socket
+                        break
+                if found is None:
+                    # print("deserialization of socket data has not found output socket with index:", socket_data['index'])
+                    # print("actual socket data:", socket_data)
+                    # we can create new socket for this
+                    found = self.__class__.Socket_class(
+                        node=self, index=socket_data['index'], position=socket_data['position'],
+                        socket_type=socket_data['socket_type'], count_on_this_node_side=num_outputs,
+                        is_input=False
+                    )
+                    self.outputs.append(found)  # append newly created output to the list
+                found.deserialize(socket_data, hashmap, restore_id)
         except Exception as e:
             dump_exception(e)
 
-        # Deserialize node content
-        res = self.content.deserialize(data['content'], hashmap)
+        # also deseralize the content of the node
+        if isinstance(self.content, Serializable):
+            return self.content.deserialize(data['content'], hashmap)
 
-        return True & res
+        return True

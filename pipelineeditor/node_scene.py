@@ -18,13 +18,15 @@ class Scene(Serializable):
         super().__init__()
         self.nodes = []
         self.edges = []
-        self.scene_width = 64000
-        self.scene_height = 64000
+        self.gr_scene = None
+        self.scene_width = 6400
+        self.scene_height = 6400
         self.history = SceneHistory(self)
         self.clipboard = SceneClipbaord(self)
 
         # init listeners
         self._has_been_modified = False
+        self._silent_selection_events = False
         self._has_been_modified_listeners = []
         self._item_selected_listeners = []
         self._items_deselected_listeners = []
@@ -42,29 +44,43 @@ class Scene(Serializable):
         self.gr_scene = QDMGraphicsScene(self)
         self.gr_scene.setGrScene(self.scene_width, self.scene_height)
 
-    def onItemSelected(self):
+    def setSilentSelectionEvents(self, value=True):
+        self._silent_selection_events = value
+
+    def onItemSelected(self, silent=False):
+        if self._silent_selection_events:
+            return
+
         current_selected_items = self.getSelectedItems()
         if current_selected_items != self._last_selected_items:
             self._last_selected_items = current_selected_items
-            self.history.store_history("Selection Changed")
 
-            for callback in self._item_selected_listeners:
-                callback()
+            if not silent:
+                self.history.store_history("Selection Changed")
+                for callback in self._item_selected_listeners:
+                    callback()
 
-    def onItemsDeselected(self):
+    def onItemsDeselected(self, silent=False):
         self.resetLastSelectedStates()
         if self._last_selected_items != []:
             self._last_selected_items = []
-            self.history.store_history("Deselction items")
 
-            for callback in self._items_deselected_listeners:
-                callback()
+            if not silent:
+                self.history.store_history("Deselction items")
+                for callback in self._items_deselected_listeners:
+                    callback()
+
+    def doDeselectItems(self, silent=False):
+        for item in self.getSelectedItems():
+            item.setSelected(False)
+        if not silent:
+            self.onItemsDeselected()
 
     def isModified(self):
         return self.has_been_modified
 
     def getSelectedItems(self):
-        self.gr_scene.selectedItems()
+        return self.gr_scene.selectedItems()
 
     @property
     def has_been_modified(self):

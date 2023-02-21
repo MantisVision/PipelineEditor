@@ -1,0 +1,287 @@
+{
+    "id": 3058026947216,
+    "scene_width": 6400,
+    "scene_height": 6400,
+    "nodes": [
+        {
+            "id": 3058027119424,
+            "title": "UUID Source",
+            "pos_x": -568.0,
+            "pos_y": -139.0,
+            "inputs": [],
+            "outputs": [
+                {
+                    "id": 3058027171312,
+                    "index": 0,
+                    "multi_edge": true,
+                    "position": 5,
+                    "socket_type": 3
+                }
+            ],
+            "content": {
+                "id": 3073111398224
+            },
+            "op_code": 3,
+            "uuid": "test",
+            "params": {
+                "uuid": "test"
+            }
+        },
+        {
+            "id": 3058027180144,
+            "title": "HARVEST",
+            "pos_x": -285.0,
+            "pos_y": -228.0,
+            "inputs": [
+                {
+                    "id": 3058027180336,
+                    "index": 0,
+                    "multi_edge": false,
+                    "position": 2,
+                    "socket_type": 2
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 3058027180384,
+                    "index": 0,
+                    "multi_edge": true,
+                    "position": 5,
+                    "socket_type": 2
+                }
+            ],
+            "content": {
+                "id": 3073111402400
+            },
+            "op_code": 4,
+            "uuid": "test",
+            "params": {
+                "method_of_capture": "",
+                "mv_session": "",
+                "drop_ir": 0,
+                "no_join": 0
+            }
+        },
+        {
+            "id": 3058027223248,
+            "title": "UPLOAD",
+            "pos_x": 192.0,
+            "pos_y": -111.0,
+            "inputs": [
+                {
+                    "id": 3058027223440,
+                    "index": 0,
+                    "multi_edge": false,
+                    "position": 2,
+                    "socket_type": 1
+                }
+            ],
+            "outputs": [],
+            "content": {
+                "id": 3073111720144
+            },
+            "op_code": 6,
+            "uuid": "",
+            "params": {
+                "file_path": "C:\\HARVEST\\test\\test_joined.mvx"
+            }
+        },
+        {
+            "id": 3058026528928,
+            "title": "TSDF",
+            "pos_x": 185.0625,
+            "pos_y": -277.81250000000006,
+            "inputs": [
+                {
+                    "id": 3058027223680,
+                    "index": 0,
+                    "multi_edge": false,
+                    "position": 2,
+                    "socket_type": 2
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 3058027223728,
+                    "index": 0,
+                    "multi_edge": true,
+                    "position": 5,
+                    "socket_type": 2
+                }
+            ],
+            "content": {
+                "id": 3073111721872
+            },
+            "op_code": 7,
+            "uuid": "",
+            "params": {
+                "file_path": "C:\\HARVEST\\test\\test_joined.mvx",
+                "client": "",
+                "build": "",
+                "scale": "",
+                "atlas_size": "",
+                "fps": "25",
+                "add_params": "",
+                "local": false,
+                "segmented": false
+            }
+        },
+        {
+            "id": 3058027226560,
+            "title": "MVX Target File",
+            "pos_x": 426.0,
+            "pos_y": -207.0,
+            "inputs": [
+                {
+                    "id": 3058027226752,
+                    "index": 0,
+                    "multi_edge": false,
+                    "position": 2,
+                    "socket_type": 1
+                }
+            ],
+            "outputs": [],
+            "content": {
+                "id": 3073111726336
+            },
+            "op_code": 2,
+            "uuid": "",
+            "params": {
+                "file_path": "C:/Personal/PipelineEditor/.gitignore"
+            }
+        },
+        {
+            "id": 3058027229584,
+            "title": "WAV Target File",
+            "pos_x": -72.0,
+            "pos_y": 37.0,
+            "inputs": [
+                {
+                    "id": 3058027229776,
+                    "index": 0,
+                    "multi_edge": false,
+                    "position": 2,
+                    "socket_type": 1
+                }
+            ],
+            "outputs": [],
+            "content": {
+                "id": 3073111730080
+            },
+            "op_code": 9,
+            "uuid": "",
+            "params": {
+                "file_path": "C:/Personal/PipelineEditor/.gitignore"
+            }
+        },
+        {
+            "id": 3073111784416,
+            "title": "Audio",
+            "pos_x": -324.0,
+            "pos_y": 8.0,
+            "inputs": [
+                {
+                    "id": 3073111784608,
+                    "index": 0,
+                    "multi_edge": false,
+                    "position": 2,
+                    "socket_type": 1
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 3073111784656,
+                    "index": 0,
+                    "multi_edge": true,
+                    "position": 5,
+                    "socket_type": 1
+                }
+            ],
+            "content": {
+                "id": 3073111733104
+            },
+            "op_code": 8,
+            "uuid": "test",
+            "params": {
+                "uuid": "test"
+            }
+        },
+        {
+            "id": 3073111784800,
+            "title": "JOIN",
+            "pos_x": -52.0,
+            "pos_y": -214.0,
+            "inputs": [
+                {
+                    "id": 3073111784944,
+                    "index": 0,
+                    "multi_edge": false,
+                    "position": 2,
+                    "socket_type": 2
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 3073111784992,
+                    "index": 0,
+                    "multi_edge": true,
+                    "position": 5,
+                    "socket_type": 2
+                }
+            ],
+            "content": {
+                "id": 3073111732528
+            },
+            "op_code": 5,
+            "uuid": "test",
+            "params": {
+                "uuid": "test",
+                "output_path": "C:\\HARVEST\\test\\test_joined.mvx"
+            }
+        }
+    ],
+    "edges": [
+        {
+            "id": 3058027218976,
+            "edge_type": 2,
+            "start": 3058027171312,
+            "end": 3058027180336
+        },
+        {
+            "id": 3058027226512,
+            "edge_type": 2,
+            "start": 3058027223728,
+            "end": 3058027226752
+        },
+        {
+            "id": 3073111770976,
+            "edge_type": 2,
+            "start": 3058027171312,
+            "end": 3073111784608
+        },
+        {
+            "id": 3073111652480,
+            "edge_type": 2,
+            "start": 3073111784656,
+            "end": 3058027229776
+        },
+        {
+            "id": 3073111652960,
+            "edge_type": 2,
+            "start": 3058027180384,
+            "end": 3073111784944
+        },
+        {
+            "id": 3073111646240,
+            "edge_type": 2,
+            "start": 3073111784992,
+            "end": 3058027223680
+        },
+        {
+            "id": 3073111785088,
+            "edge_type": 2,
+            "start": 3073111784992,
+            "end": 3058027223440
+        }
+    ]
+}

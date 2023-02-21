@@ -9,10 +9,10 @@ sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 from pipelineeditor.utils import dump_exception, pp # noqa
 from pipelineeditor.utils import loadStylesheets # noqa
 from pipelineeditor.node_editor_window import NodeEditorWindow # noqa
-from examples.calculator.calc_sub_window import CalculatorSubWindow # noqa
-from examples.calculator.calc_drag_listbox import QDMDragListBox # noqa
-from examples.calculator.calc_config import * # noqa
-from examples.calculator.nodes.colap import FrameLayout # noqa
+from examples.mantis.mv_sub_window import CalculatorSubWindow # noqa
+from examples.mantis.mv_drag_listbox import QDMDragListBox # noqa
+from examples.mantis.mv_config import * # noqa
+from examples.mantis.nodes.colap import FrameLayout # noqa
 from qss import nodeeditor_dark_resources # noqa
 
 
@@ -75,6 +75,8 @@ class CalculatorWindow(NodeEditorWindow):
         else:
             self.writeSettings()
             event.accept()
+            import sys
+            sys.exit(0)
 
     def createActions(self):
         super().createActions()
@@ -253,7 +255,6 @@ class CalculatorWindow(NodeEditorWindow):
         fnames, ffilter = QFileDialog.getOpenFileNames(self, "Open pipeline from file")
         try:
             for fname in fnames:
-                print(fname)
                 existing = self.findMdiChild(fname)
                 if existing:
                     self.mdiArea.setActiveSubWindow(existing)

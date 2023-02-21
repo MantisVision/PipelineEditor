@@ -10,6 +10,8 @@ from pipelineeditor.node_editor_widget import NodeEditorWidget
 
 
 class NodeEditorWindow(QMainWindow):
+    NodeEditorWidgetClass = NodeEditorWidget
+
     def __init__(self) -> None:
         super().__init__()
 
@@ -22,7 +24,7 @@ class NodeEditorWindow(QMainWindow):
     def initUI(self):
         self.createActions()
         self.createMenus()
-        self.node_editor = NodeEditorWidget(self)
+        self.node_editor = self.__class__.NodeEditorWidgetClass(self)
         self.setCentralWidget(self.node_editor)
         self.node_editor.scene.add_has_been_modified_listener(self.setTitle)
         self.createStatusBar()
@@ -37,9 +39,12 @@ class NodeEditorWindow(QMainWindow):
         self.statusBar().addPermanentWidget(widget)
         self.node_editor.view.scenePosChanged.connect(self.onSceneChanged)
 
-        self.setGeometry(200, 200, 800, 600)
+        # self.setGeometry(200, 200, 800, 600)
         self.setTitle()
         self.show()
+
+    def sizeHint(self):
+        return QSize(800, 600)
 
     def createStatusBar(self):
         self.statusBar().showMessage("")
@@ -48,23 +53,30 @@ class NodeEditorWindow(QMainWindow):
         self.status_bar_text = QLabel("")
 
     def createActions(self):
-        self.actNew    = QAction("&New",     self, triggered=self.onFileNew,    shortcut="Ctrl+N",       statusTip="Create new pipeline")
-        self.actOpen   = QAction("&Open",    self, triggered=self.onFileOpen,   shortcut="Ctrl+O",       statusTip="Open file")
-        self.actSave   = QAction("&Save",    self, triggered=self.onFileSave,   shortcut="Ctrl+S",       statusTip="Save file")
-        self.actSaveAs = QAction("Save &As", self, triggered=self.onFileSaveAs, shortcut="Ctrl+Shift+S", statusTip="Save file as...")
-        self.actExit   = QAction("E&xit",    self, triggered=self.close,        shortcut="ESC",          statusTip="Exit application")
-
-        self.actUndo   = QAction("&Undo",    self, triggered=self.onEditUndo,   shortcut="Ctrl+Z",       statusTip="Undo last operation")
-        self.actRedo   = QAction("&Redo",    self, triggered=self.onEditRedo,   shortcut="Ctrl+Y",       statusTip="Redo last operation")
-        self.actCopy   = QAction("&Copy",    self, triggered=self.onEditCopy,   shortcut="Ctrl+C",       statusTip="Copy Selected")
-        self.actPaste  = QAction("&Paste",   self, triggered=self.onEditPaste,  shortcut="Ctrl+V",       statusTip="Paste Selected")
-        self.actCut    = QAction("Cu&t",     self, triggered=self.onEditCut,    shortcut="Ctrl+X",       statusTip="Cut Selected")
-        self.actDelete = QAction("&Delete",  self, triggered=self.onEditDelete, shortcut="Del",          statusTip="Delete selected items")
+        self.actNew         = QAction("&New",           self, triggered=self.onFileNew,       shortcut="Ctrl+N",       statusTip="Create new pipeline")
+        self.actOpen        = QAction("&Open",          self, triggered=self.onFileOpen,      shortcut="Ctrl+O",       statusTip="Open file")
+        self.actSave        = QAction("&Save",          self, triggered=self.onFileSave,      shortcut="Ctrl+S",       statusTip="Save file")
+        self.actSaveAs      = QAction("Save &As",       self, triggered=self.onFileSaveAs,    shortcut="Ctrl+Shift+S", statusTip="Save file as...")
+        self.actExit        = QAction("E&xit",          self, triggered=self.close,           shortcut="ESC",          statusTip="Exit application")
+        self.actUndo        = QAction("&Undo",          self, triggered=self.onEditUndo,      shortcut="Ctrl+Z",       statusTip="Undo last operation")
+        self.actRedo        = QAction("&Redo",          self, triggered=self.onEditRedo,      shortcut="Ctrl+Y",       statusTip="Redo last operation")
+        self.actCopy        = QAction("&Copy",          self, triggered=self.onEditCopy,      shortcut="Ctrl+C",       statusTip="Copy Selected")
+        self.actPaste       = QAction("&Paste",         self, triggered=self.onEditPaste,     shortcut="Ctrl+V",       statusTip="Paste Selected")
+        self.actCut         = QAction("Cu&t",           self, triggered=self.onEditCut,       shortcut="Ctrl+X",       statusTip="Cut Selected")
+        self.actSelectAll   = QAction("Select &All",    self, triggered=self.onEditSelectAll, shortcut="Ctrl+A",       statusTip="Select All")
+        self.actDelete      = QAction("&Delete",        self, triggered=self.onEditDelete,    shortcut="Del",          statusTip="Delete selected items")
+        self.onEvalSelected = QAction("&Eval Selected", self, triggered=self.onEvalSelected,  shortcut="Ctrl+E",       statusTip="Evaluate selected nodes")
+        self.onEvalAll      = QAction("Eval All",       self, triggered=self.onEvalAll,       shortcut="Ctrl+Shift+E", statusTip="Evaluate all nodes")
+        self.actBake        = QAction("&Bake",          self, triggered=self.onRunBake,       shortcut="Ctrl+B",       statusTip="Bake graph into pipeline")
 
     def createMenus(self):
         self.menubar = self.menuBar()
-        self.filemenu = self.menubar.addMenu('&File')
+        self.createFileMenu()
+        self.createEditMenu()
+        self.createRunMenu()
 
+    def createFileMenu(self):
+        self.filemenu = self.menubar.addMenu('&File')
         self.filemenu.addAction(self.actNew)
         self.filemenu.addSeparator()
         self.filemenu.addAction(self.actOpen)
@@ -73,6 +85,7 @@ class NodeEditorWindow(QMainWindow):
         self.filemenu.addSeparator()
         self.filemenu.addAction(self.actExit)
 
+    def createEditMenu(self):
         self.editMenu = self.menubar.addMenu('&Edit')
         self.editMenu.addAction(self.actUndo)
         self.editMenu.addAction(self.actRedo)
@@ -80,7 +93,16 @@ class NodeEditorWindow(QMainWindow):
         self.editMenu.addAction(self.actPaste)
         self.editMenu.addAction(self.actCut)
         self.editMenu.addSeparator()
+        self.editMenu.addAction(self.actSelectAll)
+        self.editMenu.addSeparator()
         self.editMenu.addAction(self.actDelete)
+
+    def createRunMenu(self):
+        self.runMenu = self.menubar.addMenu('&Run')
+        self.runMenu.addAction(self.onEvalSelected)
+        self.runMenu.addAction(self.onEvalAll)
+        self.runMenu.addSeparator()
+        self.runMenu.addAction(self.actBake)
 
     def setTitle(self):
         title = "Pipeline Editor - "
@@ -95,8 +117,10 @@ class NodeEditorWindow(QMainWindow):
 
     def onFileOpen(self):
         if self.save_dlg:
-            fname, ffilter = QFileDialog.getOpenFileName(self, "Open pipeline from file")
-
+            fname, ffilter = QFileDialog.getOpenFileName(self, "Open pipeline from file", self.getFileDialogDirectory(), self.getFileDialogFilter())
+            print("##############")
+            print(fname)
+            print("##############")
             if not fname:
                 return
 
@@ -111,8 +135,8 @@ class NodeEditorWindow(QMainWindow):
             return self.onFileSaveAs()
 
         current_editor.fileSave()
-        self.print_msg(f"Successfully saved to {current_editor.filename}")
-        # self.statusBar().showMessage(f"Successfully saved to {self.getcurrentPipelineEditorWidget().filename}", 3000)
+        # self.print_msg(f"Successfully saved to {current_editor.filename}")
+        self.statusBar().showMessage(f"Successfully saved to {current_editor.filename}", 3000)
 
         if hasattr(current_editor, "setTitle"):
             current_editor.setTitle()
@@ -125,7 +149,7 @@ class NodeEditorWindow(QMainWindow):
         if not current_editor:
             return False
 
-        fname, ffilter = QFileDialog.getSaveFileName(self, "Save pipeline to file")
+        fname, ffilter = QFileDialog.getSaveFileName(self, "Save pipeline to file", self.getFileDialogDirectory(), self.getFileDialogFilter())
 
         if not fname:
             return False
@@ -136,7 +160,6 @@ class NodeEditorWindow(QMainWindow):
             self.setTitle()
 
         current_editor.fileSave(fname)
-        # self.print_msg(f"Successfully saved to {current_editor.filename}")
 
         return True
 
@@ -151,6 +174,10 @@ class NodeEditorWindow(QMainWindow):
     def onEditDelete(self):
         if self.getcurrentPipelineEditorWidget():
             self.getcurrentPipelineEditorWidget().scene.getView().deleteSelected()
+
+    def onEditSelectAll(self):
+        if self.getcurrentPipelineEditorWidget():
+            self.getcurrentPipelineEditorWidget().scene.getView().selectAll()
 
     def onEditCut(self):
         if self.getcurrentPipelineEditorWidget():
@@ -177,7 +204,27 @@ class NodeEditorWindow(QMainWindow):
                 print("Json is not contain any node")
                 return
 
-            self.getcurrentPipelineEditorWidget().scene.clipboard.deserializeFromClipboard(data)
+            return self.getcurrentPipelineEditorWidget().scene.clipboard.deserializeFromClipboard(data)
+
+    def onEvalSelected(self):
+        for sel in self.getcurrentPipelineEditorWidget().scene.getSelectedItems():
+            if hasattr(sel, 'node'):
+                sel.node.eval()
+
+    def onEvalAll(self):
+        for sel in self.getcurrentPipelineEditorWidget().scene.nodes:
+            if hasattr(sel, 'eval'):
+                sel.eval()
+
+    def onRunBake(self):
+        pass
+
+    def getFileDialogDirectory(self):
+        # TODO: change this dir
+        return r"C:\Personal\PipelineEditor\examples\mantis"
+
+    def getFileDialogFilter(self):
+        return 'Graph (*.json);;All files (*)'
 
     def print_msg(self, msg, color='black', msecs=3000):
         QTimer.singleShot(msecs, lambda: self.status_bar_text.setText(""))
@@ -191,7 +238,8 @@ class NodeEditorWindow(QMainWindow):
         return self.centralWidget()
 
     def isModified(self):
-        return self.getcurrentPipelineEditorWidget().scene.isModified()
+        pipline_editor = self.getcurrentPipelineEditorWidget()
+        return pipline_editor.scene.isModified() if pipline_editor else False
 
     def closeEvent(self, event) -> None:
         if self.save_dlg():

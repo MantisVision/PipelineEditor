@@ -7,7 +7,6 @@ class QDMGraphicsNode(QGraphicsItem):
     def __init__(self, node, parent=None) -> None:
         super().__init__(parent)
         self.node = node
-        self.content = self.node.content
 
         # init flags
         self._was_moved = False
@@ -49,6 +48,10 @@ class QDMGraphicsNode(QGraphicsItem):
         self._pen_default.setWidthF(1)
         self._pen_selected.setWidthF(1)
         self._pen_hovered.setWidthF(2)
+
+    @property
+    def content(self):
+        return self.node.content if self.node else None
 
     @property
     def title(self):
@@ -127,9 +130,17 @@ class QDMGraphicsNode(QGraphicsItem):
         self.title_item.setTextWidth(self.width - 2 * self._title_horizontal_padding)
 
     def initContent(self):
-        self.gr_content = QGraphicsProxyWidget(self)
-        self.content.setGeometry(self.edge_padding, self.title_height + self.edge_padding, self.width - 2 * self.edge_padding, self.height - 2 * self.edge_padding - self.title_height)
-        self.gr_content.setWidget(self.content)
+        if self.content is not None:
+            self.content.setGeometry(
+                self.edge_padding,
+                self.title_height + self.edge_padding,
+                self.width - 2 * self.edge_padding,
+                self.height - 2 * self.edge_padding - self.title_height
+            )
+
+        # get the QGraphicsProxyWidget when inserted into the grScene
+        self.gr_content = self.node.scene.gr_scene.addWidget(self.content)
+        self.gr_content.setParentItem(self)
 
     def paint(self, painter, QStyleOptionGraphicsItem, widget=None):
         # title
@@ -154,7 +165,7 @@ class QDMGraphicsNode(QGraphicsItem):
 
         # outline
         path_outline = QPainterPath()
-        path_outline.addRoundedRect(0, 0, self.width, self.height, self.edge_roundness, self.edge_roundness)
+        path_outline.addRoundedRect(-1, -1, self.width, self.height, self.edge_roundness, self.edge_roundness)
         painter.setBrush(Qt.NoBrush)
         if self.hovered:
             painter.setPen(self._pen_hovered)

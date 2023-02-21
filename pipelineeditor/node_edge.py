@@ -2,6 +2,7 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 
+from collections import OrderedDict
 from pipelineeditor.serialize.node_serializable import Serializable
 from pipelineeditor.graphics.node_graphics_edge import *
 from pipelineeditor.utils import dump_exception
@@ -85,7 +86,7 @@ class Edge(Serializable):
         self.start_socket = None
         self.end_socket = None
 
-    def remove(self):
+    def remove(self, silent_for_socket=None, silent=False):
         old_sockets = [self.start_socket, self.end_socket]
 
         self.removeFromSocket()
@@ -101,9 +102,14 @@ class Edge(Serializable):
         try:
             for socket in old_sockets:
                 if socket and socket.node:
+                    if silent:
+                        continue
+                    if silent_for_socket and socket == silent_for_socket:
+                        continue
                     socket.node.onEdgeConnectionChanged(self)
-                    if socket.is_input:
-                        socket.node.onInputChanged(self)
+                    # TODO: check this uncomment this line
+                    # if socket.is_input:
+                    socket.node.onInputChanged(socket)
         except Exception as e:
             dump_exception(e)
 
@@ -125,8 +131,8 @@ class Edge(Serializable):
         return OrderedDict([
             ('id', self.id),
             ('edge_type', self.edge_type),
-            ('start', self.start_socket.id),
-            ('end', self.end_socket.id)
+            ('start', self.start_socket.id if self.start_socket else None),
+            ('end', self.end_socket.id if self.end_socket else None)
         ])
 
     def deserialize(self, data, hashmap={}, restore_id=True):
