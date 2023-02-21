@@ -1,0 +1,67 @@
+{
+    "id": 2894019384064,
+    "scene_width": 6400,
+    "scene_height": 6400,
+    "nodes": [
+        {
+            "id": 2361528640240,
+            "title": "MVX Source File",
+            "pos_x": -560.0,
+            "pos_y": -260.0,
+            "inputs": [],
+            "outputs": [
+                {
+                    "id": 2361528640480,
+                    "index": 0,
+                    "multi_edge": true,
+                    "position": 5,
+                    "socket_type": 3
+                }
+            ],
+            "content": {
+                "id": 2361528697040
+            },
+            "op_code": 1,
+            "uuid": "",
+            "params": {
+                "file_path": ""
+            }
+        },
+        {
+            "id": 2361516348304,
+            "title": "HARVEST",
+            "pos_x": -310.0,
+            "pos_y": -193.0,
+            "inputs": [
+                {
+                    "id": 2361528640768,
+                    "index": 0,
+                    "multi_edge": false,
+                    "position": 2,
+                    "socket_type": 2
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 2361528640816,
+                    "index": 0,
+                    "multi_edge": true,
+                    "position": 5,
+                    "socket_type": 2
+                }
+            ],
+            "content": {
+                "id": 2361528699488
+            },
+            "op_code": 4,
+            "uuid": "",
+            "params": {
+                "method_of_capture": "",
+                "mv_session": "",
+                "drop_ir": 0,
+                "no_join": 0
+            }
+        }
+    ],
+    "edges": []
+}

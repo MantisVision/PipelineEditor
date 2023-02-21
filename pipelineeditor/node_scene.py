@@ -21,6 +21,10 @@ class Scene(Serializable):
         self.gr_scene = None
         self.scene_width = 6400
         self.scene_height = 6400
+
+        # current filename assigned to this scene
+        self.filename = None
+
         self.history = SceneHistory(self)
         self.clipboard = SceneClipbaord(self)
 
@@ -70,7 +74,7 @@ class Scene(Serializable):
         current_selected_items = self.getSelectedItems()
         if current_selected_items == self._last_selected_items:
             return
-        
+
         self.resetLastSelectedStates()
         if self._last_selected_items == []:
             self._last_selected_items = []
@@ -156,6 +160,7 @@ class Scene(Serializable):
             f.write(json.dumps(self.serialize(), indent=4))
             print(f"Saving to {filename} was successful")
             self.has_been_modified = False
+            self.filename = filename
 
     def load_from_file(self, filename):
         try:
@@ -163,6 +168,7 @@ class Scene(Serializable):
                 data = json.loads(f.read())
                 self.deserialize(data)
                 self.has_been_modified = False
+                self.filename = filename
         except json.JSONDecodeError:
             raise InvalidFile(f"{filename} is not a valid JSON file")
         except Exception as e:

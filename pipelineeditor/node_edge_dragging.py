@@ -6,6 +6,8 @@ from pipelineeditor.node_edge import Edge, EDGE_TYPE_DEFAULT
 class EdgeDragging:
     def __init__(self, gr_view) -> None:
         self.gr_view = gr_view
+        self.drag_edge = None
+        self.drag_start_socket = None
 
     def getEdgeClass(self):
         return self.gr_view.gr_scene.scene.getEdgeClass()

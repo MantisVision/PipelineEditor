@@ -92,7 +92,11 @@ class Node(Serializable):
             counter += 1
 
     def onEdgeConnectionChanged(self, new_edge):
+        # print("ASDASDASD")
+        # TODO: set nicer colors!
         pass
+        # new_edge._start_socket.changeSocketType(5)
+        # new_edge._end_socket.changeSocketType(5)
         # print(f"{self.__class__.__name__} onEdgeConnectionChanged {new_edge}")
 
     def onInputChanged(self, new_edge):
