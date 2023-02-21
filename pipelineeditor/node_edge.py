@@ -65,19 +65,24 @@ class Edge(Serializable):
             self.scene.gr_scene.removeItem(self.gr_edge)
 
         self._edge_type = val
-        if self.edge_type == EDGE_TYPE_DIRECT:
-            self.gr_edge = QDMGraphicsEdgeDirect(self)
-        elif self.edge_type == EDGE_TYPE_BEZIER:
-            self.gr_edge = QDMGraphicsEdgeBezier(self)
-        elif self.edge_type == EDGE_TYPE_SQUARE:
-            self.gr_edge = GraphicsEdgePathSquare(self)
-        else:
-            self.gr_edge = QDMGraphicsEdgeBezier(self)
-
+        self.gr_edge = self.create_edge_class_instance(self.edge_type)
         self.scene.gr_scene.addItem(self.gr_edge)
 
         if self.start_socket:
             self.updatePositions()
+
+    def detetmine_edge_type(self, edge_type):
+        if edge_type == EDGE_TYPE_DIRECT:
+            return QDMGraphicsEdgeDirect
+        elif edge_type == EDGE_TYPE_SQUARE:
+            return GraphicsEdgePathSquare
+
+        return QDMGraphicsEdgeBezier
+
+    def create_edge_class_instance(self, edge_type):
+        edge_class = self.detetmine_edge_type(edge_type)
+        edge = edge_class(self)
+        return edge
 
     def getOtherSocket(self, known_socket):
         return self.start_socket if known_socket == self.end_socket else self.end_socket

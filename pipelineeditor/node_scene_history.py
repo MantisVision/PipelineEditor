@@ -128,7 +128,9 @@ class SceneHistory():
                     if node.id == node_id:
                         node.gr_node.setSelected(True)
                         break
+
             current_selection = self.capture_current_selection()
+            self.scene._last_selected_items = self.scene.getSelectedItems()
 
             # if the selection of nodes differ before and after restoration, set flag
             if current_selection['nodes'] != previous_selection['nodes'] or current_selection['edges'] != previous_selection['edges']:

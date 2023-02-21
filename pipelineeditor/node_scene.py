@@ -30,7 +30,7 @@ class Scene(Serializable):
         self._has_been_modified_listeners = []
         self._item_selected_listeners = []
         self._items_deselected_listeners = []
-        self._last_selected_items = []
+        self._last_selected_items = None
 
         # here we can store callback for retrieving the class for Nodes
         self.node_class_selector = None
@@ -43,6 +43,12 @@ class Scene(Serializable):
     def initUI(self):
         self.gr_scene = QDMGraphicsScene(self)
         self.gr_scene.setGrScene(self.scene_width, self.scene_height)
+
+    def getNodeByID(self, id):
+        for node in self.nodes:
+            if node.id == id:
+                return node
+        return None
 
     def setSilentSelectionEvents(self, value=True):
         self._silent_selection_events = value
@@ -61,8 +67,12 @@ class Scene(Serializable):
                 self.history.store_history("Selection Changed")
 
     def onItemsDeselected(self, silent=False):
+        current_selected_items = self.getSelectedItems()
+        if current_selected_items == self._last_selected_items:
+            return
+        
         self.resetLastSelectedStates()
-        if self._last_selected_items != []:
+        if self._last_selected_items == []:
             self._last_selected_items = []
 
             if not silent:
@@ -157,6 +167,10 @@ class Scene(Serializable):
             raise InvalidFile(f"{filename} is not a valid JSON file")
         except Exception as e:
             dump_exception(e)
+
+    def getEdgeClass(self):
+        """Return the class representing Edge. Override me if needed"""
+        return Edge
 
     def set_node_class_selector(self, class_selectinf_func):
         self.node_class_selector = class_selectinf_func

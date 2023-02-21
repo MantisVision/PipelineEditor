@@ -217,11 +217,10 @@ class MVSubWindow(NodeEditorWidget):
 
             if self.scene.getView().mode == MODE_EDGE_DRAG:
                 # If we were dragging edge
-                target_socket = self.determine_target_socket_of_node(self.scene.getView().drag_start_socket.is_output, new_node)
+                target_socket = self.determine_target_socket_of_node(self.scene.getView().dragging.drag_start_socket.is_output, new_node)
                 if target_socket is not None:
-                    self.scene.getView().edgeDragEnd(target_socket.gr_socket)
+                    self.scene.getView().dragging.edgeDragEnd(target_socket.gr_socket)
                     self.finish_new_node_state(new_node)
-
             else:
                 self.scene.history.store_history(f"Created {new_node.__class__.__name__}")
 
