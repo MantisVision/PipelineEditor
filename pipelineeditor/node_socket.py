@@ -37,6 +37,8 @@ class Socket(Serializable):
         if self._socket_type != new_socket_type:
             self._socket_type = new_socket_type
             self.gr_socket.changeSocketType()
+            return True
+        return False
 
     def delete(self):
         self.gr_socket.setParentItem(None)
@@ -91,5 +93,6 @@ class Socket(Serializable):
         if restore_id:
             self.id = data['id']
         self.multi_edge = self.determineMultiEdges(data)
+        self.changeSocketType(data['socket_type'])
         hashmap[data['id']] = self
         return True

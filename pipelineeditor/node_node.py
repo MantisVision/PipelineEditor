@@ -92,7 +92,8 @@ class Node(Serializable):
             counter += 1
 
     def onEdgeConnectionChanged(self, new_edge):
-        print(f"{self.__class__.__name__} onEdgeConnectionChanged {new_edge}")
+        pass
+        # print(f"{self.__class__.__name__} onEdgeConnectionChanged {new_edge}")
 
     def onInputChanged(self, new_edge):
         print(f"{self.__class__.__name__} onEdgeInputChanged {new_edge}")
@@ -151,12 +152,20 @@ class Node(Serializable):
     def setPos(self, x, y):
         self.gr_node.setPos(x, y)
 
+    def getSocketScenePosition(self, socket):
+        nodepos = self.grNode.pos()
+        socketpos = self.getSocketPosition(socket.index, socket.position, socket.count_on_this_node_side)
+        return (nodepos.x() + socketpos[0], nodepos.y() + socketpos[1])
+
     def setContentTitle(self, title):
         self.content.setTitle(title)
 
     def onDoubleClicked(self, event):
         """Event handling double click on Graphics Node in `Scene`"""
         print("double click")
+
+    def onDeserialized(self, data):
+        pass
 
     def remove(self):
         for socket in (self.inputs + self.outputs):

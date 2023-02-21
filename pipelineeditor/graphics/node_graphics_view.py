@@ -11,7 +11,7 @@ from pipelineeditor.utils import dump_exception
 MODE_NOOP = 1
 MODE_EDGE_DRAG = 2
 MODE_EDGE_CUT = 3
-EDGE_DRAG_THRESHOLD = 10
+EDGE_DRAG_THRESHOLD = 50
 
 
 class QDMGraphicsView(QGraphicsView):
@@ -179,42 +179,45 @@ class QDMGraphicsView(QGraphicsView):
     def leftMouseButtonRelease(self, event):
         item = self.getItemAtClick(event)
 
-        if hasattr(item, "node") or isinstance(item, QDMGraphicsEdge) or not item:
-            if event.modifiers() & Qt.ShiftModifier:
-                event.ignore()
-                fakeEvent = QMouseEvent(event.type(), event.localPos(), event.screenPos(), Qt.LeftButton, Qt.NoButton, event.modifiers() | Qt.ControlModifier)
-                super().mouseReleaseEvent(fakeEvent)
-                return
-
-        if self.mode == MODE_EDGE_DRAG:
-            if self.distanceBetweenClickAndReleaseIsOff(event):
-                if self.edgeDragEnd(item):
+        try:
+            if hasattr(item, "node") or isinstance(item, QDMGraphicsEdge) or not item:
+                if event.modifiers() & Qt.ShiftModifier:
+                    event.ignore()
+                    fakeEvent = QMouseEvent(event.type(), event.localPos(), event.screenPos(), Qt.LeftButton, Qt.NoButton, event.modifiers() | Qt.ControlModifier)
+                    super().mouseReleaseEvent(fakeEvent)
                     return
 
-        if self.mode == MODE_EDGE_CUT:
-            self.cut_intersecting_edges()
-            self.cutline._line_points = []
-            self.cutline.update()
-            QApplication.setOverrideCursor(Qt.ArrowCursor)
-            self.mode = MODE_NOOP
-            return
+            if self.mode == MODE_EDGE_DRAG:
+                if self.distanceBetweenClickAndReleaseIsOff(event):
+                    if self.edgeDragEnd(item):
+                        return
 
-        # Store selection in history_stamps
-        if self.rubberBandDragRect:
-            self.rubberBandDragRect = False
-            current_selection = self.gr_scene.selectedItems()
+            if self.mode == MODE_EDGE_CUT:
+                self.cut_intersecting_edges()
+                self.cutline._line_points = []
+                self.cutline.update()
+                QApplication.setOverrideCursor(Qt.ArrowCursor)
+                self.mode = MODE_NOOP
+                return
 
-            if current_selection != self.gr_scene.scene._last_selected_items:
-                if current_selection == []:
-                    self.gr_scene.itemsDeselected.emit()
-                else:
-                    self.gr_scene.itemSelected.emit()
+            # Store selection in history_stamps
+            if self.rubberBandDragRect:
+                self.rubberBandDragRect = False
+                current_selection = self.gr_scene.selectedItems()
 
-                self.gr_scene.scene._last_selected_items = current_selection
-            return
+                if current_selection != self.gr_scene.scene._last_selected_items:
+                    if current_selection == []:
+                        self.gr_scene.itemsDeselected.emit()
+                    else:
+                        self.gr_scene.itemSelected.emit()
 
-        if not item:
-            self.gr_scene.itemsDeselected.emit()
+                    self.gr_scene.scene._last_selected_items = current_selection
+                return
+
+            if not item:
+                self.gr_scene.itemsDeselected.emit()
+        except Exception as e:
+            dump_exception(e)
 
         super().mouseReleaseEvent(event)
 
@@ -234,12 +237,19 @@ class QDMGraphicsView(QGraphicsView):
         try:
             if isinstance(item, QDMGraphicsSocket):
                 if item.socket != self.drag_start_socket:
+
                     # if release dragging on socket (other than the first)
                     if not item.socket.multi_edge:
                         item.socket.remove_all_edges()
 
-                    if not self.drag_start_socket.multi_edge:
-                        self.drag_start_socket.remove_all_edges()
+                    # First remove old edges / send notifications
+                    for socket in (item.socket, self.drag_start_socket):
+                        if not socket.multi_edge:
+                            if socket.is_input:
+                                # print("removing SILENTLY edges from input socket (is_input and !is_multi_edges) [DragStart]:", item.socket.edges)
+                                socket.remove_all_edges(silent=True)
+                            else:
+                                socket.remove_all_edges(silent=False)
 
                     new_edge = Edge(self.gr_scene.scene, self.drag_start_socket, item.socket, edge_type=EDGE_TYPE_DEFAULT)
 
@@ -261,13 +271,13 @@ class QDMGraphicsView(QGraphicsView):
 
         if self.mode == MODE_EDGE_DRAG:
             # according to sentry: 'NoneType' object has no attribute 'gr_edge'
-            if self.drag_edge is not None:
+            if self.drag_edge is not None and self.drag_edge.gr_edge:
                 self.drag_edge.gr_edge.setDestination(scenepos.x(), scenepos.y())
                 self.drag_edge.gr_edge.update()
             else:
                 print(">>> Want to update self.drag_edge gr_edge, but it's None!!!")
 
-        if self.mode == MODE_EDGE_CUT:
+        if self.mode == MODE_EDGE_CUT and self.cutline:
             self.cutline._line_points.append(scenepos)
             self.cutline.update()
 

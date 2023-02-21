@@ -19,9 +19,10 @@ class QDMGraphicsSocket(QGraphicsItem):
         super().__init__(socket.node.gr_node)
 
         self.socket = socket
-
+        self.is_highlight = False
         self.radius = 6.0
         self.outline_width = 1.0
+        self.highlight_width = 2.0
         self.initAssets()
 
     @property
@@ -47,15 +48,20 @@ class QDMGraphicsSocket(QGraphicsItem):
         # determine socket color
         self._color_background = self.getSocketColor(self.socket_type)
         self._color_outline = QColor("#FF000000")
+        self._color_highlight = QColor("#FF37A6FF")
 
         self._pen = QPen(self._color_outline)
         self._pen.setWidthF(self.outline_width)
+
+        self._pen_highlight = QPen(self._color_highlight)
+        self._pen_highlight.setWidthF(self.highlight_width)
+
         self._brush = QBrush(self._color_background)
 
     def paint(self, painter, QStyleOptionGraphicsItem, widget=None):
         """Painting a circle"""
         painter.setBrush(self._brush)
-        painter.setPen(self._pen)
+        painter.setPen(self._pen if not self.is_highlight else self._pen_highlight)
         painter.drawEllipse(int(-self.radius), int(-self.radius), int(2 * self.radius), int(2 * self.radius))
 
     def boundingRect(self) -> QRectF:

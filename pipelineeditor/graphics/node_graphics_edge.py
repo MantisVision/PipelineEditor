@@ -28,7 +28,7 @@ class QDMGraphicsEdge(QGraphicsPathItem):
         self.setAcceptHoverEvents(True)
 
     def initAssets(self):
-        self._color = QColor("#001000")
+        self._color = self._default_color = QColor("#001000")
         self._color_selected = QColor("#00ff00")
         self._color_hovered  = QColor("#FF37A6FF")
         self._hover_width = 5
@@ -43,6 +43,23 @@ class QDMGraphicsEdge(QGraphicsPathItem):
         self._pen_selected.setWidthF(self._width)
         self._pen_dragging.setWidthF(self._width)
         self._pen_dragging.setStyle(Qt.DashLine)
+
+    def changeColor(self, color):
+        """Change color of the edge from string hex value '#00ff00'"""
+        print("^Called change color to:", color.red(), color.green(), color.blue(), "on edge:", self.edge)
+        self._color = QColor(color) if type(color) == str else color
+        self._pen = QPen(self._color)
+        self._pen.setWidthF(self._width)
+
+    def setColorFromSockets(self) -> bool:
+        """Change color according to connected sockets. Returns ``True`` if color can be determined"""
+        socket_type_start = self.edge.start_socket.socket_type
+        socket_type_end = self.edge.end_socket.socket_type
+
+        if socket_type_start != socket_type_end:
+            return False
+
+        self.changeColor(self.edge.start_socket.grSocket.getSocketColor(socket_type_start))
 
     def onSelected(self):
         self.edge.scene.gr_scene.itemSelected.emit()

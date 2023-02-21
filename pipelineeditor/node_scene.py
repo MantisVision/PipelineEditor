@@ -56,9 +56,9 @@ class Scene(Serializable):
             self._last_selected_items = current_selected_items
 
             if not silent:
-                self.history.store_history("Selection Changed")
                 for callback in self._item_selected_listeners:
                     callback()
+                self.history.store_history("Selection Changed")
 
     def onItemsDeselected(self, silent=False):
         self.resetLastSelectedStates()
@@ -182,18 +182,67 @@ class Scene(Serializable):
         ])
 
     def deserialize(self, data, hashmap={}, restore_id=True):
-        self.clear()
         hashmap = {}
 
         if restore_id:
             self.id = data['id']
 
-        # Load nodes
-        for node_data in data['nodes']:
-            self.get_node_class_from_data(node_data)(self).deserialize(node_data, hashmap, restore_id)
+        # -- deserialize NODES
+        # Instead of recreating all the nodes, reuse existing ones...
+        # get list of all current nodes:
+        all_nodes = self.nodes.copy()
 
-        # Load Edges
+        # go through deserialized nodes:
+        for node_data in data['nodes']:
+            # can we find this node in the scene?
+            found = False
+            for node in all_nodes:
+                if node.id == node_data['id']:
+                    found = node
+                    break
+
+            if not found:
+                new_node = self.get_node_class_from_data(node_data)(self)
+                new_node.deserialize(node_data, hashmap, restore_id)
+                new_node.onDeserialized(node_data)
+                # print("New node for", node_data['title'])
+            else:
+                found.deserialize(node_data, hashmap, restore_id)
+                found.onDeserialized(node_data)
+                all_nodes.remove(found)
+                # print("Reused", node_data['title'])
+
+        # remove nodes which are left in the scene and were NOT in the serialized data!
+        # that means they were not in the graph before...
+        while all_nodes != []:
+            node = all_nodes.pop()
+            node.remove()
+
+        # -- deserialize EDGES
+        # Instead of recreating all the edges, reuse existing ones...
+        # get list of all current edges:
+        all_edges = self.edges.copy()
+
+        # go through deserialized edges:
         for edge_data in data['edges']:
-            Edge(self).deserialize(edge_data, hashmap, restore_id)
+            # can we find this node in the scene?
+            found = False
+            for edge in all_edges:
+                if edge.id == edge_data['id']:
+                    found = edge
+                    break
+
+            if not found:
+                new_edge = Edge(self).deserialize(edge_data, hashmap, restore_id)
+                # print("New edge for", edge_data)
+            else:
+                found.deserialize(edge_data, hashmap, restore_id)
+                all_edges.remove(found)
+
+        # remove nodes which are left in the scene and were NOT in the serialized data!
+        # that means they were not in the graph before...
+        while all_edges != []:
+            edge = all_edges.pop()
+            edge.remove()
 
         return True
