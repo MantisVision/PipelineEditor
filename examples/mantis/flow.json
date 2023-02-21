@@ -1,17 +1,17 @@
 {
-    "id": 3058026947216,
+    "id": 1754912858096,
     "scene_width": 6400,
     "scene_height": 6400,
     "nodes": [
         {
-            "id": 3058027119424,
+            "id": 1754913080176,
             "title": "UUID Source",
-            "pos_x": -568.0,
-            "pos_y": -139.0,
+            "pos_x": -514.8125,
+            "pos_y": -188.31250000000003,
             "inputs": [],
             "outputs": [
                 {
-                    "id": 3058027171312,
+                    "id": 1754913099296,
                     "index": 0,
                     "multi_edge": true,
                     "position": 5,
@@ -19,7 +19,7 @@
                 }
             ],
             "content": {
-                "id": 3073111398224
+                "id": 2293474727328
             },
             "op_code": 3,
             "uuid": "test",
@@ -28,13 +28,13 @@
             }
         },
         {
-            "id": 3058027180144,
+            "id": 1754913107552,
             "title": "HARVEST",
-            "pos_x": -285.0,
-            "pos_y": -228.0,
+            "pos_x": -277.75,
+            "pos_y": -255.56250000000003,
             "inputs": [
                 {
-                    "id": 3058027180336,
+                    "id": 1754913107744,
                     "index": 0,
                     "multi_edge": false,
                     "position": 2,
@@ -43,7 +43,7 @@
             ],
             "outputs": [
                 {
-                    "id": 3058027180384,
+                    "id": 1754913107792,
                     "index": 0,
                     "multi_edge": true,
                     "position": 5,
@@ -51,7 +51,7 @@
                 }
             ],
             "content": {
-                "id": 3073111402400
+                "id": 2293474730352
             },
             "op_code": 4,
             "uuid": "test",
@@ -63,37 +63,13 @@
             }
         },
         {
-            "id": 3058027223248,
-            "title": "UPLOAD",
-            "pos_x": 192.0,
-            "pos_y": -111.0,
+            "id": 1754913151568,
+            "title": "JOIN",
+            "pos_x": -36.75,
+            "pos_y": -261.3125,
             "inputs": [
                 {
-                    "id": 3058027223440,
-                    "index": 0,
-                    "multi_edge": false,
-                    "position": 2,
-                    "socket_type": 1
-                }
-            ],
-            "outputs": [],
-            "content": {
-                "id": 3073111720144
-            },
-            "op_code": 6,
-            "uuid": "",
-            "params": {
-                "file_path": "C:\\HARVEST\\test\\test_joined.mvx"
-            }
-        },
-        {
-            "id": 3058026528928,
-            "title": "TSDF",
-            "pos_x": 185.0625,
-            "pos_y": -277.81250000000006,
-            "inputs": [
-                {
-                    "id": 3058027223680,
+                    "id": 1754913151760,
                     "index": 0,
                     "multi_edge": false,
                     "position": 2,
@@ -102,7 +78,7 @@
             ],
             "outputs": [
                 {
-                    "id": 3058027223728,
+                    "id": 1754913151808,
                     "index": 0,
                     "multi_edge": true,
                     "position": 5,
@@ -110,10 +86,43 @@
                 }
             ],
             "content": {
-                "id": 3073111721872
+                "id": 2293474734240
+            },
+            "op_code": 5,
+            "uuid": "test",
+            "params": {
+                "uuid": "test",
+                "output_path": "C:\\HARVEST\\test\\test_joined.mvx"
+            }
+        },
+        {
+            "id": 1754913152624,
+            "title": "TSDF",
+            "pos_x": 215.75000000000006,
+            "pos_y": -321.12500000000006,
+            "inputs": [
+                {
+                    "id": 1754913152816,
+                    "index": 0,
+                    "multi_edge": false,
+                    "position": 2,
+                    "socket_type": 2
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 1754913152864,
+                    "index": 0,
+                    "multi_edge": true,
+                    "position": 5,
+                    "socket_type": 2
+                }
+            ],
+            "content": {
+                "id": 2293474736688
             },
             "op_code": 7,
-            "uuid": "",
+            "uuid": "test",
             "params": {
                 "file_path": "C:\\HARVEST\\test\\test_joined.mvx",
                 "client": "",
@@ -123,82 +132,35 @@
                 "fps": "25",
                 "add_params": "",
                 "local": false,
-                "segmented": false
+                "segmented": false,
+                "uuid": ""
             }
         },
         {
-            "id": 3058027226560,
-            "title": "MVX Target File",
-            "pos_x": 426.0,
-            "pos_y": -207.0,
-            "inputs": [
-                {
-                    "id": 3058027226752,
-                    "index": 0,
-                    "multi_edge": false,
-                    "position": 2,
-                    "socket_type": 1
-                }
-            ],
-            "outputs": [],
-            "content": {
-                "id": 3073111726336
-            },
-            "op_code": 2,
-            "uuid": "",
-            "params": {
-                "file_path": "C:/Personal/PipelineEditor/.gitignore"
-            }
-        },
-        {
-            "id": 3058027229584,
-            "title": "WAV Target File",
-            "pos_x": -72.0,
-            "pos_y": 37.0,
-            "inputs": [
-                {
-                    "id": 3058027229776,
-                    "index": 0,
-                    "multi_edge": false,
-                    "position": 2,
-                    "socket_type": 1
-                }
-            ],
-            "outputs": [],
-            "content": {
-                "id": 3073111730080
-            },
-            "op_code": 9,
-            "uuid": "",
-            "params": {
-                "file_path": "C:/Personal/PipelineEditor/.gitignore"
-            }
-        },
-        {
-            "id": 3073111784416,
+            "id": 1754913156416,
             "title": "Audio",
-            "pos_x": -324.0,
-            "pos_y": 8.0,
+            "pos_x": -296.8749999999999,
+            "pos_y": -42.187499999999986,
             "inputs": [
                 {
-                    "id": 3073111784608,
+                    "id": 1754913156752,
                     "index": 0,
                     "multi_edge": false,
                     "position": 2,
-                    "socket_type": 1
+                    "socket_type": 2
                 }
             ],
             "outputs": [
                 {
-                    "id": 3073111784656,
+                    "id": 1754913156800,
                     "index": 0,
                     "multi_edge": true,
                     "position": 5,
-                    "socket_type": 1
+                    "socket_type": 2
                 }
             ],
             "content": {
-                "id": 3073111733104
+                "id": 2293475037760
             },
             "op_code": 8,
             "uuid": "test",
@@ -207,81 +169,120 @@
             }
         },
         {
-            "id": 3073111784800,
-            "title": "JOIN",
-            "pos_x": -52.0,
-            "pos_y": -214.0,
+            "id": 1754913156896,
+            "title": "WAV Target File",
+            "pos_x": -54.68749999999997,
+            "pos_y": -32.8125,
             "inputs": [
                 {
-                    "id": 3073111784944,
+                    "id": 1754913157088,
+                    "index": 0,
+                    "multi_edge": false,
+                    "position": 2,
+                    "socket_type": 1
+                }
+            ],
+            "outputs": [],
+            "content": {
+                "id": 2293475039632
+            },
+            "op_code": 9,
+            "uuid": "",
+            "params": {
+                "file_path": "C:/Personal/PipelineEditor/.gitignore"
+            }
+        },
+        {
+            "id": 1754936398208,
+            "title": "UPLOAD",
+            "pos_x": 242.18749999999983,
+            "pos_y": -104.68749999999994,
+            "inputs": [
+                {
+                    "id": 1754936398400,
                     "index": 0,
                     "multi_edge": false,
                     "position": 2,
                     "socket_type": 2
                 }
             ],
-            "outputs": [
+            "outputs": [],
+            "content": {
+                "id": 2293475041504
+            },
+            "op_code": 6,
+            "uuid": "",
+            "params": {
+                "file_path": "C:\\HARVEST\\test\\test_joined.mvx"
+            }
+        },
+        {
+            "id": 1754936398832,
+            "title": "MVX Target File",
+            "pos_x": 451.5624999999999,
+            "pos_y": -320.31250000000006,
+            "inputs": [
                 {
-                    "id": 3073111784992,
+                    "id": 1754936399024,
                     "index": 0,
-                    "multi_edge": true,
-                    "position": 5,
-                    "socket_type": 2
+                    "multi_edge": false,
+                    "position": 2,
+                    "socket_type": 1
                 }
             ],
+            "outputs": [],
             "content": {
-                "id": 3073111732528
+                "id": 2293475043808
             },
-            "op_code": 5,
-            "uuid": "test",
+            "op_code": 2,
+            "uuid": "",
             "params": {
-                "uuid": "test",
-                "output_path": "C:\\HARVEST\\test\\test_joined.mvx"
+                "file_path": "C:/Personal/PipelineEditor/.gitignore"
             }
         }
     ],
     "edges": [
         {
-            "id": 3058027218976,
+            "id": 1754913107504,
             "edge_type": 2,
-            "start": 3058027171312,
-            "end": 3058027180336
+            "start": 1754913099296,
+            "end": 1754913107744
         },
         {
-            "id": 3058027226512,
+            "id": 1754913148496,
             "edge_type": 2,
-            "start": 3058027223728,
-            "end": 3058027226752
+            "start": 1754913107792,
+            "end": 1754913151760
         },
         {
-            "id": 3073111770976,
+            "id": 1754912275952,
             "edge_type": 2,
-            "start": 3058027171312,
-            "end": 3073111784608
+            "start": 1754913151808,
+            "end": 1754913152816
         },
         {
-            "id": 3073111652480,
+            "id": 1754913156368,
             "edge_type": 2,
-            "start": 3073111784656,
-            "end": 3058027229776
+            "start": 1754913099296,
+            "end": 1754913156752
         },
         {
-            "id": 3073111652960,
+            "id": 1754913156848,
             "edge_type": 2,
-            "start": 3058027180384,
-            "end": 3073111784944
+            "start": 1754913156800,
+            "end": 1754913157088
         },
         {
-            "id": 3073111646240,
+            "id": 1754936398496,
             "edge_type": 2,
-            "start": 3073111784992,
-            "end": 3058027223680
+            "start": 1754913152864,
+            "end": 1754936399024
         },
         {
-            "id": 3073111785088,
+            "id": 1754936398640,
             "edge_type": 2,
-            "start": 3073111784992,
-            "end": 3058027223440
+            "start": 1754936398400,
+            "end": 1754913151808
         }
     ]
 }

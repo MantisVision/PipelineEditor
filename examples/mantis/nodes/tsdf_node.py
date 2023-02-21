@@ -16,6 +16,8 @@ class MVNode_TSDF(MVOperationsNode):
     content_label_obj_name = "tsdf_o_node_bg"
     colaps_widget = None
     input_path_line_edit = None
+    uuid_line_edit = None
+    ow_uuid_line_edit = None
     input_path = ""
     output_path = ""
 
@@ -26,7 +28,7 @@ class MVNode_TSDF(MVOperationsNode):
     def createParamWidget(self):
         if not self.colaps_widget:
             self.colaps_widget = QWidget()
-            self.colaps_widget.setMinimumWidth(250)
+            self.colaps_widget.setMinimumWidth(270)
             self.colaps_widget.setStyleSheet("")
             self.colaps_widget.setObjectName(str(self.id))
             layout = QVBoxLayout()
@@ -34,11 +36,13 @@ class MVNode_TSDF(MVOperationsNode):
             layout.setAlignment(Qt.AlignTop)
             self.colaps_widget.setLayout(layout)
 
-            if not self.input_path_line_edit:
-                self.input_path_line_edit = QLineEdit()
-                self.input_path_line_edit.setDisabled(True)
-                self.input_path_line_edit.textChanged.connect(self.onTextChange)
-
+            self.uuid_line_edit = QLineEdit("")
+            self.uuid_line_edit.setReadOnly(True)
+            self.input_path_line_edit = QLineEdit()
+            self.input_path_line_edit.setDisabled(True)
+            self.input_path_line_edit.textChanged.connect(self.onTextChange)
+            
+            self.ow_uuid_line_edit = QLineEdit()
             self.client = QLineEdit()
             self.build = QLineEdit()
             self.atlas_size = QLineEdit()
@@ -65,6 +69,14 @@ class MVNode_TSDF(MVOperationsNode):
             self.fps_cb.setCurrentText("25")
             self.fps_cb.setMaximumWidth(40)
 
+            UuidGB = CollapseGB()
+            UuidGB.setTitle("UUID")
+            UuidGB.setLayout(QGridLayout())
+            UuidGB.layout().addWidget(QLabel("UUID:"), 0, 0)
+            UuidGB.layout().addWidget(self.uuid_line_edit, 0, 1)
+            UuidGB.setFixedHeight(UuidGB.sizeHint().height())
+            layout.addWidget(UuidGB)
+
             inputGB = CollapseGB()
             inputGB.setTitle("Input")
             inputGB.setLayout(QFormLayout())
@@ -80,6 +92,7 @@ class MVNode_TSDF(MVOperationsNode):
             paramsGB.layout().addRow(QLabel("Scale:"), self.scale)
             paramsGB.layout().addRow(QLabel("Atlas Size:"), self.atlas_size)
             paramsGB.layout().addRow(QLabel("FPS:"), self.fps_cb)
+            paramsGB.layout().addRow(QLabel("Overwrite UUID:"), self.ow_uuid_line_edit)
             paramsGB.layout().addRow(QLabel("Additional Params:"), self.add_params)
             paramsGB.layout().addRow(self.segmented_cb)
             paramsGB.layout().addRow(self.local_cb)
@@ -115,6 +128,8 @@ class MVNode_TSDF(MVOperationsNode):
             return
 
         val = input_node.getVal()
+        self._uuid = input_node.getUUID()
+        self.uuid_line_edit.setText(self._uuid)
 
         if val is None:
             self.gr_node.setToolTip("File path is missing")
@@ -129,7 +144,7 @@ class MVNode_TSDF(MVOperationsNode):
         if not Path(self.input_path).exists():
             self.markInvalid()
             self.markDescendantsDirty()
-            self.gr_node.setToolTip("File wasn't found")
+            self.gr_node.setToolTip("Input file wasn't found")
             return
 
         self.markDirty(False)
@@ -160,7 +175,7 @@ class MVNode_TSDF(MVOperationsNode):
 
     def serialize(self):
         res = super().serialize()
-        res['uuid'] = ""
+        res['uuid'] = self._uuid
         res['params'] = {}
         res['params']['file_path'] = self.input_path_line_edit.text()
         res['params']['client'] = self.client.text()
@@ -171,11 +186,13 @@ class MVNode_TSDF(MVOperationsNode):
         res['params']['add_params'] = self.add_params.text()
         res['params']['local'] = self.local_cb.isChecked()
         res['params']['segmented'] = self.segmented_cb.isChecked()
+        res['params']['uuid'] = self.ow_uuid_line_edit.text()
         return res
 
     def deserialize(self, data, hashmap={}, restore_id=True):
         res = super().deserialize(data, hashmap, restore_id)
         try:
+            self.uuid_line_edit.setText(data['uuid'])
             self.input_path_line_edit.setText(data['params']['file_path'])
             self.client.setText(data['params']['client'])
             self.build.setText(data['params']['build'])
@@ -185,6 +202,7 @@ class MVNode_TSDF(MVOperationsNode):
             self.add_params.setText(data['params']['add_params'])
             self.local_cb.setChecked(data['params']['local'])
             self.segmented_cb.setChecked(data['params']['segmented'])
+            self.ow_uuid_line_edit.setText(data['params']['uuid'])
             return True & res
         except Exception as e:
             dump_exception(e)

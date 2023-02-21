@@ -30,7 +30,7 @@ class MVNode_Harvest(MVOperationsNode):
     def createParamWidget(self):
         if not self.colaps_widget:
             self.colaps_widget = QWidget()
-            self.colaps_widget.setMinimumWidth(250)
+            self.colaps_widget.setMinimumWidth(270)
             self.colaps_widget.setStyleSheet("")
             self.colaps_widget.setObjectName(str(self.id))
             layout = QVBoxLayout()
@@ -38,10 +38,9 @@ class MVNode_Harvest(MVOperationsNode):
             layout.setAlignment(Qt.AlignTop)
             self.colaps_widget.setLayout(layout)
 
-            if not self.uuid_line_edit:
-                self.uuid_line_edit = QLineEdit()
-                self.uuid_line_edit.setDisabled(True)
-                self.uuid_line_edit.textChanged.connect(self.onTextChange)
+            self.uuid_line_edit = QLineEdit()
+            self.uuid_line_edit.setReadOnly(True)
+            self.uuid_line_edit.textChanged.connect(self.onTextChange)
 
             self.method_of_capture_line = QLineEdit()
             self.mv_session_line = QLineEdit()
@@ -55,12 +54,13 @@ class MVNode_Harvest(MVOperationsNode):
             self.no_join_cb.addItems(["True", "False"])
             self.no_join_cb.setMaximumWidth(60)
 
-            inputGB = CollapseGB()
-            inputGB.setTitle("Input")
-            inputGB.setLayout(QFormLayout())
-            inputGB.layout().addRow(QLabel("UUID:"), self.uuid_line_edit)
-            inputGB.setFixedHeight(inputGB.sizeHint().height())
-            layout.addWidget(inputGB)
+            UuidGB = CollapseGB()
+            UuidGB.setTitle("UUID")
+            UuidGB.setLayout(QGridLayout())
+            UuidGB.layout().addWidget(QLabel("UUID:"), 0, 0)
+            UuidGB.layout().addWidget(self.uuid_line_edit, 0, 1)
+            UuidGB.setFixedHeight(UuidGB.sizeHint().height())
+            layout.addWidget(UuidGB)
 
             paramsGB = CollapseGB()
             paramsGB.setTitle("Params")
@@ -124,7 +124,7 @@ class MVNode_Harvest(MVOperationsNode):
 
     def serialize(self):
         res = super().serialize()
-        res['uuid'] = self.uuid_line_edit.text()
+        res['uuid'] = self._uuid
         res['params'] = {}
         res['params']['method_of_capture'] = self.method_of_capture_line.text()
         res['params']['mv_session'] = self.mv_session_line.text()

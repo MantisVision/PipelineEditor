@@ -47,7 +47,7 @@ class MantisWindow(NodeEditorWindow):
         self.windowMapper.mapped[QWidget].connect(self.setActiveSubWindow)
 
         self.createNodeDock()
-        self.createMinimapDock()
+        # self.createMinimapDock()
         self.createParameterDock()
         self.createActions()
         self.createMenus()
@@ -274,7 +274,7 @@ class MantisWindow(NodeEditorWindow):
 
     def createMinimapDock(self):
         self.minimap = QWidget()
-        self.minimap.setMinimumWidth(250)
+        self.minimap.setMinimumWidth(270)
 
         self.minimap_dock = QDockWidget("Minimap")
         self.minimap_dock.setWidget(self.minimap)
@@ -286,7 +286,7 @@ class MantisWindow(NodeEditorWindow):
     def createParameterDock(self):
         self.colaps_widget = QWidget()
         self.colaps_widget.setMinimumHeight(10)
-        self.colaps_widget.setMinimumWidth(250)
+        self.colaps_widget.setMinimumWidth(270)
 
         self.param_dock = QDockWidget("Parameter")
         self.param_dock.setWidget(self.colaps_widget)

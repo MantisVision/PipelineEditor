@@ -25,7 +25,7 @@ class MVNode_O_Audio(MVOperationsNode):
     def createParamWidget(self):
         if not self.colaps_widget:
             self.colaps_widget = QWidget()
-            self.colaps_widget.setMinimumWidth(250)
+            self.colaps_widget.setMinimumWidth(270)
             self.colaps_widget.setStyleSheet("")
             self.colaps_widget.setObjectName(str(self.id))
             layout = QVBoxLayout()

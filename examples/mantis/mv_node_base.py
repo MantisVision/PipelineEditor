@@ -50,6 +50,7 @@ class MVNode(Node):
     op_title = "Undefined"
     content_label = ""
     content_label_obj_name = "mv_node_bg"
+    _uuid = ""
 
     def __init__(self, scene, inputs=[2, 2], outputs=[1]) -> None:
         super().__init__(scene, self.__class__.op_title, inputs, outputs)
@@ -112,8 +113,8 @@ class MVNode(Node):
         self.markDirty()
         self.eval()
 
-    # def remove(self):
-    #     super().remove()
+    def getUUID(self):
+        return self._uuid if self._uuid else ""
 
     def serialize(self):
         res = super().serialize()

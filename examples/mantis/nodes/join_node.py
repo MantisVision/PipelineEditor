@@ -26,31 +26,29 @@ class MVNode_Join(MVOperationsNode):
 
     def createParamWidget(self):
         if not self.colaps_widget:
-            if not self.colaps_widget:
-                self.colaps_widget = QWidget()
-                self.colaps_widget.setMinimumWidth(250)
-                self.colaps_widget.setStyleSheet("")
-                self.colaps_widget.setObjectName(str(self.id))
+            self.colaps_widget = QWidget()
+            self.colaps_widget.setMinimumWidth(270)
+            self.colaps_widget.setStyleSheet("")
+            self.colaps_widget.setObjectName(str(self.id))
             layout = QVBoxLayout()
             layout.setSpacing(0)
             layout.setAlignment(Qt.AlignTop)
             self.colaps_widget.setLayout(layout)
 
-            if not self.uuid_line_edit:
-                self.uuid_line_edit = QLineEdit("")
-                self.uuid_line_edit.setReadOnly(True)
-                self.uuid_line_edit.textChanged.connect(self.onTextChange)
+            self.uuid_line_edit = QLineEdit("")
+            self.uuid_line_edit.setReadOnly(True)
+            self.uuid_line_edit.textChanged.connect(self.onTextChange)
 
-            if not self.output_path_line_edit:
-                self.output_path_line_edit = QLineEdit("")
-                self.output_path_line_edit.setReadOnly(True)
+            self.output_path_line_edit = QLineEdit("")
+            self.output_path_line_edit.setReadOnly(True)
 
-            inputGB = CollapseGB()
-            inputGB.setTitle("Input")
-            inputGB.setLayout(QFormLayout())
-            inputGB.layout().addRow(QLabel("UUID: "), self.uuid_line_edit)
-            inputGB.setFixedHeight(inputGB.sizeHint().height())
-            layout.addWidget(inputGB)
+            UuidGB = CollapseGB()
+            UuidGB.setTitle("UUID")
+            UuidGB.setLayout(QGridLayout())
+            UuidGB.layout().addWidget(QLabel("UUID:"), 0, 0)
+            UuidGB.layout().addWidget(self.uuid_line_edit, 0, 1)
+            UuidGB.setFixedHeight(UuidGB.sizeHint().height())
+            layout.addWidget(UuidGB)
 
             outputGB = CollapseGB()
             outputGB.setTitle("Output")
@@ -109,9 +107,9 @@ class MVNode_Join(MVOperationsNode):
 
     def serialize(self):
         res = super().serialize()
-        res['uuid'] = self.uuid_line_edit.text()
+        res['uuid'] = self._uuid
         res['params'] = {}
-        res['params']['uuid'] = self.uuid_line_edit.text()
+        res['params']['uuid'] = self._uuid
         res['params']['output_path'] = self.output_path
         return res
 
@@ -119,6 +117,7 @@ class MVNode_Join(MVOperationsNode):
         res = super().deserialize(data, hashmap, restore_id)
         try:
             self.uuid_line_edit.setText(data['uuid'])
+            self.output_path_line_edit.setText(data['params']['output_path'])
             return True & res
         except Exception as e:
             dump_exception(e)

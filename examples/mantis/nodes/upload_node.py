@@ -17,6 +17,7 @@ class MVNode_Upload(MVOperationsNode):
     colaps_widget = None
     input_path = ""
     input_path_line_edit = ""
+    uuid_line_edit = None
 
     def __init__(self, scene) -> None:
         super().__init__(scene, inputs=[2], outputs=[])
@@ -25,7 +26,7 @@ class MVNode_Upload(MVOperationsNode):
     def createParamWidget(self):
         if not self.colaps_widget:
             self.colaps_widget = QWidget()
-            self.colaps_widget.setMinimumWidth(250)
+            self.colaps_widget.setMinimumWidth(270)
             self.colaps_widget.setStyleSheet("")
             self.colaps_widget.setObjectName(str(self.id))
             layout = QVBoxLayout()
@@ -33,10 +34,21 @@ class MVNode_Upload(MVOperationsNode):
             layout.setAlignment(Qt.AlignTop)
             self.colaps_widget.setLayout(layout)
 
-            if not self.input_path_line_edit:
-                self.input_path_line_edit = QLineEdit()
-                self.input_path_line_edit.setReadOnly(True)
-                self.input_path_line_edit.textChanged.connect(self.onTextChange)
+            self.uuid_line_edit = QLineEdit("")
+            self.uuid_line_edit.setReadOnly(True)
+            self.uuid_line_edit.textChanged.connect(self.onTextChange)
+
+            self.input_path_line_edit = QLineEdit()
+            self.input_path_line_edit.setReadOnly(True)
+            self.input_path_line_edit.textChanged.connect(self.onTextChange)
+
+            UuidGB = CollapseGB()
+            UuidGB.setTitle("UUID")
+            UuidGB.setLayout(QGridLayout())
+            UuidGB.layout().addWidget(QLabel("UUID:"), 0, 0)
+            UuidGB.layout().addWidget(self.uuid_line_edit, 0, 1)
+            UuidGB.setFixedHeight(UuidGB.sizeHint().height())
+            layout.addWidget(UuidGB)
 
             inputGB = CollapseGB()
             inputGB.setTitle("Input")
@@ -62,6 +74,7 @@ class MVNode_Upload(MVOperationsNode):
             return
 
         val = input_node.getVal()
+        self.uuid_line_edit.setText(input_node.getUUID())
 
         if val is None:
             self.gr_node.setToolTip("File path is missing")
@@ -91,7 +104,7 @@ class MVNode_Upload(MVOperationsNode):
 
     def serialize(self):
         res = super().serialize()
-        res['uuid'] = ""
+        res['uuid'] = self._uuid
         res['params'] = {}
         res['params']['file_path'] = self.input_path_line_edit.text()
         return res
@@ -99,8 +112,8 @@ class MVNode_Upload(MVOperationsNode):
     def deserialize(self, data, hashmap={}, restore_id=True):
         res = super().deserialize(data, hashmap, restore_id)
         try:
-            value = data['params']['file_path']
-            self.input_path_line_edit.setText(value)
+            self.uuid_line_edit.setText(data['uuid'])
+            self.input_path_line_edit.setText(data['params']['file_path'])
             return True & res
         except Exception as e:
             dump_exception(e)
