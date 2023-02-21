@@ -20,9 +20,9 @@ class MiniGRNode(QGraphicsItem):
         self.setAcceptHoverEvents(True)
 
     def initSizes(self):
-        self.width = 160 // 8
-        self.height = 74 // 8
-        self.edge_roundness = 10 // 8
+        self.width = 160 // 4
+        self.height = 74 // 4
+        self.edge_roundness = 10 // 4
 
     def initAssets(self):
         self._color = QColor("#7F000000")

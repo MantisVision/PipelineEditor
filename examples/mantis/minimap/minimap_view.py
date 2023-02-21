@@ -13,7 +13,7 @@ class MinimapScene():
         self.gr_scene = MinimapGRScene(self)
         self.gr_scene.setGrScene(self.scene_width, self.scene_height)
         self.nodes = []
-    
+
     def add_node(self, node):
         self.nodes.append(node)
 
@@ -33,6 +33,7 @@ class MinimapGRView(QGraphicsView):
         super().__init__(parent)
         self.minimap_gr_scene = minimap_gr_scene
         self.setScene(self.minimap_gr_scene)
+        self.scale(0.5, 0.5)
 
 
 class MinimapWidget(QWidget): # noqa
