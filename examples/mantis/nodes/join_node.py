@@ -26,29 +26,14 @@ class MVNode_Join(MVOperationsNode):
 
     def createParamWidget(self):
         if not self.colaps_widget:
-            self.colaps_widget = QWidget()
-            self.colaps_widget.setMinimumWidth(270)
-            self.colaps_widget.setStyleSheet("")
-            self.colaps_widget.setObjectName(str(self.id))
-            layout = QVBoxLayout()
-            layout.setSpacing(0)
-            layout.setAlignment(Qt.AlignTop)
-            self.colaps_widget.setLayout(layout)
+            self.colaps_widget = self.createCollapsWidget()
+            layout = self.colaps_widget.layout()
 
-            self.uuid_line_edit = QLineEdit("")
-            self.uuid_line_edit.setReadOnly(True)
-            self.uuid_line_edit.textChanged.connect(self.onTextChange)
+            UuidGB = self.createUUIDCollapsGB(self.onTextChange)
+            layout.addWidget(UuidGB)
 
             self.output_path_line_edit = QLineEdit("")
             self.output_path_line_edit.setReadOnly(True)
-
-            UuidGB = CollapseGB()
-            UuidGB.setTitle("UUID")
-            UuidGB.setLayout(QGridLayout())
-            UuidGB.layout().addWidget(QLabel("UUID:"), 0, 0)
-            UuidGB.layout().addWidget(self.uuid_line_edit, 0, 1)
-            UuidGB.setFixedHeight(UuidGB.sizeHint().height())
-            layout.addWidget(UuidGB)
 
             outputGB = CollapseGB()
             outputGB.setTitle("Output")

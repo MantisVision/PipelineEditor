@@ -212,7 +212,7 @@ class Node(Serializable):
             socket = edge.getOtherSocket(self.outputs[index])
             return socket.node
         except IndexError:
-            print("Exception: trying to get input but nothing attached")
+            # print("Exception: trying to get output but nothing attached")
             return None
         except Exception as e:
             dump_exception(e)
@@ -311,53 +311,6 @@ class Node(Serializable):
             ('outputs', [socket.serialize() for socket in self.outputs]),
             ('content', self.content.serialize() if isinstance(self.content, Serializable) else {})
         ])
-
-    # def deserialize(self, data, hashmap={}, restore_id=True):
-    #     try:
-    #         if restore_id:
-    #             self.id = data['id']
-    #         hashmap[data['id']] = self
-
-    #         self.setPos(data['pos_x'], data['pos_y'])
-    #         self.title = data['title']
-
-    #         data['inputs'].sort(key=lambda socket: socket['index'] + socket['position'] * 1000)
-    #         data['outputs'].sort(key=lambda socket: socket['index'] + socket['position'] * 1000)
-    #         num_inputs = len(data['inputs'])
-    #         num_outputs = len(data['outputs'])
-
-    #         self.inputs = []
-    #         for socket_data in data['inputs']:
-    #             new_socket = Socket(
-    #                 node=self,
-    #                 index=socket_data['index'],
-    #                 position=socket_data['position'],
-    #                 socket_type=socket_data['socket_type'],
-    #                 count_on_this_node_side=num_inputs,
-    #                 is_input=True
-    #             )
-    #             new_socket.deserialize(socket_data, hashmap, restore_id)
-    #             self.inputs.append(new_socket)
-
-    #         self.outputs = []
-    #         for socket_data in data['outputs']:
-    #             new_socket = Socket(
-    #                 node=self,
-    #                 index=socket_data['index'],
-    #                 position=socket_data['position'],
-    #                 socket_type=socket_data['socket_type'],
-    #                 count_on_this_node_side=num_outputs,
-    #                 is_input=False
-    #             )
-    #             new_socket.deserialize(socket_data, hashmap, restore_id)
-    #             self.outputs.append(new_socket)
-    #     except Exception as e:
-    #         dump_exception(e)
-
-    #     # Deserialize node content
-    #     res = self.content.deserialize(data['content'], hashmap)
-
-    #     return True & res
 
     def deserialize(self, data, hashmap={}, restore_id=True):
         try:

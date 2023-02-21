@@ -27,21 +27,16 @@ class MVNode_TSDF(MVOperationsNode):
 
     def createParamWidget(self):
         if not self.colaps_widget:
-            self.colaps_widget = QWidget()
-            self.colaps_widget.setMinimumWidth(270)
-            self.colaps_widget.setStyleSheet("")
-            self.colaps_widget.setObjectName(str(self.id))
-            layout = QVBoxLayout()
-            layout.setSpacing(0)
-            layout.setAlignment(Qt.AlignTop)
-            self.colaps_widget.setLayout(layout)
+            self.colaps_widget = self.createCollapsWidget()
+            layout = self.colaps_widget.layout()
 
-            self.uuid_line_edit = QLineEdit("")
-            self.uuid_line_edit.setReadOnly(True)
+            UuidGB = self.createUUIDCollapsGB(self.onTextChange)
+            layout.addWidget(UuidGB)
+
             self.input_path_line_edit = QLineEdit()
-            self.input_path_line_edit.setDisabled(True)
+            self.input_path_line_edit.setReadOnly(True)
             self.input_path_line_edit.textChanged.connect(self.onTextChange)
-            
+
             self.ow_uuid_line_edit = QLineEdit()
             self.client = QLineEdit()
             self.build = QLineEdit()
@@ -68,14 +63,6 @@ class MVNode_TSDF(MVOperationsNode):
             self.fps_cb.addItems(["5", "10", "15", "20", "25"])
             self.fps_cb.setCurrentText("25")
             self.fps_cb.setMaximumWidth(40)
-
-            UuidGB = CollapseGB()
-            UuidGB.setTitle("UUID")
-            UuidGB.setLayout(QGridLayout())
-            UuidGB.layout().addWidget(QLabel("UUID:"), 0, 0)
-            UuidGB.layout().addWidget(self.uuid_line_edit, 0, 1)
-            UuidGB.setFixedHeight(UuidGB.sizeHint().height())
-            layout.addWidget(UuidGB)
 
             inputGB = CollapseGB()
             inputGB.setTitle("Input")

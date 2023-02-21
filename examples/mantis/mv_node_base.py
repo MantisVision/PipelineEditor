@@ -3,6 +3,7 @@ from pathlib import Path
 from pipelineeditor.node_node import Node
 from pipelineeditor.node_content_widget import QDMNodeContentWidget
 from pipelineeditor.graphics.node_graphics_node import QDMGraphicsNode
+from examples.mantis.nodes.colap import CollapseGB
 from pipelineeditor.node_socket import *
 from pipelineeditor.utils import dump_exception
 
@@ -51,6 +52,7 @@ class MVNode(Node):
     content_label = ""
     content_label_obj_name = "mv_node_bg"
     _uuid = ""
+    uuid_line_edit = None
 
     def __init__(self, scene, inputs=[2, 2], outputs=[1]) -> None:
         super().__init__(scene, self.__class__.op_title, inputs, outputs)
@@ -115,6 +117,32 @@ class MVNode(Node):
 
     def getUUID(self):
         return self._uuid if self._uuid else ""
+
+    def createCollapsWidget(self):
+        colaps_widget = QWidget()
+        colaps_widget.setMinimumWidth(270)
+        colaps_widget.setStyleSheet("")
+        colaps_widget.setObjectName(str(self.id))
+        layout = QVBoxLayout()
+        layout.setSpacing(0)
+        layout.setAlignment(Qt.AlignTop)
+        colaps_widget.setLayout(layout)
+
+        return colaps_widget
+
+    def createUUIDCollapsGB(self, callback, set_readonly=True):
+        self.uuid_line_edit = QLineEdit("")
+        self.uuid_line_edit.setReadOnly(set_readonly)
+        self.uuid_line_edit.textChanged.connect(callback)
+
+        UuidGB = CollapseGB()
+        UuidGB.setTitle("UUID")
+        UuidGB.setLayout(QGridLayout())
+        UuidGB.layout().addWidget(QLabel("UUID:"), 0, 0)
+        UuidGB.layout().addWidget(self.uuid_line_edit, 0, 1)
+        UuidGB.setFixedHeight(UuidGB.sizeHint().height())
+
+        return UuidGB
 
     def serialize(self):
         res = super().serialize()

@@ -24,27 +24,9 @@ class MVNode_O_Audio(MVOperationsNode):
 
     def createParamWidget(self):
         if not self.colaps_widget:
-            self.colaps_widget = QWidget()
-            self.colaps_widget.setMinimumWidth(270)
-            self.colaps_widget.setStyleSheet("")
-            self.colaps_widget.setObjectName(str(self.id))
-            layout = QVBoxLayout()
-            layout.setSpacing(0)
-            layout.setAlignment(Qt.AlignTop)
-            self.colaps_widget.setLayout(layout)
-
-            t = CollapseGB()
-            t.setTitle("Input")
-            t.setLayout(QFormLayout())
-
-            if not self.uuid_line_edit:
-                self.uuid_line_edit = QLineEdit(self._uuid)
-                self.uuid_line_edit.setReadOnly(True)
-                self.uuid_line_edit.textChanged.connect(self.onTextChange)
-
-            t.layout().addRow(QLabel("UUID:"), self.uuid_line_edit)
-            t.setFixedHeight(t.sizeHint().height())
-            layout.addWidget(t)
+            self.colaps_widget = self.createCollapsWidget()
+            UuidGB = self.createUUIDCollapsGB(self.onTextChange)
+            self.colaps_widget.layout().addWidget(UuidGB)
 
         return self.colaps_widget
 

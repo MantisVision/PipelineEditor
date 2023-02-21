@@ -25,14 +25,8 @@ class MVNode_T_MVX_File(MVOutputNode):
 
     def createParamWidget(self):
         if not self.colaps_widget:
-            self.colaps_widget = QWidget()
-            self.colaps_widget.setMinimumWidth(270)
-            self.colaps_widget.setStyleSheet("")
-            self.colaps_widget.setObjectName(str(self.id))
-            layout = QVBoxLayout()
-            layout.setSpacing(0)
-            layout.setAlignment(Qt.AlignTop)
-            self.colaps_widget.setLayout(layout)
+            self.colaps_widget = self.createCollapsWidget()
+            layout = self.colaps_widget.layout()
 
             t = CollapseGB()
             t.setTitle("Output")
@@ -120,14 +114,8 @@ class MVNode_T_WAV_File(MVOutputNode):
 
     def createParamWidget(self):
         if not self.colaps_widget:
-            self.colaps_widget = QWidget()
-            self.colaps_widget.setMinimumWidth(270)
-            self.colaps_widget.setStyleSheet("")
-            self.colaps_widget.setObjectName(str(self.id))
-            layout = QVBoxLayout()
-            layout.setSpacing(0)
-            layout.setAlignment(Qt.AlignTop)
-            self.colaps_widget.setLayout(layout)
+            self.colaps_widget = self.createCollapsWidget()
+            layout = self.colaps_widget.layout()
 
             t = CollapseGB()
             t.setTitle("Output")

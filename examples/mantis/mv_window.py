@@ -210,24 +210,8 @@ class MantisWindow(NodeEditorWindow):
         selected = active_mdi_child.scene.gr_scene.selectedItems()
         if selected:
             node = selected[0].node
-            print(node.id, node.isInvalid())
-            colaps = [
-                "MVNode_S_UUID",
-                "MVNode_S_MVX_File",
-                "MVNode_T_MVX_File",
-                "MVNode_Harvest",
-                "MVNode_Join",
-                "MVNode_Upload",
-                "MVNode_TSDF",
-                "MVNode_O_Audio",
-                "MVNode_T_WAV_File",
-            ]
-
-            if node.__class__.__name__ in colaps:
-                if self.param_dock.widget().objectName() != str(node.id):
-                    print("check params")
-                self.param_dock.setWidget(node.createParamWidget())
-                self.param_dock.setVisible(True)
+            self.param_dock.setWidget(node.createParamWidget())
+            self.param_dock.setVisible(True)
 
     def createToolBars(self):
         pass
@@ -293,7 +277,7 @@ class MantisWindow(NodeEditorWindow):
         self.param_dock.setFloating(False)
 
         self.addDockWidget(Qt.RightDockWidgetArea, self.param_dock)
-        self.param_dock.setVisible(True)
+        self.param_dock.setVisible(False)
 
     def createStatusBar(self):
         self.statusBar().showMessage("")
