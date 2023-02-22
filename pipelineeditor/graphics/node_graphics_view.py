@@ -2,6 +2,7 @@ from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 
+import json
 from pipelineeditor.graphics.node_graphics_edge import QDMGraphicsEdge
 from pipelineeditor.graphics.node_graphics_socket import QDMGraphicsSocket
 from pipelineeditor.node_edge_dragging import EdgeDragging
@@ -155,8 +156,16 @@ class QDMGraphicsView(QGraphicsView):
 
         # Shift clicking items
         if hasattr(item, "node") or isinstance(item, QDMGraphicsEdge) or not item:
+            # TODO: Fix first node moving...
+            if item and hasattr(item, "node"):
+                if event.modifiers() & Qt.ShiftModifier and event.modifiers() & Qt.ControlModifier:
+                    item.node.gr_node.setSelected(True)
+                    print("Shift Control pressed")
+                    data = self.gr_scene.scene.clipboard.serializedSelected(delete=False)
+                    self.gr_scene.scene.clipboard.deserializeFromClipboard(data)
+                    item.node.gr_node.setSelected(False)
+
             if event.modifiers() & Qt.ShiftModifier:
-                print("ASDASD")
                 event.ignore()
                 fakeEvent = QMouseEvent(QEvent.MouseButtonPress, event.localPos(), event.screenPos(), Qt.LeftButton, event.buttons() | Qt.LeftButton, event.modifiers() | Qt.ControlModifier)
                 super().mousePressEvent(fakeEvent)
