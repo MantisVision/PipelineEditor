@@ -176,6 +176,7 @@ class MVSubWindow(NodeEditorWidget):
         if hasattr(item, 'sokcet'):
             selected = item.socket.node
 
+        # TODO: make all selction invalid/dirty/eval?
         if selected and action == eval_act:
             selected.eval()
         if selected and action == eval_selected_act:
