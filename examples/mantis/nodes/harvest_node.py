@@ -24,7 +24,7 @@ class MVNode_Harvest(MVOperationsNode):
     mv_session_line = None
 
     def __init__(self, scene) -> None:
-        super().__init__(scene, inputs=[2], outputs=[2])
+        super().__init__(scene, inputs=[8], outputs=[8])
         self.createParamWidget()
 
     def createParamWidget(self):

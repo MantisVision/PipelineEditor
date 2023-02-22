@@ -69,7 +69,7 @@ class Node(Serializable):
                 node=self,
                 index=counter,
                 position=self.input_socket_position,
-                socket_type=i,
+                socket_type=8,
                 multi_edge=self.input_multi_edge,
                 count_on_this_node_side=len(inputs),
                 is_input=True,
@@ -83,7 +83,7 @@ class Node(Serializable):
                 node=self,
                 index=counter,
                 position=self.output_socket_position,
-                socket_type=o,
+                socket_type=8,
                 multi_edge=self.output_multi_edge,
                 count_on_this_node_side=len(outputs),
                 is_input=False,
@@ -92,12 +92,11 @@ class Node(Serializable):
             counter += 1
 
     def onEdgeConnectionChanged(self, new_edge):
-        # print("ASDASDASD")
         # TODO: set nicer colors!
-        pass
-        # new_edge._start_socket.changeSocketType(5)
-        # new_edge._end_socket.changeSocketType(5)
-        # print(f"{self.__class__.__name__} onEdgeConnectionChanged {new_edge}")
+        if new_edge and new_edge._start_socket:
+            new_edge._start_socket.highlightSocket()
+        if new_edge and new_edge._end_socket:
+            new_edge._end_socket.highlightSocket()
 
     def onInputChanged(self, new_edge):
         print(f"{self.__class__.__name__} onEdgeInputChanged {new_edge}")

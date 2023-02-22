@@ -21,7 +21,7 @@ class MVNode_S_MVX_File(MVInputNode):
     uuid_line_edit = None
 
     def __init__(self, scene) -> None:
-        super().__init__(scene, inputs=[], outputs=[3])
+        super().__init__(scene, inputs=[], outputs=[8])
         self.createParamWidget()
 
     def createParamWidget(self):
@@ -124,13 +124,13 @@ class MVNode_S_UUID(MVInputNode):
     uuid_line_edit = None
 
     def __init__(self, scene) -> None:
-        super().__init__(scene, inputs=[], outputs=[3])
+        super().__init__(scene, inputs=[], outputs=[8])
         self.createParamWidget()
 
     def createParamWidget(self):
         if not self.colaps_widget:
             self.colaps_widget = self.createCollapsWidget()
-            UuidGB = self.createUUIDCollapsGB(self.onTextChange)
+            UuidGB = self.createUUIDCollapsGB(self.onTextChange, set_readonly=False)
             self.colaps_widget.layout().addWidget(UuidGB)
 
         return self.colaps_widget

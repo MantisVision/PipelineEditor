@@ -3,13 +3,15 @@ from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 
 SOCKET_COLORS = [
-    QColor("#FFFF7700"),
-    QColor("#FF52e220"),
-    QColor("#FF0056a6"),
-    QColor("#FFa86db1"),
-    QColor("#FFb54747"),
-    QColor("#FFdbe220"),
-    QColor("#FF888888"),
+    QColor("#FF7700"),
+    QColor("#52e220"),
+    QColor("#0056a6"),
+    QColor("#a86db1"),
+    QColor("#b54747"),
+    QColor("#dbe220"),
+    QColor("#888888"),
+    QColor("#B4E220"),
+    QColor("#B9B9B9")
 ]
 
 

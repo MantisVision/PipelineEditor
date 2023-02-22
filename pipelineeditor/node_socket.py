@@ -40,6 +40,14 @@ class Socket(Serializable):
             return True
         return False
 
+    def resetSocketColor(self):
+        self._socket_type = 8
+        self.gr_socket.changeSocketType()
+
+    def highlightSocket(self):
+        self._socket_type = 7
+        self.gr_socket.changeSocketType()
+
     def delete(self):
         self.gr_socket.setParentItem(None)
         self.node.scene.gr_scene.removeItem(self.gr_socket)

@@ -156,6 +156,7 @@ class QDMGraphicsView(QGraphicsView):
         # Shift clicking items
         if hasattr(item, "node") or isinstance(item, QDMGraphicsEdge) or not item:
             if event.modifiers() & Qt.ShiftModifier:
+                print("ASDASD")
                 event.ignore()
                 fakeEvent = QMouseEvent(QEvent.MouseButtonPress, event.localPos(), event.screenPos(), Qt.LeftButton, event.buttons() | Qt.LeftButton, event.modifiers() | Qt.ControlModifier)
                 super().mousePressEvent(fakeEvent)
