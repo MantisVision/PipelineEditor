@@ -154,16 +154,19 @@ class MVSubWindow(NodeEditorWidget):
 
     def handleNodeContextMenu(self, event):
         context_menu = QMenu(self)
+        selected = None
+        item = self.scene.getItemAt(event.pos())
+
         mark_dirty_act = context_menu.addAction("Mark Dirty")
         mark_dirty_desc_act = context_menu.addAction("Mark Descendants Dirty")
         mark_invalid_act = context_menu.addAction("Mark Invalid")
         umnark_invalid_act = context_menu.addAction("Unmark Invalid")
-        eval_act = context_menu.addAction("Eval")
+        eval_act = context_menu.addAction("Eval this")
+        eval_selected_act = context_menu.addAction("Eval selected")
+        eval_selected_act.setDisabled(True if len(self.scene.getSelectedItems()) == 0 else False)
 
         action = context_menu.exec_(self.mapToGlobal(event.pos()))
 
-        selected = None
-        item = self.scene.getItemAt(event.pos())
         if type(item) == QGraphicsProxyWidget:
             item = item.widget()
 
@@ -174,7 +177,9 @@ class MVSubWindow(NodeEditorWidget):
             selected = item.socket.node
 
         if selected and action == eval_act:
-            val = selected.eval()
+            selected.eval()
+        if selected and action == eval_selected_act:
+            [sel.node.eval() for sel in self.scene.getSelectedItems() if hasattr(sel, 'node')]
         elif selected and action == mark_dirty_act:
             selected.markDirty()
         elif selected and action == mark_dirty_desc_act:

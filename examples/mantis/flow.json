@@ -15,11 +15,11 @@
                     "index": 0,
                     "multi_edge": true,
                     "position": 5,
-                    "socket_type": 3
+                    "socket_type": 7
                 }
             ],
             "content": {
-                "id": 2293474727328
+                "id": 3049923536080
             },
             "op_code": 3,
             "uuid": "test",
@@ -38,7 +38,7 @@
                     "index": 0,
                     "multi_edge": false,
                     "position": 2,
-                    "socket_type": 2
+                    "socket_type": 7
                 }
             ],
             "outputs": [
@@ -47,11 +47,11 @@
                     "index": 0,
                     "multi_edge": true,
                     "position": 5,
-                    "socket_type": 2
+                    "socket_type": 7
                 }
             ],
             "content": {
-                "id": 2293474730352
+                "id": 3049923539104
             },
             "op_code": 4,
             "uuid": "test",
@@ -73,7 +73,7 @@
                     "index": 0,
                     "multi_edge": false,
                     "position": 2,
-                    "socket_type": 2
+                    "socket_type": 7
                 }
             ],
             "outputs": [
@@ -82,11 +82,11 @@
                     "index": 0,
                     "multi_edge": true,
                     "position": 5,
-                    "socket_type": 2
+                    "socket_type": 7
                 }
             ],
             "content": {
-                "id": 2293474734240
+                "id": 3049946808384
             },
             "op_code": 5,
             "uuid": "test",
@@ -106,7 +106,7 @@
                     "index": 0,
                     "multi_edge": false,
                     "position": 2,
-                    "socket_type": 2
+                    "socket_type": 7
                 }
             ],
             "outputs": [
@@ -115,11 +115,11 @@
                     "index": 0,
                     "multi_edge": true,
                     "position": 5,
-                    "socket_type": 2
+                    "socket_type": 7
                 }
             ],
             "content": {
-                "id": 2293474736688
+                "id": 3049946810832
             },
             "op_code": 7,
             "uuid": "test",
@@ -147,7 +147,7 @@
                     "index": 0,
                     "multi_edge": false,
                     "position": 2,
-                    "socket_type": 2
+                    "socket_type": 7
                 }
             ],
             "outputs": [
@@ -156,11 +156,11 @@
                     "index": 0,
                     "multi_edge": true,
                     "position": 5,
-                    "socket_type": 2
+                    "socket_type": 7
                 }
             ],
             "content": {
-                "id": 2293475037760
+                "id": 3049946816160
             },
             "op_code": 8,
             "uuid": "test",
@@ -179,12 +179,12 @@
                     "index": 0,
                     "multi_edge": false,
                     "position": 2,
-                    "socket_type": 1
+                    "socket_type": 7
                 }
             ],
             "outputs": [],
             "content": {
-                "id": 2293475039632
+                "id": 3049946818032
             },
             "op_code": 9,
             "uuid": "",
@@ -203,12 +203,12 @@
                     "index": 0,
                     "multi_edge": false,
                     "position": 2,
-                    "socket_type": 2
+                    "socket_type": 7
                 }
             ],
             "outputs": [],
             "content": {
-                "id": 2293475041504
+                "id": 3049946819904
             },
             "op_code": 6,
             "uuid": "",
@@ -227,12 +227,12 @@
                     "index": 0,
                     "multi_edge": false,
                     "position": 2,
-                    "socket_type": 1
+                    "socket_type": 7
                 }
             ],
             "outputs": [],
             "content": {
-                "id": 2293475043808
+                "id": 3049946822208
             },
             "op_code": 2,
             "uuid": "",
@@ -243,46 +243,46 @@
     ],
     "edges": [
         {
-            "id": 1754913107504,
+            "id": 3049946751056,
             "edge_type": 2,
             "start": 1754913099296,
             "end": 1754913107744
         },
         {
-            "id": 1754913148496,
-            "edge_type": 2,
-            "start": 1754913107792,
-            "end": 1754913151760
-        },
-        {
-            "id": 1754912275952,
-            "edge_type": 2,
-            "start": 1754913151808,
-            "end": 1754913152816
-        },
-        {
-            "id": 1754913156368,
+            "id": 3049946751200,
             "edge_type": 2,
             "start": 1754913099296,
             "end": 1754913156752
         },
         {
-            "id": 1754913156848,
+            "id": 3049946751920,
             "edge_type": 2,
             "start": 1754913156800,
             "end": 1754913157088
         },
         {
-            "id": 1754936398496,
+            "id": 3049946751104,
+            "edge_type": 2,
+            "start": 1754913107792,
+            "end": 1754913151760
+        },
+        {
+            "id": 3049946751248,
+            "edge_type": 2,
+            "start": 1754913151808,
+            "end": 1754913152816
+        },
+        {
+            "id": 3049946751344,
+            "edge_type": 2,
+            "start": 1754913151808,
+            "end": 1754936398400
+        },
+        {
+            "id": 3049946752064,
             "edge_type": 2,
             "start": 1754913152864,
             "end": 1754936399024
-        },
-        {
-            "id": 1754936398640,
-            "edge_type": 2,
-            "start": 1754936398400,
-            "end": 1754913151808
         }
     ]
 }
