@@ -159,11 +159,9 @@ class QDMGraphicsView(QGraphicsView):
             # TODO: Fix first node moving...
             if item and hasattr(item, "node"):
                 if event.modifiers() & Qt.ShiftModifier and event.modifiers() & Qt.ControlModifier:
-                    item.node.gr_node.setSelected(True)
                     print("Shift Control pressed")
                     data = self.gr_scene.scene.clipboard.serializedSelected(delete=False)
-                    self.gr_scene.scene.clipboard.deserializeFromClipboard(data)
-                    item.node.gr_node.setSelected(False)
+                    self.gr_scene.scene.clipboard.deserializeFromClipboard(data, adjust_pos=False)
 
             if event.modifiers() & Qt.ShiftModifier:
                 event.ignore()

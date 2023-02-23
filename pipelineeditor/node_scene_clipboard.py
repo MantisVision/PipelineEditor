@@ -49,7 +49,7 @@ class SceneClipbaord():
 
         return data
 
-    def deserializeFromClipboard(self, data):
+    def deserializeFromClipboard(self, data, adjust_pos=True):
         hashmap = {}
 
         # Calculate mouse pos
@@ -85,9 +85,10 @@ class SceneClipbaord():
             created_node.append(new_node)
 
             # readjust new_node position
-            posx, posy = new_node.pos.x(), new_node.pos.y()
-            newx, newy = mousex + posx - minx, mousey + posy - miny
-            new_node.setPos(newx, newy)
+            if adjust_pos:
+                posx, posy = new_node.pos.x(), new_node.pos.y()
+                newx, newy = mousex + posx - minx, mousey + posy - miny
+                new_node.setPos(newx, newy)
             new_node.doSelect()
 
         # Create each edge
@@ -95,6 +96,7 @@ class SceneClipbaord():
             for edge_data in data['edges']:
                 new_edge = Edge(self.scene)
                 new_edge.deserialize(edge_data, hashmap, restore_id=False)
+                new_edge.doSelect()
 
         self.scene.setSilentSelectionEvents(False)
 

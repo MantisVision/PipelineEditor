@@ -92,7 +92,6 @@ class Node(Serializable):
             counter += 1
 
     def onEdgeConnectionChanged(self, new_edge):
-        # TODO: set nicer colors!
         if new_edge and new_edge._start_socket:
             new_edge._start_socket.highlightSocket()
         if new_edge and new_edge._end_socket:
