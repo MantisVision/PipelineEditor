@@ -109,6 +109,64 @@ class MiniNode():
     def setPos(self, x, y):
         self.gr_node.setPos(x, y)
 
-
     def onDoubleClicked(self, event):
         print("double click")
+
+
+class MiniGRROI(QGraphicsItem):
+    def __init__(self, roi, parent=None) -> None:
+        super().__init__(parent)
+        self.roi = roi
+
+        # init flags
+        self.initSizes()
+        self.initAssets()
+
+        self.initUI()
+
+    def initUI(self):
+        self.setFlags(QGraphicsItem.ItemIsSelectable | QGraphicsItem.ItemIsMovable)
+        self.setAcceptHoverEvents(True)
+
+    def boundingRect(self) -> QRectF:
+        return QRectF(
+            0,
+            0,
+            self.width,
+            self.height
+        ).normalized()
+
+    def initSizes(self):
+        self.width = 180
+        self.height = 240
+        self.edge_roundness = 10
+
+    def initAssets(self):
+        self._color = QColor("#7F000000")
+
+        self._pen_default = QPen(self._color)
+
+        self._pen_default.setWidthF(1)
+
+    def paint(self, painter, QStyleOptionGraphicsItem, widget=None):
+        path_content = QPainterPath()
+        path_content.addRoundedRect(0, 0, self.width, self.height, self.edge_roundness, self.edge_roundness)
+        painter.setPen(self._pen_default)
+        painter.drawPath(path_content.simplified())
+
+
+class MiniROI():
+    GraphicROIClass = MiniGRROI
+
+    def __init__(self, scene) -> None:
+        super().__init__()
+        self.scene = scene
+        self.gr_roi = self.__class__.GraphicROIClass(self)
+        self.scene.gr_scene.addItem(self.gr_roi)
+
+    @property
+    def pos(self):
+        return self.gr_roi.pos()
+
+    def setPos(self, x, y):
+        self.gr_roi.setPos(x, y)

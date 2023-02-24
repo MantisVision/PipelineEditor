@@ -3,7 +3,7 @@ from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 
-from mini_node import MiniNode
+from mini_node import MiniNode, MiniROI
 
 
 class MinimapScene():
@@ -33,14 +33,17 @@ class MinimapGRView(QGraphicsView):
         super().__init__(parent)
         self.minimap_gr_scene = minimap_gr_scene
         self.setScene(self.minimap_gr_scene)
-        self.scale(0.5, 0.5)
+        # self.scale(0.5, 0.5)
 
+    def mouseReleaseEvent(self, event):
+        print(event.pos())
 
 class MinimapWidget(QWidget): # noqa
     def __init__(self, parent=None) -> None:
         super().__init__(parent)
         self.initUI()
         node = MiniNode(self.scene, "My Awesome Node1")
+        roi = MiniROI(self.scene)
 
     def initUI(self):
         self.layout = QVBoxLayout()
@@ -51,7 +54,6 @@ class MinimapWidget(QWidget): # noqa
         # Create graphics view
         self.view = MinimapGRView(self.scene.gr_scene, self)
         self.layout.addWidget(self.view)
-
 
 if __name__ == '__main__':
     # don't auto scale when drag app to a different monitor.

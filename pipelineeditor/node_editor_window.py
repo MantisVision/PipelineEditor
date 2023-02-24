@@ -118,9 +118,6 @@ class NodeEditorWindow(QMainWindow):
     def onFileOpen(self):
         if self.save_dlg:
             fname, ffilter = QFileDialog.getOpenFileName(self, "Open pipeline from file", self.getFileDialogDirectory(), self.getFileDialogFilter())
-            print("##############")
-            print(fname)
-            print("##############")
             if not fname:
                 return
 
