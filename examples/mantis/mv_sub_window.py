@@ -13,7 +13,6 @@ from pipelineeditor.node_edge import EDGE_TYPE_BEZIER, EDGE_TYPE_DIRECT, EDGE_TY
 class MVSubWindow(NodeEditorWidget):
     def __init__(self, parent=None) -> None:
         super().__init__(parent)
-        # self.setAttribute(Qt.WA_DeleteOnClose)
         self.scene.add_has_been_modified_listener(self.setTitle)
         self.scene.history.addHistoryRestoreListener(self.onHistoryRestored)
         self.scene.add_drag_enter_listener(self.onDragEnter)

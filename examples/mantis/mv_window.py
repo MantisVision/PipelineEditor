@@ -13,6 +13,7 @@ from examples.mantis.mv_drag_listbox import QDMDragListBox     # noqa
 from examples.mantis.nodes.colap import CollapseGB             # noqa
 from pipelineeditor.utils import loadStylesheets               # noqa
 from pipelineeditor.utils import dump_exception, pp            # noqa
+from minimap.minimap_child import MinimapChild                 # noqa
 from qss import nodeeditor_dark_resources                      # noqa
 
 
@@ -126,6 +127,12 @@ class MantisWindow(NodeEditorWindow):
         self.actPrevious.setEnabled(hasMdiChild)
         self.actSeparator.setEnabled(hasMdiChild)
         self.updateEditMenu()
+
+    def updateMinimap(self):
+        print("update minimap")
+        pipeline_editor = self.getcurrentPipelineEditorWidget()
+        if pipeline_editor:
+            self.minimap.scene.deserialize(pipeline_editor.scene.serialize())
 
     def updateEditMenu(self):
         try:
@@ -257,8 +264,11 @@ class MantisWindow(NodeEditorWindow):
         self.addDockWidget(Qt.LeftDockWidgetArea, self.nodes_dock)
 
     def createMinimapDock(self):
-        self.minimap = QWidget()
-        self.minimap.setMinimumWidth(270)
+        self.minimap = MinimapChild()
+        self.minimap.setMaximumWidth(270)
+        self.minimap.setMaximumHeight(270)
+        self.minimap.fileLoad(r"C:\Personal\PipelineEditor\examples\mantis\flow.json")
+        self.minimap.view.scale(0.1, 0.1)
 
         self.minimap_dock = QDockWidget("Minimap")
         self.minimap_dock.setWidget(self.minimap)
@@ -410,6 +420,7 @@ class MantisWindow(NodeEditorWindow):
         # TODO: Submit here callback function on item selection (only for nodes)
         pipeline_editor.scene.add_item_doubleclick_listener(self.onNodeClick)
         pipeline_editor.scene.history.addHistoryModifiedListener(self.updateEditMenu)
+        pipeline_editor.scene.history.addHistoryModifiedListener(self.updateMinimap)
         pipeline_editor.addCloseEventListener(self.onSubwindowClose)
 
         return sub_window
