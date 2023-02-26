@@ -19,8 +19,8 @@ class Scene(Serializable):
         self.nodes = []
         self.edges = []
         self.gr_scene = None
-        self.scene_width = 6400
-        self.scene_height = 6400
+        self.scene_width = 3600
+        self.scene_height = 3600
 
         # current filename assigned to this scene
         self.filename = None

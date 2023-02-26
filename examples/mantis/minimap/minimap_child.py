@@ -11,11 +11,15 @@ class MinimapChild(MVSubWindow):
         self.replaceDef()
         self.view.setAcceptDrops(False)
         self.view.setDragMode(QGraphicsView.NoDrag)
+        self.scene_width = 3600
+        self.scene_height = 3600
+        self.scene.gr_scene.setGrScene(self.scene_width, self.scene_height)
+        self.view.scale(0.061, 0.061)
 
     def replaceDef(self):
         self.scene.gr_scene.drawBackground = types.MethodType(self.emtyDef, self)
         self.view.leftMouseButtonPress = types.MethodType(self.emtyDef, self)
-        self.view.wheelEvent = types.MethodType(self.emtyDef, self)
+        # self.view.wheelEvent = types.MethodType(self.emtyDef, self)
 
     def emtyDef(self, *args):
         pass

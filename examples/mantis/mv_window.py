@@ -48,7 +48,7 @@ class MantisWindow(NodeEditorWindow):
         self.windowMapper.mapped[QWidget].connect(self.setActiveSubWindow)
 
         self.createNodeDock()
-        # self.createMinimapDock()
+        self.createMinimapDock()
         self.createParameterDock()
         self.createActions()
         self.createMenus()
@@ -266,9 +266,8 @@ class MantisWindow(NodeEditorWindow):
     def createMinimapDock(self):
         self.minimap = MinimapChild()
         self.minimap.setMaximumWidth(270)
-        self.minimap.setMaximumHeight(270)
+        self.minimap.setMaximumHeight(200)
         self.minimap.fileLoad(r"C:\Personal\PipelineEditor\examples\mantis\flow.json")
-        self.minimap.view.scale(0.1, 0.1)
 
         self.minimap_dock = QDockWidget("Minimap")
         self.minimap_dock.setWidget(self.minimap)
