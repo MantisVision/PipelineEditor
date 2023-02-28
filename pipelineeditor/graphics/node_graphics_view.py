@@ -8,12 +8,15 @@ from pipelineeditor.graphics.node_graphics_socket import QDMGraphicsSocket
 from pipelineeditor.graphics.node_graphics_cutline import QDMGraphicsCutline
 from pipelineeditor.node_edge_dragging import EdgeDragging
 from pipelineeditor.node_edge_rerouting import EdgeRerouting
+from pipelineeditor.node_edge_intersect import EdgeIntersect
 from pipelineeditor.utils import dump_exception
 
-MODE_NOOP = 1
-MODE_EDGE_DRAG = 2
-MODE_EDGE_CUT = 3
-MODE_EDGE_REROUTING = 4
+MODE_NOOP = 1               #: Mode representing no operation is done
+MODE_EDGE_DRAG = 2          #: Mode representing when we drag edge state
+MODE_EDGE_CUT = 3           #: Mode representing when we draw a cutting edge
+MODE_EDGE_REROUTING = 4    #: Mode representing when we re-route existing edges
+MODE_NODE_DRAG = 5          #: Mode representing when we drag a node
+
 EDGE_DRAG_THRESHOLD = 50
 
 
@@ -40,6 +43,7 @@ class QDMGraphicsView(QGraphicsView):
 
         self.dragging = EdgeDragging(self)
         self.rerouting = EdgeRerouting(self)
+        self.intersecting = EdgeIntersect(self)
 
         self.cutline = QDMGraphicsCutline()
         self.gr_scene.addItem(self.cutline)
@@ -172,6 +176,10 @@ class QDMGraphicsView(QGraphicsView):
                 super().mousePressEvent(fakeEvent)
                 return
 
+        if hasattr(item, "node"):
+            if self.mode == MODE_NOOP:
+                self.mode = MODE_NODE_DRAG
+
         if isinstance(item, QDMGraphicsSocket):
             if self.mode == MODE_NOOP and event.modifiers() & Qt.ControlModifier:
                 socket = item.socket
@@ -228,6 +236,11 @@ class QDMGraphicsView(QGraphicsView):
                 QApplication.setOverrideCursor(Qt.ArrowCursor)
                 self.mode = MODE_NOOP
                 return
+
+            if self.mode == MODE_NODE_DRAG:
+                if hasattr(item, 'node'):
+                    self.intersecting.dropNode(item.node)
+                self.mode = MODE_NOOP
 
             # Store selection in history_stamps
             if self.rubberBandDragRect:
