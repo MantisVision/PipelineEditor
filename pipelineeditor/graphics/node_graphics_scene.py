@@ -13,6 +13,13 @@ class QDMGraphicsScene(QGraphicsScene):
 
         self.scene = scene
 
+        # There is an issue when deleteing multiple QGraphicsItem from scene, that cause crashes,
+        # This line should try to fix it, although it has some perforamance penalty.
+        # https://bugreports.qt.io/browse/QTBUG-18021
+        # https://bugreports.qt.io/browse/QTBUG-50691
+
+        self.setItemIndexMethod(QGraphicsScene.NoIndex)
+
         self.grid_size = 20
         self.grid_squares = 5
         self._color_background = QColor("#393939")
