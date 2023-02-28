@@ -48,7 +48,7 @@ class MantisWindow(NodeEditorWindow):
         self.windowMapper.mapped[QWidget].connect(self.setActiveSubWindow)
 
         self.createNodeDock()
-        self.createMinimapDock()
+        # self.createMinimapDock()
         self.createParameterDock()
         self.createActions()
         self.createMenus()
@@ -68,7 +68,9 @@ class MantisWindow(NodeEditorWindow):
         self.statusBar().addPermanentWidget(widget)
         self.readSettings()
 
-        self.setWindowTitle("Mantis Example")
+        self.setWindowTitle("Mantis Pipeline Editor")
+        print(str(Path(__file__).joinpath(r"icons\mv_favicon.ico")))
+        self.setWindowIcon(QIcon(str(Path(__file__).parent.joinpath(r"icons\mv_favicon.ico"))))
 
     def closeEvent(self, event):
         self.mdiArea.closeAllSubWindows()
@@ -419,7 +421,7 @@ class MantisWindow(NodeEditorWindow):
         # TODO: Submit here callback function on item selection (only for nodes)
         pipeline_editor.scene.add_item_doubleclick_listener(self.onNodeClick)
         pipeline_editor.scene.history.addHistoryModifiedListener(self.updateEditMenu)
-        pipeline_editor.scene.history.addHistoryModifiedListener(self.updateMinimap)
+        # pipeline_editor.scene.history.addHistoryModifiedListener(self.updateMinimap)
         pipeline_editor.addCloseEventListener(self.onSubwindowClose)
 
         return sub_window
