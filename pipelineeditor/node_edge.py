@@ -106,7 +106,8 @@ class Edge(Serializable):
         try:
             for socket in old_sockets:
                 if socket and socket.node:
-                    socket.resetSocketColor()
+                    if not socket.has_edge():
+                        socket.resetSocketColor()
                     if silent:
                         continue
                     if silent_for_socket and socket == silent_for_socket:

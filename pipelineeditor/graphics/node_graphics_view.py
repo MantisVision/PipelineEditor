@@ -5,13 +5,15 @@ from PyQt5.QtWidgets import *
 import json
 from pipelineeditor.graphics.node_graphics_edge import QDMGraphicsEdge
 from pipelineeditor.graphics.node_graphics_socket import QDMGraphicsSocket
-from pipelineeditor.node_edge_dragging import EdgeDragging
 from pipelineeditor.graphics.node_graphics_cutline import QDMGraphicsCutline
+from pipelineeditor.node_edge_dragging import EdgeDragging
+from pipelineeditor.node_edge_rerouting import EdgeRerouting
 from pipelineeditor.utils import dump_exception
 
 MODE_NOOP = 1
 MODE_EDGE_DRAG = 2
 MODE_EDGE_CUT = 3
+MODE_EDGE_REROUTING = 4
 EDGE_DRAG_THRESHOLD = 50
 
 
@@ -37,6 +39,7 @@ class QDMGraphicsView(QGraphicsView):
         self.release_mb_pos = None
 
         self.dragging = EdgeDragging(self)
+        self.rerouting = EdgeRerouting(self)
 
         self.cutline = QDMGraphicsCutline()
         self.gr_scene.addItem(self.cutline)
@@ -169,10 +172,18 @@ class QDMGraphicsView(QGraphicsView):
                 super().mousePressEvent(fakeEvent)
                 return
 
-        if isinstance(item, QDMGraphicsSocket) and self.mode == MODE_NOOP:
-            self.mode = MODE_EDGE_DRAG
-            self.dragging.edgeDragStart(item)
-            return
+        if isinstance(item, QDMGraphicsSocket):
+            if self.mode == MODE_NOOP and event.modifiers() & Qt.ControlModifier:
+                socket = item.socket
+                if socket.has_edge():
+                    self.mode = MODE_EDGE_REROUTING
+                    self.rerouting.startRerouting(socket)
+                    return
+
+            if self.mode == MODE_NOOP:
+                self.mode = MODE_EDGE_DRAG
+                self.dragging.edgeDragStart(item)
+                return
 
         if self.mode == MODE_EDGE_DRAG and self.dragging.edgeDragEnd(item):
             return
@@ -206,6 +217,10 @@ class QDMGraphicsView(QGraphicsView):
                     if self.dragging.edgeDragEnd(item):
                         return
 
+            if self.mode == MODE_EDGE_REROUTING:
+                self.rerouting.stopRerouting(item.socket if item and isinstance(item, QDMGraphicsSocket) else None)
+                self.mode = MODE_NOOP
+
             if self.mode == MODE_EDGE_CUT:
                 self.cut_intersecting_edges()
                 self.cutline._line_points = []
@@ -238,12 +253,18 @@ class QDMGraphicsView(QGraphicsView):
     def mouseMoveEvent(self, event):
         scenepos = self.mapToScene(event.pos())
 
-        if self.mode == MODE_EDGE_DRAG:
-            self.dragging.update_destination(scenepos.x(), scenepos.y())
+        try:
+            if self.mode == MODE_EDGE_DRAG:
+                self.dragging.update_destination(scenepos.x(), scenepos.y())
 
-        if self.mode == MODE_EDGE_CUT and self.cutline:
-            self.cutline._line_points.append(scenepos)
-            self.cutline.update()
+            if self.mode == MODE_EDGE_REROUTING:
+                self.rerouting.updateScenePosition(scenepos.x(), scenepos.y())
+
+            if self.mode == MODE_EDGE_CUT and self.cutline:
+                self.cutline._line_points.append(scenepos)
+                self.cutline.update()
+        except Exception as e:
+            dump_exception(e)
 
         self.last_scene_mouse_position = scenepos
 

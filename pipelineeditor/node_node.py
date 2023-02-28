@@ -155,8 +155,8 @@ class Node(Serializable):
         self.gr_node.setPos(x, y)
 
     def getSocketScenePosition(self, socket):
-        nodepos = self.grNode.pos()
-        socketpos = self.getSocketPosition(socket.index, socket.position, socket.count_on_this_node_side)
+        nodepos = self.gr_node.pos()
+        socketpos = self.getSocketsPosition(socket._index, socket._position, socket.count_on_this_node_side)
         return (nodepos.x() + socketpos[0], nodepos.y() + socketpos[1])
 
     def setContentTitle(self, title):
