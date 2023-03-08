@@ -189,8 +189,8 @@ class QDMGraphicsView(QGraphicsView):
             if self.mode == MODE_NOOP:
                 self.mode = MODE_NODE_DRAG
 
-        if self.isSnappingEnabled(event):
-            item = self.snapping.get_snapped_socket_item(event)
+        # if self.isSnappingEnabled(event):
+        #     item = self.snapping.getSnappedSocketItem(event)
 
         if isinstance(item, QDMGraphicsSocket):
             if self.mode == MODE_NOOP and event.modifiers() & Qt.ControlModifier:
@@ -235,14 +235,14 @@ class QDMGraphicsView(QGraphicsView):
 
             if self.mode == MODE_EDGE_DRAG:
                 if self.distanceBetweenClickAndReleaseIsOff(event):
-                    if self.isSnappingEnabled(event):
-                        item = self.snapping.get_snapped_socket_item(event)
+                    # if self.isSnappingEnabled(event):
+                    #     item = self.snapping.getSnappedSocketItem(event)
                     if self.dragging.edgeDragEnd(item):
                         return
 
             if self.mode == MODE_EDGE_REROUTING:
-                if self.isSnappingEnabled(event):
-                    item = self.snapping.get_snapped_socket_item(event)
+                # if self.isSnappingEnabled(event):
+                #     item = self.snapping.getSnappedSocketItem(event)
                 self.rerouting.stopRerouting(item.socket if item and isinstance(item, QDMGraphicsSocket) else None)
                 self.mode = MODE_NOOP
 
@@ -284,11 +284,11 @@ class QDMGraphicsView(QGraphicsView):
         scenepos = self.mapToScene(event.pos())
 
         try:
-            modified = self.setSocketHighlights(scenepos, highlight=False, radius=EDGE_SNAPPING_RADIUS + 100)
-            if self.isSnappingEnabled(event):
-                _, scenepos = self.snapping.get_snapped_to_socket_positio(scenepos)
-            if modified:
-                self.update()
+            # modified = self.setSocketHighlights(scenepos, highlight=False, radius=EDGE_SNAPPING_RADIUS + 100)
+            # if self.isSnappingEnabled(event):
+            #     _, scenepos = self.snapping.getSnappedToSocketPosition(scenepos)
+            # if modified:
+            #     self.update()
 
             if self.mode == MODE_EDGE_DRAG:
                 self.dragging.update_destination(scenepos.x(), scenepos.y())
