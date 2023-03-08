@@ -20,7 +20,7 @@ MODE_NODE_DRAG = 5          #: Mode representing when we drag a node
 
 EDGE_DRAG_THRESHOLD = 50
 EDGE_SNAPPING = True
-EDGE_SNAPPING_RADIUS = 24
+EDGE_SNAPPING_RADIUS = 12
 
 
 class QDMGraphicsView(QGraphicsView):
@@ -73,7 +73,8 @@ class QDMGraphicsView(QGraphicsView):
         self._doubleclick_listeneres = []
 
     def isSnappingEnabled(self, event):
-        return EDGE_SNAPPING and (event.modifiers() & Qt.ControlModifier) if event else True
+        # return EDGE_SNAPPING and (event.modifiers() & Qt.ControlModifier) if event else True
+        return EDGE_SNAPPING
 
     def reset_mode(self):
         self.mode = MODE_NOOP
@@ -188,6 +189,9 @@ class QDMGraphicsView(QGraphicsView):
             if self.mode == MODE_NOOP:
                 self.mode = MODE_NODE_DRAG
 
+        if self.isSnappingEnabled(event):
+            item = self.snapping.get_snapped_socket_item(event)
+
         if isinstance(item, QDMGraphicsSocket):
             if self.mode == MODE_NOOP and event.modifiers() & Qt.ControlModifier:
                 socket = item.socket
@@ -202,8 +206,6 @@ class QDMGraphicsView(QGraphicsView):
                 return
 
         if self.mode == MODE_EDGE_DRAG:
-            if self.isSnappingEnabled(event):
-                item = self.snapping.get_snapped_socket_item(event)
             if self.dragging.edgeDragEnd(item):
                 return
 
@@ -282,8 +284,11 @@ class QDMGraphicsView(QGraphicsView):
         scenepos = self.mapToScene(event.pos())
 
         try:
+            modified = self.setSocketHighlights(scenepos, highlight=False, radius=EDGE_SNAPPING_RADIUS + 100)
             if self.isSnappingEnabled(event):
                 _, scenepos = self.snapping.get_snapped_to_socket_positio(scenepos)
+            if modified:
+                self.update()
 
             if self.mode == MODE_EDGE_DRAG:
                 self.dragging.update_destination(scenepos.x(), scenepos.y())
@@ -302,6 +307,20 @@ class QDMGraphicsView(QGraphicsView):
         self.scenePosChanged.emit(int(scenepos.x()), int(scenepos.y()))
 
         super().mouseMoveEvent(event)
+
+    def setSocketHighlights(self, scenepos, highlight, radius):
+        scene_rect = QRectF(
+            scenepos.x() - radius,
+            scenepos.y() - radius,
+            radius * 2,
+            radius * 2
+        )
+        items = self.gr_scene.items(scene_rect)
+        items = list(filter(lambda x: isinstance(x, QDMGraphicsSocket), items))
+        for gr_socket in items:
+            gr_socket.is_highlight = highlight
+
+        return items
 
     def distanceBetweenClickAndReleaseIsOff(self, event):
         new_lmb_release_scene_pos = self.mapToScene(event.pos())
