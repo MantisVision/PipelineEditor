@@ -9,6 +9,7 @@ from pipelineeditor.graphics.node_graphics_cutline import QDMGraphicsCutline
 from pipelineeditor.node_edge_dragging import EdgeDragging
 from pipelineeditor.node_edge_rerouting import EdgeRerouting
 from pipelineeditor.node_edge_intersect import EdgeIntersect
+from pipelineeditor.node_edge_snapping import EdgeSnapping
 from pipelineeditor.utils import dump_exception
 
 MODE_NOOP = 1               #: Mode representing no operation is done
@@ -18,6 +19,8 @@ MODE_EDGE_REROUTING = 4    #: Mode representing when we re-route existing edges
 MODE_NODE_DRAG = 5          #: Mode representing when we drag a node
 
 EDGE_DRAG_THRESHOLD = 50
+EDGE_SNAPPING = True
+EDGE_SNAPPING_RADIUS = 24
 
 
 class QDMGraphicsView(QGraphicsView):
@@ -41,9 +44,11 @@ class QDMGraphicsView(QGraphicsView):
         self.last_mb_pos = None
         self.release_mb_pos = None
 
-        self.dragging = EdgeDragging(self)
-        self.rerouting = EdgeRerouting(self)
+        # Edge logic
+        self.dragging     = EdgeDragging(self)
+        self.rerouting    = EdgeRerouting(self)
         self.intersecting = EdgeIntersect(self)
+        self.snapping     = EdgeSnapping(self, EDGE_SNAPPING_RADIUS)
 
         self.cutline = QDMGraphicsCutline()
         self.gr_scene.addItem(self.cutline)
@@ -66,6 +71,9 @@ class QDMGraphicsView(QGraphicsView):
         self._drag_enter_listeneres = []
         self._drop_listeneres = []
         self._doubleclick_listeneres = []
+
+    def isSnappingEnabled(self, event):
+        return EDGE_SNAPPING and (event.modifiers() & Qt.ControlModifier) if event else True
 
     def reset_mode(self):
         self.mode = MODE_NOOP
@@ -193,8 +201,11 @@ class QDMGraphicsView(QGraphicsView):
                 self.dragging.edgeDragStart(item)
                 return
 
-        if self.mode == MODE_EDGE_DRAG and self.dragging.edgeDragEnd(item):
-            return
+        if self.mode == MODE_EDGE_DRAG:
+            if self.isSnappingEnabled(event):
+                item = self.snapping.get_snapped_socket_item(event)
+            if self.dragging.edgeDragEnd(item):
+                return
 
         # Cutline event
         if not item:
@@ -222,10 +233,14 @@ class QDMGraphicsView(QGraphicsView):
 
             if self.mode == MODE_EDGE_DRAG:
                 if self.distanceBetweenClickAndReleaseIsOff(event):
+                    if self.isSnappingEnabled(event):
+                        item = self.snapping.get_snapped_socket_item(event)
                     if self.dragging.edgeDragEnd(item):
                         return
 
             if self.mode == MODE_EDGE_REROUTING:
+                if self.isSnappingEnabled(event):
+                    item = self.snapping.get_snapped_socket_item(event)
                 self.rerouting.stopRerouting(item.socket if item and isinstance(item, QDMGraphicsSocket) else None)
                 self.mode = MODE_NOOP
 
@@ -267,6 +282,9 @@ class QDMGraphicsView(QGraphicsView):
         scenepos = self.mapToScene(event.pos())
 
         try:
+            if self.isSnappingEnabled(event):
+                _, scenepos = self.snapping.get_snapped_to_socket_positio(scenepos)
+
             if self.mode == MODE_EDGE_DRAG:
                 self.dragging.update_destination(scenepos.x(), scenepos.y())
 
