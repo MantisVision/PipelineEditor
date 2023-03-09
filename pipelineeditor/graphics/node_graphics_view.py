@@ -73,7 +73,8 @@ class QDMGraphicsView(QGraphicsView):
         self._doubleclick_listeneres = []
 
     def isSnappingEnabled(self, event):
-        return EDGE_SNAPPING and (event.modifiers() & Qt.ControlModifier) if event else True
+        # return EDGE_SNAPPING and (event.modifiers() & Qt.ControlModifier) if event else True
+        return EDGE_SNAPPING
 
     def reset_mode(self):
         self.mode = MODE_NOOP
@@ -284,7 +285,7 @@ class QDMGraphicsView(QGraphicsView):
         try:
             modified = self.setSocketHighlights(scenepos, highlighted=False, radius=EDGE_SNAPPING_RADIUS + 100)
             if self.isSnappingEnabled(event):
-                _, scenepos = self.snapping.get_snapped_to_socket_positio(scenepos)
+                _, scenepos = self.snapping.get_snapped_to_socket_position(scenepos)
             if modified:
                 self.update()
 

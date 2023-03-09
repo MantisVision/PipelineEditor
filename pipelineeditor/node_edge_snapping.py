@@ -11,11 +11,11 @@ class EdgeSnapping():
 
     def get_snapped_socket_item(self, event):
         scenepos = self.gr_view.mapToScene(event.pos())
-        gr_socket, _ = self.get_snapped_to_socket_positio(scenepos)
+        gr_socket, _ = self.get_snapped_to_socket_position(scenepos)
 
         return gr_socket
 
-    def get_snapped_to_socket_positio(self, scenepos):
+    def get_snapped_to_socket_position(self, scenepos):
         scene_rect = QRectF(
             scenepos.x() - self.snapping_radius,
             scenepos.y() - self.snapping_radius,
