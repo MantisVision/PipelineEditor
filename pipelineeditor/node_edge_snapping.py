@@ -11,15 +11,17 @@ class EdgeSnapping():
 
     def getSnappedSocketItem(self, event):
         scenepos = self.gr_view.mapToScene(event.pos())
-        grSocket, pos = self.getSnappedToSocketPosition(scenepos)
-        return grSocket
+        gr_socket, _ = self.get_snapped_to_socket_positio(scenepos)
 
-    def getSnappedToSocketPosition(self, scenepos):
-        scan_rect = QRectF(
-            scenepos.x() - self.edge_snapping_radius,
-            scenepos.y() - self.edge_snapping_radius,
-            self.edge_snapping_radius * 2,
-            self.edge_snapping_radius * 2
+        return gr_socket
+
+    def get_snapped_to_socket_positio(self, scenepos):
+        scene_rect = QRectF(
+            scenepos.x() - self.snapping_radius,
+            scenepos.y() - self.snapping_radius,
+            self.snapping_radius * 2,
+            self.snapping_radius * 2,
+
         )
         items = self.gr_scene.items(scan_rect)
         items = list(filter(lambda x: isinstance(x, QDMGraphicsSocket), items))
@@ -40,6 +42,7 @@ class EdgeSnapping():
 
         selected_item.is_highlight = True
 
+        selected_item.is_highlight = True
         calcpos = selected_item.socket.node.getSocketScenePosition(selected_item.socket)
 
         return selected_item, QPointF(*calcpos)

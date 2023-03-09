@@ -284,11 +284,12 @@ class QDMGraphicsView(QGraphicsView):
         scenepos = self.mapToScene(event.pos())
 
         try:
-            # modified = self.setSocketHighlights(scenepos, highlight=False, radius=EDGE_SNAPPING_RADIUS + 100)
-            # if self.isSnappingEnabled(event):
-            #     _, scenepos = self.snapping.getSnappedToSocketPosition(scenepos)
-            # if modified:
-            #     self.update()
+            modified = self.setSocketHighlights(scenepos, highlighted=False, radius=EDGE_SNAPPING_RADIUS + 100)
+            if self.isSnappingEnabled(event):
+                _, scenepos = self.snapping.get_snapped_to_socket_positio(scenepos)
+            if modified:
+                self.update()
+
 
             if self.mode == MODE_EDGE_DRAG:
                 self.dragging.update_destination(scenepos.x(), scenepos.y())
@@ -308,17 +309,19 @@ class QDMGraphicsView(QGraphicsView):
 
         super().mouseMoveEvent(event)
 
-    def setSocketHighlights(self, scenepos, highlight, radius):
+    def setSocketHighlights(self, scenepos, highlighted, radius):
+
         scene_rect = QRectF(
             scenepos.x() - radius,
             scenepos.y() - radius,
             radius * 2,
             radius * 2
         )
+
         items = self.gr_scene.items(scene_rect)
         items = list(filter(lambda x: isinstance(x, QDMGraphicsSocket), items))
         for gr_socket in items:
-            gr_socket.is_highlight = highlight
+            gr_socket.is_highlight = highlighted
 
         return items
 
