@@ -4,7 +4,7 @@ from pipelineeditor.graphics.node_graphics_socket import QDMGraphicsSocket
 
 
 class EdgeSnapping():
-    def __init__(self, gr_view, snapping_radius=24) -> None:
+    def __init__(self, gr_view, snapping_radius=26) -> None:
         self.gr_view = gr_view
         self.gr_scene = gr_view.gr_scene
         self.snapping_radius = snapping_radius
