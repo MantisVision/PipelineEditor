@@ -4,11 +4,11 @@ from pipelineeditor.graphics.node_graphics_socket import QDMGraphicsSocket
 
 
 class EdgeSnapping():
-    def __init__(self, gr_view, snapping_radius=26) -> None:
+    def __init__(self, gr_view, snapping_radius) -> None:
 
         self.gr_view = gr_view
         self.gr_scene = self.gr_view.gr_scene
-        self.edge_snapping_radius = snapping_radius
+        self.snapping_radius = snapping_radius
 
     def getSnappedSocketItem(self, event):
         scenepos = self.gr_view.mapToScene(event.pos())
@@ -24,7 +24,7 @@ class EdgeSnapping():
             self.snapping_radius * 2,
 
         )
-        items = self.gr_scene.items(scan_rect)
+        items = self.gr_scene.items(scene_rect)
         items = list(filter(lambda x: isinstance(x, QDMGraphicsSocket), items))
 
         if len(items) == 0:
