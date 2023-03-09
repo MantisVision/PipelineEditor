@@ -11,7 +11,7 @@ class EdgeSnapping():
 
     def get_snapped_socket_item(self, event):
         scenepos = self.gr_view.mapToScene(event.pos())
-        gr_socket, pos = self.get_snapped_to_socket_positio(scenepos)
+        gr_socket, _ = self.get_snapped_to_socket_positio(scenepos)
 
         return gr_socket
 
@@ -40,6 +40,7 @@ class EdgeSnapping():
                     nearest = distance
                     selected_item = gr_socket
 
+        selected_item.is_highlight = True
         calcpos = selected_item.socket.node.getSocketScenePosition(selected_item.socket)
 
         return selected_item, QPointF(*calcpos)
