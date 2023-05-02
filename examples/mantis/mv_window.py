@@ -357,11 +357,10 @@ class MantisWindow(NodeEditorWindow):
         if not self.getcurrentPipelineEditorWidget():
             return
 
-        print(len(self.getcurrentPipelineEditorWidget().scene.nodes))
         for node in self.getcurrentPipelineEditorWidget().scene.nodes:
             if node.isInvalid():
-                print(node)
                 self.print_msg("Some node are not valid, can't bake Pipline", color='red')
+                QMessageBox.critical(self, "Pipeline Editor Error", "Some node are not valid, can't bake Pipline", QMessageBox.Ok)
                 return
             if isinstance(node, MVInputNode):
                 pipelines.append([])
